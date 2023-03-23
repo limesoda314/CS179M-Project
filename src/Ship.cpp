@@ -1,7 +1,23 @@
 #include "../headers/Ship.h"
 
+
+int Ship::reset_ship() {
+    manifest_name = ""; 
+    Coordinates.clear();
+    Mass.clear();
+    Names.clear();
+
+    if (Names.size() != 0 || Coordinates.size() != 0 || Names.size() != 0) {
+        return -1; 
+    }
+
+    return 0; 
+}
 // load manifest from filepath
 int Ship::load_manifest(const string &filepath) {
+    if (manifest_name != "") {
+        reset_ship(); 
+    }
     
     fstream fin(filepath); 
     
@@ -12,6 +28,7 @@ int Ship::load_manifest(const string &filepath) {
         } 
         this->manifest_name = filepath.at(i) + this->manifest_name; 
     }
+    this->manifest_name = this->manifest_name.substr(0, manifest_name.size()-4); 
 
     if (!fin.is_open()) {
         cout << "Error opening file, please try again" << endl;
@@ -37,6 +54,9 @@ int Ship::load_manifest(const string &filepath) {
     }
     
     fin.close(); 
+
+    string comment = "Uploaded Manifest " + manifest_name + ".txt"; 
+    log_comment(comment); 
 
     return 0; 
 }
@@ -64,14 +84,14 @@ int Ship::create_outbound() {
     string filepath = "Outbound/"; 
     char save = 'n';  
     while (save != 'y') {
-        cout << "Save to: " << filepath << manifest_name << " y/n: "; 
+        cout << "Save to: " << filepath << manifest_name << "OUTBOUND.txt" << " y/n: "; 
         cin >> save; 
         if (save != 'y') {
             cin >> filepath; 
         }
     }
     
-    ofstream fout(filepath + manifest_name); 
+    ofstream fout(filepath + manifest_name + "OUTBOUND.txt"); 
 
     if (!fout.is_open()) {
         cout << "Unable to open file" << endl; 
@@ -93,5 +113,48 @@ int Ship::create_outbound() {
         fout << Names.at(i) << endl; 
     }
 
+    string comment = "Finished a Cycle. Manifest " + manifest_name + "OUTBOUND.txt was written to deskop, and a reminder to operator to send file was displayed."; 
+    log_comment(comment); 
+
     return 0; 
 }  
+
+int Ship::log_comment(const string &comment) {
+    string filepath = "logfiles/logfile_";
+    time_t now = time(0); 
+    tm *ltm = localtime(&now);
+    filepath += to_string(1900 + ltm->tm_year) + ".txt";  
+    
+    ofstream fout(filepath, ios_base::app); 
+
+    if (!fout.is_open()) {
+        cout << "Unable to open file" << endl; 
+        return -1; 
+    }
+    
+    fout << 1+ltm->tm_mon << "-" << ltm->tm_mday << "-" << 1900 + ltm->tm_year << ": ";
+    fout << ltm->tm_hour << ":" << ltm->tm_min << "  ";
+    fout << comment << endl;  
+    return 0; 
+}
+
+int Ship::view_logfile() {
+    string year; 
+    cout << "Input year: "; 
+    cin >> year; 
+
+    string filepath = "logfiles/logfile_" + year + ".txt"; 
+    fstream fin(filepath); 
+
+    if (!fin.is_open()) {
+        cout << "Error opening file, please try again" << endl;
+        return -1; 
+    }
+    cout << "Log File " << year << endl;
+    string line; 
+    while (getline(fin, line)) {
+        cout << line << endl; 
+    }
+    cout << "End of Log File" << endl; 
+    return 0; 
+} 

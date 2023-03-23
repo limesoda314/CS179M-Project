@@ -1,0 +1,5 @@
+3-22-2023: 22:22  Uploaded Manifest ShipCase1.txt
+3-22-2023: 22:22  Finished a Cycle. Manifest ShipCase1OUTBOUND.txt was written to deskop, and a reminder to operator to send file was displayed.
+3-22-2023: 22:22  Test1
+3-22-2023: 22:22  Hello hello. Hello!!
+3-22-2023: 22:23  Uploaded Manifest ShipCase2.txt
