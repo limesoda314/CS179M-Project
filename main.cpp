@@ -7,7 +7,6 @@ void menu();
 
 int main() {
     
-
     menu(); 
 
     return 0; 
@@ -25,6 +24,8 @@ void menu() {
         cout << "3: Create Outbound Manifest" << endl; 
         cout << "4: Log comment" << endl; 
         cout << "5: View logfile" << endl; 
+        cout << "6: Print ship" << endl; 
+        cout << "7: Print balance score" << endl; 
         cout << "9: Quit" << endl; 
 
         cin >> option; 
@@ -71,6 +72,23 @@ void menu() {
         }
         if (option == 5) {
             Ship1.view_logfile(); 
+        }
+        if (option == 6) {
+            if (Ship1.get_manifest_name() == "") {
+                cout << "Load a manifest first" << endl; 
+            } else {
+                Ship1.print_ship();
+            }
+            
+        }
+        if (option == 7) {
+            if (Ship1.get_manifest_name() == "") {
+                cout << "Load a manifest first" << endl; 
+            } else {
+                cout << "Ship has a balance score of: "; 
+                cout << Ship1.balance_score();
+                cout << endl; 
+            }
         }
 
         if (option == 9) {

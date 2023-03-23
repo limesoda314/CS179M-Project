@@ -88,3 +88,19 @@ June 1st 2023: 08:12 “Apple Valley Tires, call 902-555-2322 if problem” is o
 ::  
 June 2nd 2023: 01:13 Finished a Cycle. Manifest HMMAFreigerOUTBOUND.txt was written to desktop, and a reminder pop-up to operator to send file was displayed.
 ```
+
+
+
+unload: 
+
+1. PIE
+2. PSA
+3. ASG 
+... 
+
+
+load: 
+container name: 
+container mass (0 for empty): 
+
+ALL ships fit within an 8x12 grid 

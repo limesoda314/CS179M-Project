@@ -48,9 +48,16 @@ int Ship::load_manifest(const string &filepath) {
         getline(fin, cargo_mass, ','); 
         // cout << cargo_mass.substr(2, cargo_mass.length()-3) << endl;
         Mass.push_back(cargo_mass.substr(2, cargo_mass.length()-3)); 
+        
         getline(fin, cargo_name);  
-        // cout << cargo_name.substr(1, cargo_name.length()-1) << endl; 
-        Names.push_back(cargo_name.substr(1, cargo_name.length()-1)); 
+        if (fin.eof()) {
+            Names.push_back(cargo_name.substr(1, cargo_name.length()-1)); 
+            break; 
+        }
+        else {
+            Names.push_back(cargo_name.substr(1, cargo_name.length()-2)); 
+        }
+       
     }
     
     fin.close(); 
@@ -158,3 +165,74 @@ int Ship::view_logfile() {
     cout << "End of Log File" << endl; 
     return 0; 
 } 
+
+int Ship::print_ship() const {
+    /*
+    i = 0 1 2 3 4 5 6 7 
+    j = 0 1 2 3 4 5 6 7 8 9 10 11 12
+    index = 0-95
+
+    */
+   
+    for (int i = 7; i >= 0; i--) {
+        for (int j = 0; j < 12; j++)  {
+            //cout << Names.at(i*j).size() << " "; 
+            
+            string status; 
+            if (i == 0)  {
+                status = Names.at(j);      
+            }
+            else {
+                status = Names.at(i*12+j); 
+            }
+           
+            if (status == "UNUSED") {
+                cout << "-U-";
+                //cout << status;
+                //cout << i << " " << j << endl;
+            }
+            else if (status == "NAN") {
+                cout << "-N-";
+                //cout << status;
+                //cout << i << " " << j << endl;
+            } 
+            else {
+                cout << "-X-";
+                //cout << status.size(); 
+                //cout << status;
+                //cout << i << " " << j << endl; 
+            }
+            
+        }
+        cout << endl; 
+    }
+    
+    return 0;
+}
+
+double Ship::balance_score() const {
+    double right =0; 
+    double left=0; 
+    
+    for (int i = 0; i < Coordinates.size(); i++) {
+        if (Names.at(i) != "NAN" && Names.at(i) != "UNUSED") {
+            if (Coordinates.at(i).second <= 6) {
+                left++;
+            }
+            else {
+                right++; 
+            }
+        }
+    }
+    cout << endl; 
+    cout << "right: " << right << endl; 
+    cout << "left: " <<left << endl; 
+    double balance; 
+    if (left > right) {
+        balance = right/left;
+    }
+    else {
+        balance = left/right; 
+    } 
+    return balance;
+}

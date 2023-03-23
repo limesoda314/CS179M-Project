@@ -21,14 +21,19 @@ class Ship {
         int load_manifest(const string &filepath); 
         int read_manifest();                            // likely for development/testing only 
         int create_outbound();  
-        int reset_ship(); // so we can load again 
+        int reset_ship(); // so we can load again
+        int print_ship() const; 
+        
 
         // logfile 
         int log_comment(const string &comment);
         int view_logfile(); 
         string get_manifest_name() const {return manifest_name; }
 
+
         // TODO: operations 
+        double balance_score() const; 
+        int balance();  
 
 }; 
 
