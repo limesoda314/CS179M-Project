@@ -1,6 +1,5 @@
 #include "../headers/Ship.h"
 
-
 int Ship::reset_ship() {
     manifest_name = ""; 
     Coordinates.clear();
@@ -13,6 +12,7 @@ int Ship::reset_ship() {
 
     return 0; 
 }
+
 // load manifest from filepath
 int Ship::load_manifest(const string &filepath) {
     if (manifest_name != "") {
@@ -36,37 +36,38 @@ int Ship::load_manifest(const string &filepath) {
     }
  
     while(!fin.eof()) {
-        string cargo_y; 
-        string cargo_x; 
+        string cargo_y;
+        string cargo_x;
         string cargo_mass;
         string cargo_name;
 
         getline(fin, cargo_y, ','); 
         getline(fin, cargo_x, ',');
-        //cout << cargo_x.substr(0,2) << endl; 
-        Coordinates.push_back(pair<int,int> (   stoi(cargo_y.substr(1,2)),  stoi(cargo_x.substr(0,2))   )); 
+        cout << stoi(cargo_x.substr(0, 2)) << endl; 
+        cout << stoi(cargo_y.substr(1, 2)) << endl; 
+        this->Coordinates.push_back(pair<int,int> ( stoi(cargo_y.substr(1,2)),  stoi(cargo_x.substr(0,2)) )); 
         getline(fin, cargo_mass, ','); 
-        // cout << cargo_mass.substr(2, cargo_mass.length()-3) << endl;
-        Mass.push_back(cargo_mass.substr(2, cargo_mass.length()-3)); 
+        cout << cargo_mass.substr(2, cargo_mass.length() - 3) << endl;
+        this->Mass.push_back(cargo_mass.substr(2, cargo_mass.length()-3)); 
         
-        getline(fin, cargo_name);  
-        if (fin.eof()) {
-            Names.push_back(cargo_name.substr(1, cargo_name.length()-1)); 
-            break; 
-        }
-        else {
-            Names.push_back(cargo_name.substr(1, cargo_name.length()-2)); 
-        }
+        getline(fin, cargo_name);
+
+        // cargo_name = cargo_name.substr(1, cargo_name.length() - 1);
+
+        cout << cargo_name.substr(1, cargo_name.length() - 1) << endl;
+
+        this->Names.push_back(cargo_name.substr(1, cargo_name.length() - 1));
        
     }
     
     fin.close(); 
 
     string comment = "Uploaded Manifest " + manifest_name + ".txt"; 
-    log_comment(comment); 
+    log_comment(comment);
 
-    return 0; 
+    return 0;
 }
+
 // output manifest contents to console 
 int Ship::read_manifest() {
     cout << "Manifest" << endl; 
@@ -170,13 +171,13 @@ int Ship::print_ship() const {
     /*
     i = 0 1 2 3 4 5 6 7 
     j = 0 1 2 3 4 5 6 7 8 9 10 11 12
-    index = 0-95
+    index = 0 - 95
 
     */
    
     for (int i = 7; i >= 0; i--) {
         for (int j = 0; j < 12; j++)  {
-            //cout << Names.at(i*j).size() << " "; 
+            // cout << Names.at(i*j).size() << " "; 
             
             string status; 
             if (i == 0)  {
@@ -242,7 +243,6 @@ double Ship::balance_score() const {
     
     return balance;
 }
-
 
 int Ship::balance_ship() {
 
@@ -493,3 +493,8 @@ double Ship::calculate_manhattan(int y_1, int x_1, int y_2, int x_2) const {
     double distance = abs(y_1 - y_2) + abs(x_1-x_2); 
     return distance;
 } 
+
+int Ship::load_unload_ship() {
+    cout << "STUB: load or unload the ship..." << endl;
+    return 0; // 0 if no error happened
+}

@@ -1,22 +1,35 @@
 #include <iostream> 
 #include "headers/Ship.h" 
 
+#include "headers/MainWindow.h"
+
+#include <QApplication>
+
+int main(int argc, char *argv[])
+{
+    QApplication a(argc, argv);
+    MainWindow w;
+    w.show();
+    return a.exec();
+}
 
 void menu(); 
 
 
-int main() {
+//int main() {
     
-    menu(); 
+//    menu(); 
 
-    return 0; 
-}
+//    return 0; 
+//}
 
 void menu() {
     
-    int option = 0;
+    char option;
+
     Ship Ship1 = Ship();
-    while (option != 9)  {
+
+    while ( !( (option == 'q') && (option == 'Q') ) )  {
         cout << "MENU" << endl; 
 
         cout << "1: Load Manifest" << endl;
@@ -27,11 +40,11 @@ void menu() {
         cout << "6: Print ship" << endl; 
         cout << "7: Print balance score" << endl; 
         cout << "8: Balance ship" << endl; 
-        cout << "9: Quit" << endl; 
+        cout << "q: Quit" << endl; 
 
         cin >> option; 
         
-        if (option == 1) {
+        if (option == '1') {
             int test; 
             cout << "Test 1-5: ";
             cin >> test; 
@@ -39,8 +52,7 @@ void menu() {
             Ship1.load_manifest(testpath);
             
         }
-
-        if (option == 2) {
+        else if (option == '2') {
             if (Ship1.get_manifest_name() == "") {
                 cout << "Load a manifest first" << endl; 
             }
@@ -49,8 +61,7 @@ void menu() {
             }
             
         }
-
-        if (option == 3) {
+        else if (option == '3') {
             if (Ship1.get_manifest_name() == "") {
                 cout << "Load a manifest first" << endl; 
             }
@@ -58,10 +69,9 @@ void menu() {
                 Ship1.create_outbound();
             }
         }
-        if (option == 4) {
+        else if (option == '4') {
             time_t now = time(0); 
             tm *ltm = localtime(&now);
-            
 
             cout << "Will log to logfile_" << to_string(1900 + ltm->tm_year) << ".txt" << endl; 
             cout << "Single line comment: " << endl; 
@@ -71,38 +81,43 @@ void menu() {
 
             Ship1.log_comment(comment); 
         }
-        if (option == 5) {
+        else if (option == '5') {
             Ship1.view_logfile(); 
         }
-        if (option == 6) {
+        else if (option == '6') {
             if (Ship1.get_manifest_name() == "") {
                 cout << "Load a manifest first" << endl; 
             } else {
                 Ship1.print_ship();
             }
-            
         }
-        if (option == 7) {
+        else if (option == '7') {
             if (Ship1.get_manifest_name() == "") {
                 cout << "Load a manifest first" << endl; 
             } else {
-                 
                 Ship1.balance_score();
-                
             }
         }
-        if (option == 8) {
+        else if (option == '8') {
             if (Ship1.get_manifest_name() == "") {
                 cout << "Load a manifest first" << endl; 
             } else {
-                
                 Ship1.balance_ship();
-                 
             }
         }
-
-        if (option == 9) {
+        else if (option == '9') {
+            if (Ship1.get_manifest_name() == "") {
+                cout << "Load a manifest first" << endl;
+            } else {
+                Ship1.load_unload_ship();
+            }
+        }
+        else if ( (option == 'q') || (option == 'Q') ) {
             break; 
+        }
+        else {
+            cout << "Error: please use one of the given options." << endl;
+            continue;
         }
 
     } 

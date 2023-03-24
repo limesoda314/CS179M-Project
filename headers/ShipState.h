@@ -11,7 +11,8 @@ using namespace std;
 
 class ShipState {
     private:
-        Ship *BalanceShip; 
+        Ship *BalanceShip;
+         
     public: 
         // constructors 
         ShipState   (Ship *ship) : BalanceShip(ship) {}

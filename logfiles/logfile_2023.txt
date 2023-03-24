@@ -17,3 +17,27 @@
 3-23-2023: 19:17  Balanced ship. Balance factor is now 0.990000
 3-23-2023: 20:25  Uploaded Manifest ShipCase1.txt
 3-23-2023: 20:26  Balanced ship. Balance factor is now 0.990000
+3-24-2023: 0:3  Uploaded Manifest ShipCase1.txt
+3-24-2023: 0:3  Balanced ship. Balance factor is now 0.000000
+3-24-2023: 0:4  Uploaded Manifest ShipCase1.txt
+3-24-2023: 0:4  Uploaded Manifest ShipCase1.txt
+3-24-2023: 0:7  Uploaded Manifest ShipCase1.txt
+3-24-2023: 0:7  Uploaded Manifest ShipCase1.txt
+3-24-2023: 0:8  Uploaded Manifest ShipCase1.txt
+3-24-2023: 0:10  Uploaded Manifest ShipCase1.txt
+3-24-2023: 0:11  Uploaded Manifest ShipCase1.txt
+3-24-2023: 0:13  Uploaded Manifest ShipCase1.txt
+3-24-2023: 0:13  Uploaded Manifest ShipCase1.txt
+3-24-2023: 0:14  Uploaded Manifest ShipCase1.txt
+3-24-2023: 0:14  Uploaded Manifest ShipCase1.txt
+3-24-2023: 0:28  Uploaded Manifest ShipCase1.txt
+3-24-2023: 0:29  Uploaded Manifest ShipCase1.txt
+3-24-2023: 0:29  Uploaded Manifest ShipCase1.txt
+3-24-2023: 0:29  Uploaded Manifest ShipCase1.txt
+3-24-2023: 0:30  Uploaded Manifest ShipCase1.txt
+3-24-2023: 0:30  Uploaded Manifest ShipCase1.txt
+3-24-2023: 0:33  Uploaded Manifest ShipCase1.txt
+3-24-2023: 0:35  Uploaded Manifest ShipCase1.txt
+3-24-2023: 0:37  Uploaded Manifest ShipCase1.txt
+3-24-2023: 0:38  Uploaded Manifest ShipCase1.txt
+3-24-2023: 0:38  Uploaded Manifest ShipCase1.txt
