@@ -21,7 +21,9 @@ MainWindow::MainWindow(QWidget *parent)
     this->connect(ui->loginbutton, &QPushButton::clicked, this, &MainWindow::login_button_clicked);
     this->connect(ui->add_comment_button, &QPushButton::clicked, this, &MainWindow::add_comment_clicked);
     this->connect(ui->refresh_logfile_view_output_box, &QPushButton::clicked, this, &MainWindow::refresh_logfile_output_clicked);
-    this->connect(ui->manifest_status_load_manifest_button, &QPushButton::clicked, this, &MainWindow::load_manifest_clicked);
+    this->connect(ui->manifest_status_load_manifest_button_2, &QPushButton::clicked, this, &MainWindow::load_manifest_clicked);
+    this->connect(ui->manifest_status_load_manifest_button_3, &QPushButton::clicked, this, &MainWindow::load_manifest_clicked);
+    this->connect(ui->manifest_status_load_manifest_button_4, &QPushButton::clicked, this, &MainWindow::load_manifest_clicked);
 }
 
 MainWindow::~MainWindow()

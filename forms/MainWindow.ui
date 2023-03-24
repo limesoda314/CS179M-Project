@@ -25,7 +25,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>4</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="logintab">
        <attribute name="title">
@@ -170,7 +170,7 @@
               </widget>
              </item>
              <item row="1" column="0">
-              <widget class="QPushButton" name="pushButton_5">
+              <widget class="QPushButton" name="manifest_status_load_manifest_button_3">
                <property name="text">
                 <string>Load Manifest</string>
                </property>
@@ -198,7 +198,7 @@
               </widget>
              </item>
              <item row="0" column="1">
-              <widget class="QLineEdit" name="manifestPathLineEdit_2"/>
+              <widget class="QLineEdit" name="manifestStatus_ManifestPathLineEdit_3"/>
              </item>
             </layout>
            </widget>
@@ -327,7 +327,7 @@
               </widget>
              </item>
              <item row="1" column="0">
-              <widget class="QPushButton" name="pushButton_2">
+              <widget class="QPushButton" name="manifest_status_load_manifest_button_2">
                <property name="text">
                 <string>Load Manifest</string>
                </property>
@@ -355,7 +355,7 @@
               </widget>
              </item>
              <item row="0" column="1">
-              <widget class="QLineEdit" name="manifestPathLineEdit"/>
+              <widget class="QLineEdit" name="manifestStatus_ManifestPathLineEdit_2"/>
              </item>
             </layout>
            </widget>
@@ -597,10 +597,10 @@
               </widget>
              </item>
              <item row="0" column="1">
-              <widget class="QLineEdit" name="manifestStatus_ManifestPathLineEdit"/>
+              <widget class="QLineEdit" name="manifestStatus_ManifestPathLineEdit_4"/>
              </item>
              <item row="1" column="0">
-              <widget class="QPushButton" name="manifest_status_load_manifest_button">
+              <widget class="QPushButton" name="manifest_status_load_manifest_button_4">
                <property name="text">
                 <string>Load Manifest</string>
                </property>
