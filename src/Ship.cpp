@@ -62,8 +62,9 @@ int Ship::load_manifest(const std::string &filepath) {
     
     fin.close(); 
 
-    std::string comment = "Uploaded Manifest " + manifest_name + ".txt"; 
-    log_comment(comment);
+//    std::string comment = "Uploaded Manifest " + manifest_name + ".txt";
+    // log_comment(comment);
+
 
     return 0;
 }
@@ -71,7 +72,7 @@ int Ship::load_manifest(const std::string &filepath) {
 // output manifest contents to console 
 int Ship::read_manifest() {
     std::cout << "Manifest" << std::endl; 
-    for (int i = 0 ; i < Coordinates.size(); i++) {
+    for (unsigned int i = 0 ; i < Coordinates.size(); i++) {
         std::cout << "coordinates: ";
         if (Coordinates.at(i).first < 10) {
             std::cout << " "; 

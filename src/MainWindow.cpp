@@ -4,6 +4,7 @@
 #include <QtWidgets>
 
 #include "../headers/Logger.h"
+#include "../headers/Ship.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -12,6 +13,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     this->logger = new Logger(this);
+    this->manifestShip = new Ship();
 
     QPushButton tmp;
 
@@ -19,6 +21,9 @@ MainWindow::MainWindow(QWidget *parent)
     this->connect(ui->loginbutton, &QPushButton::clicked, this, &MainWindow::login_button_clicked);
     this->connect(ui->add_comment_button, &QPushButton::clicked, this, &MainWindow::add_comment_clicked);
     this->connect(ui->refresh_logfile_view_output_box, &QPushButton::clicked, this, &MainWindow::refresh_logfile_output_clicked);
+    this->connect(ui->manifest_status_load_manifest_button_2, &QPushButton::clicked, this, &MainWindow::load_manifest_clicked);
+    this->connect(ui->manifest_status_load_manifest_button_3, &QPushButton::clicked, this, &MainWindow::load_manifest_clicked);
+    this->connect(ui->manifest_status_load_manifest_button_4, &QPushButton::clicked, this, &MainWindow::load_manifest_clicked);
 }
 
 MainWindow::~MainWindow()
@@ -124,4 +129,22 @@ void MainWindow::refresh_logfile_output_clicked() {
     this->ui->logfile_view_output_plaintext->setPlainText(QString::fromStdString(tot_string));
     
     return;
+}
+
+void MainWindow::load_manifest_clicked() {
+    std::cout << "load manifest clicked" << std::endl;
+    QString filepathQ = this->ui->manifestStatus_ManifestPathLineEdit->text();
+    std::string filepath = filepathQ.toStdString();
+
+    if (filepath == "" || filepath.at(0) == ' ') {
+        this->ui->manifestStatus_ManifestPathLineEdit->setPlaceholderText("Error: Please input a valid filepath.");
+        return;
+    }
+
+    this->manifestShip->load_manifest(filepath);
+
+    std::string comment = "Uploaded Manifest " + manifestShip->get_manifest_name() + ".txt";
+
+    logger->logRawComment(comment);
+
 }

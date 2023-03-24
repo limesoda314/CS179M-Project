@@ -7,6 +7,7 @@
 #include <string> 
 #include <algorithm> 
 
+
 class Ship {
     private:
         std::vector<std::pair<int,int>> Coordinates; 
