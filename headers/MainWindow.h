@@ -35,5 +35,6 @@ class MainWindow : public QMainWindow
         void load_manifest_balance_clicked();
         void load_manifest_status_clicked();
         void load_manifest_onload_clicked();
+        void generate_balancing_states_clicked();
 };
 #endif // MAINWINDOW_H

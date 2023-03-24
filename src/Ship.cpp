@@ -254,6 +254,14 @@ double Ship::balance_score() const {
     return balance;
 }
 
+
+std::vector<std::pair<int,int>> Ship::balance_list() {
+
+    std::vector<std::pair<int,int>> balance_pair_list = {{1,2},{1,11}, {1,3}, {2,11}, {2,11},{1,10}};
+    return balance_pair_list;
+
+}
+
 int Ship::balance_ship() {
 
     std::vector<std::pair<int, int>> left_items;    // mass values, coord index
@@ -507,4 +515,29 @@ double Ship::calculate_manhattan(int y_1, int x_1, int y_2, int x_2) const {
 int Ship::load_unload_ship() {
     std::cout << "STUB: load or unload the ship..." << std::endl;
     return 0; // 0 if no error happened
+}
+
+
+std::string Ship::swap_coordinates(std::pair<int,int>& coord1, std::pair<int,int>& coord2) {
+
+    // convert coordinate to their index
+    std::string tempMass = Mass.at((coord2.first-1)*12 + (coord2.second-1));
+    Mass.at((coord2.first-1)*12 + (coord2.second-1)) = Mass.at((coord1.first-1)*12 + (coord1.second-1));
+    Mass.at((coord1.first-1)*12 + (coord1.second-1)) = tempMass;
+
+    std::string tempName = Names.at((coord2.first-1)*12 + (coord2.second-1));
+    Names.at((coord2.first-1)*12 + (coord2.second-1)) = Names.at((coord1.first-1)*12 + (coord1.second-1));
+    Names.at((coord1.first-1)*12 + (coord1.second-1)) = tempName;
+
+    return print_ship();
+}
+
+void Ship::save_ship_states(std::vector<std::string> &saved_states, std::vector<std::pair<int, int> > balance_list) {
+
+    saved_states.push_back(print_ship());
+    for (int i = 0; i < balance_list.size() -1; i++) {
+        // saves the printed ship string after swapping
+        saved_states.push_back(swap_coordinates(balance_list.at(i), balance_list.at(i+1)));
+    }
+
 }
