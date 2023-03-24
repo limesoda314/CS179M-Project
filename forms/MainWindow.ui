@@ -25,7 +25,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>3</number>
+       <number>4</number>
       </property>
       <widget class="QWidget" name="logintab">
        <attribute name="title">
@@ -585,7 +585,7 @@
               <x>10</x>
               <y>10</y>
               <width>751</width>
-              <height>71</height>
+              <height>86</height>
              </rect>
             </property>
             <layout class="QFormLayout" name="formLayout_4">
@@ -597,10 +597,10 @@
               </widget>
              </item>
              <item row="0" column="1">
-              <widget class="QLineEdit" name="manifestPathLineEdit_3"/>
+              <widget class="QLineEdit" name="manifestStatus_ManifestPathLineEdit"/>
              </item>
              <item row="1" column="0">
-              <widget class="QPushButton" name="pushButton_11">
+              <widget class="QPushButton" name="manifest_status_load_manifest_button">
                <property name="text">
                 <string>Load Manifest</string>
                </property>

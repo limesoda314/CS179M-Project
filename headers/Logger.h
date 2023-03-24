@@ -34,6 +34,7 @@ class Logger {
 
         void logLogin(std::string) const;
         void logComment() const;
+        void logRawComment(std::string);
 
     private:
         void createLogfileDirAndFile() const;
