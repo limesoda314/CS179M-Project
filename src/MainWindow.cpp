@@ -79,9 +79,51 @@ void MainWindow::add_comment_clicked() {
 void MainWindow::refresh_logfile_output_clicked() {
     std::cout << "refresh logfile output" << std::endl;
     
-//    QVerticalLayout* newLayout
+    QVBoxLayout* newLayout = new QVBoxLayout();
+    QPlainTextEdit* myPlainTextBox = new QPlainTextEdit();
     
-//    this->ui->logfile_view_output_box->setLayout();
+    // Log to log file
+    std::string folderpath = QApplication::applicationDirPath().toStdString() + "/logfiles";
+    
+    QDir _dir;
+    
+    int _dirExists = _dir.exists(QString::fromStdString(folderpath));
+    
+    if (!_dirExists) {
+        _dir.mkdir(QString::fromStdString(folderpath));
+    }
+    
+    std::string filepath = folderpath + "/logfile_";
+    
+    time_t now = time(0);
+    tm *ltm = localtime(&now);
+    
+    filepath += std::to_string(1900 + ltm->tm_year) + ".txt";
+
+    QString QFilePathString = QString::fromStdString(filepath); 
+
+    QFile _file(QFilePathString);
+
+    int _fileOpened = _file.open( QIODevice::ReadOnly );
+
+    // Error checking
+    if (!_fileOpened) {
+        std::cout << "Error opening file: \"" << filepath << "\"" << std::endl;
+        return;
+    }
+    
+    std::string tot_string;
+    
+    QTextStream in(&_file);
+    
+    while (!in.atEnd()) {
+        QString line = in.readLine();
+        tot_string += line.toStdString() + "\n";
+    }
+    
+    _file.close();
+    
+    this->ui->logfile_view_output_plaintext->setPlainText(QString::fromStdString(tot_string));
     
     return;
 }

@@ -471,6 +471,21 @@
                <property name="styleSheet">
                 <string notr="true">background-color: lightgray; border: 2px solid gray</string>
                </property>
+               <widget class="QWidget" name="verticalLayoutWidget_11">
+                <property name="geometry">
+                 <rect>
+                  <x>10</x>
+                  <y>10</y>
+                  <width>711</width>
+                  <height>301</height>
+                 </rect>
+                </property>
+                <layout class="QVBoxLayout" name="logfile_view_output_box_layout">
+                 <item>
+                  <widget class="QPlainTextEdit" name="logfile_view_output_plaintext"/>
+                 </item>
+                </layout>
+               </widget>
               </widget>
              </item>
             </layout>

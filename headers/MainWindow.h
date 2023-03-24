@@ -4,7 +4,11 @@
 #include <QMainWindow>
 #include <QtWidgets>
 #include <QLayout>
+<<<<<<< HEAD
 #include "Ship.h"
+=======
+#include <QVBoxLayout>
+>>>>>>> ea1f3fc70dc18dcb294d36d066efa1ce15282a4d
 
 class Logger;
 
