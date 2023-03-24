@@ -248,12 +248,14 @@ int Ship::balance_ship() {
 
     vector<pair<int, int>> left_items;    // mass values, coord index
     vector<pair<int, int>> right_items;   // mass values, coord index 
+    vector<pair<int,int>> heavier_side;
+    vector<int> possible_spaces;          // vector of indices of possible free spaces to move items to 
+    vector<int> best_index;               // corresponds to heavier_side; stores index from possible_spaces, value at this index in possible_spaces is the best space to move to 
+    vector<double> best_manhattan;        // corresponds to heavier_side; stores value of best manhattan 
     
-    int right_mass = 0; 
-    int left_mass = 0; 
-    double deficit; 
-    double balance;
-    double balanceMass;
+    double right_mass = 0; 
+    double left_mass = 0; 
+    
     // put items into left and right list
     // first is the mass value 
     // second is the coordinate index 
@@ -271,38 +273,47 @@ int Ship::balance_ship() {
         }
     }
 
-    balanceMass = (left_mass+right_mass)/2.0;
-    
+     
     if (left_mass > right_mass) {
-        balance = (right_mass * 1.0) /left_mass ;
-        deficit = abs(balanceMass - left_mass);
+        heavier_side = left_items; 
     }
     else {
-        balance = (left_mass*1.0)/right_mass; 
-        deficit = abs(balanceMass - right_mass);
+        heavier_side = right_items; 
     }
 
-     // ------------------------------------------------------------------------
-    // sort left and right vectors + coordinates
-    sort(left_items.begin(), left_items.begin());
-    sort(right_items.begin(), right_items.begin()); 
+    print_balance_info(left_items, right_items, left_mass, right_mass); 
 
-    cout << "balance factor: " << balance << endl; 
-    cout << "balance mass: " << balanceMass << endl; 
-    cout << "deficit: " << deficit << endl;
-    cout << "left mass: " << left_mass << " item mass - "; 
-    for (int i = 0; i < left_items.size(); i++) {
-        cout << left_items.at(i).first << " ";
-    }
-    cout << endl; 
-    cout << "right mass: " << right_mass << " item mass - "; 
-    for (int i = 0; i < right_items.size(); i++) {
-        cout << right_items.at(i).first << " ";
-    }
-    cout << endl; 
-    // ------------------------------------------------------------------------
     // calculate the possible spaces to place the items 
-    vector<int> possible_spaces; // vector of indices of possible spaces to move items to 
+    calculate_possible_places(possible_spaces, right_mass, left_mass); 
+
+    // calculate best coordinates for heavier side based on the possible spaces and best manhattann  
+    calculate_best_manhattan(heavier_side, best_index, best_manhattan, possible_spaces); 
+
+    // calculate which item to sacrifice 
+    int sacrifice_index = 0;                // index in the list 
+    int best_man = best_manhattan.at(0);  
+
+    // calculates the best place to move 
+    // saves index and manhattan 
+    calculate_best_place(sacrifice_index, best_man, best_index, best_manhattan, heavier_side); 
+
+    // based on the sacrifice index and best index to move to
+    // we swap the mass, names, and update the lists 
+    calculate_swap_coordinates(left_mass, right_mass, sacrifice_index, best_index, left_items, right_items); 
+    
+    
+    cout << "-----------------UPDATED INFO AFTER MOVING ITEM----------------------------" << endl; 
+    
+    double balance = print_balance_info(left_items, right_items, left_mass, right_mass); 
+    
+    string comment = "Balanced ship. Balance factor is now " + to_string(balance); 
+    log_comment(comment); 
+    return 0; 
+    
+}
+
+void Ship::calculate_possible_places(vector<int> &possible_spaces, int right_mass, int left_mass) {
+    
     for (int i = 0; i < Coordinates.size(); i++) {
         if (left_mass > right_mass) {
             if (Names.at(i) == "UNUSED" && Coordinates.at(i).second > 6) {
@@ -328,20 +339,10 @@ int Ship::balance_ship() {
             }
         }
     }
-    // ------------------------------------------------------------------------
+}
 
-    vector<pair<int,int>> heavier_side; 
-    if (left_mass > right_mass) {
-        heavier_side = left_items; 
-    }
-    else {
-        heavier_side = right_items; 
-    }
-    
 
-    vector<int> best_index; // should end up having the same size as heavier_side list 
-    vector<double> best_manhattan; 
-   
+void Ship::calculate_best_manhattan(vector<pair<int,int>> & heavier_side, vector<int> & best_index, vector<double> &best_manhattan, vector<int> &possible_spaces) {
     for (int i = 0; i < heavier_side.size(); i++) {
         // find best coordinate to move to for each item in list 
         // calculate manhattan is overloaded to also take two different coordinate indices 
@@ -360,12 +361,42 @@ int Ship::balance_ship() {
         best_index.push_back(best_ind);
         best_manhattan.push_back(best_val); 
     }
+}
 
+double Ship::print_balance_info(vector<pair<int, int>> &left_side, vector<pair<int,int>> &right_side, const double &left_mass, const double &right_mass)  {
+    double balance, balanceMass, deficit; 
 
-    // calculate which item to sacrifice 
-    int sacrifice_index = 0;                // index in the list 
-    int best_man = best_manhattan.at(0);  
+    balanceMass = (left_mass+right_mass)/2.0;
+    
+    if (left_mass > right_mass) {
+        balance = (right_mass * 1.0) /left_mass ;
+        deficit = abs(balanceMass - left_mass);
+    }
+    else {
+        balance = (left_mass*1.0)/right_mass; 
+        deficit = abs(balanceMass - right_mass);
+    }
 
+    sort(left_side.begin(), left_side.begin());
+    sort(right_side.begin(), right_side.begin()); 
+
+    cout << "balance factor: " << balance << endl; 
+    cout << "balance mass: " << balanceMass << endl; 
+    cout << "deficit: " << deficit << endl;
+    cout << "left mass: " << left_mass << " item mass - "; 
+    for (int i = 0; i < left_side.size(); i++) {
+        cout << left_side.at(i).first << " ";
+    }
+    cout << endl; 
+    cout << "right mass: " << right_mass << " item mass - "; 
+    for (int i = 0; i < right_side.size(); i++) {
+        cout << right_side.at(i).first << " ";
+    }
+    cout << endl; 
+    return balance; 
+}
+
+void Ship::calculate_best_place(int& sacrifice_index, int &best_man, const vector<int> &best_index, const vector<double> &best_manhattan, const vector<pair<int,int>> &heavier_side) {
     cout << "--------------Calculating best place to move each item----------------" << endl; 
     for (int i = 0; i < best_index.size(); i++) {
         if (best_manhattan.at(i) < best_man) {
@@ -398,6 +429,10 @@ int Ship::balance_ship() {
     cout << "Manhattan: " << best_manhattan.at(sacrifice_index) << endl; 
     cout << "--------------------END MOVE------------------" << endl; 
 
+
+}
+
+void Ship::calculate_swap_coordinates(double & left_mass, double &right_mass, const int &sacrifice_index, const vector<int>&best_index, vector<pair<int, int>> & left_items, vector<pair<int, int>> & right_items) {
     if (left_mass > right_mass) {
         // swap the names 
         string temp_name = Names.at(best_index.at(sacrifice_index));
@@ -405,8 +440,8 @@ int Ship::balance_ship() {
         Names.at(left_items.at(sacrifice_index).second) = temp_name; 
         // swap mass 
         string temp_mass = Mass.at(best_index.at(sacrifice_index));
-        Mass.at(best_index.at(sacrifice_index)) = Names.at(left_items.at(sacrifice_index).second); 
-        Mass.at(left_items.at(sacrifice_index).second) = temp_name; 
+        Mass.at(best_index.at(sacrifice_index)) = Mass.at(left_items.at(sacrifice_index).second); 
+        Mass.at(left_items.at(sacrifice_index).second) = temp_mass; 
 
         // update coordinates
         left_items.at(sacrifice_index).second = best_index.at(sacrifice_index); 
@@ -430,8 +465,8 @@ int Ship::balance_ship() {
         
         // swap mass 
         string temp_mass = Mass.at(best_index.at(sacrifice_index));
-        Mass.at(best_index.at(sacrifice_index)) = Names.at(right_items.at(sacrifice_index).second); 
-        Mass.at(right_items.at(sacrifice_index).second) = temp_name; 
+        Mass.at(best_index.at(sacrifice_index)) = Mass.at(right_items.at(sacrifice_index).second); 
+        Mass.at(right_items.at(sacrifice_index).second) = temp_mass; 
         
         // update coordinates 
         right_items.at(sacrifice_index).second = best_index.at(sacrifice_index); 
@@ -447,32 +482,7 @@ int Ship::balance_ship() {
         right_items.at(left_items.size()-1) = right_items.at(sacrifice_index); 
         right_items.pop_back(); 
     }
-    
-    cout << "-----------------UPDATED INFO AFTER MOVING ITEM----------------------------" << endl; 
-    
-    // sort left and right vectors + coordinates
-    sort(left_items.begin(), left_items.begin());
-    sort(right_items.begin(), right_items.begin()); 
-
-    cout << "balance factor: " << balance << endl; 
-    cout << "balance mass: " << balanceMass << endl; 
-    cout << "deficit: " << deficit << endl;
-    cout << "left mass: " << left_mass << " item mass - "; 
-    for (int i = 0; i < left_items.size(); i++) {
-        cout << left_items.at(i).first << " ";
-    }
-    cout << endl; 
-    cout << "right mass: " << right_mass << " item mass - "; 
-    for (int i = 0; i < right_items.size(); i++) {
-        cout << right_items.at(i).first << " ";
-    }
-    cout << endl; 
-
-    
-    return 0; 
-    
 }
-
 // pass in the index to a coordinate 
 double Ship::calculate_manhattan(int index_a, int index_b) const {
 

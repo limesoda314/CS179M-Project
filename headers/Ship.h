@@ -35,7 +35,12 @@ class Ship {
         // TODO: operations 
         double balance_score() const; 
         int balance_ship();
+        double print_balance_info(vector<pair<int, int>>&, vector<pair<int,int>>&, const double &, const double &);
+        void calculate_possible_places(vector<int> &, int, int);  
+        void calculate_best_manhattan(vector<pair<int,int>> &, vector<int> &, vector<double> &, vector<int> &);
+        void calculate_best_place(int&, int &, const vector<int> &, const vector<double> &, const vector<pair<int,int>> &); 
         double calculate_manhattan(int index_a, int index_b) const;  
+        void calculate_swap_coordinates(double &, double &, const int &, const vector<int>&, vector<pair<int, int>> &, vector<pair<int, int>> &);
         // pass in the index to a coordinate 
         double calculate_manhattan(int y_1, int x_1, int y_2, int x_2) const;  
 
