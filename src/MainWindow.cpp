@@ -21,9 +21,10 @@ MainWindow::MainWindow(QWidget *parent)
     this->connect(ui->loginbutton, &QPushButton::clicked, this, &MainWindow::login_button_clicked);
     this->connect(ui->add_comment_button, &QPushButton::clicked, this, &MainWindow::add_comment_clicked);
     this->connect(ui->refresh_logfile_view_output_box, &QPushButton::clicked, this, &MainWindow::refresh_logfile_output_clicked);
-    this->connect(ui->manifest_status_load_manifest_button_2, &QPushButton::clicked, this, &MainWindow::load_manifest_clicked);
-    this->connect(ui->manifest_status_load_manifest_button_3, &QPushButton::clicked, this, &MainWindow::load_manifest_clicked);
-    this->connect(ui->manifest_status_load_manifest_button_4, &QPushButton::clicked, this, &MainWindow::load_manifest_clicked);
+    this->connect(ui->onload_offload_load_manifest, &QPushButton::clicked, this, &MainWindow::load_manifest_onload_clicked);
+    this->connect(ui->balancing_manifest_button, &QPushButton::clicked, this, &MainWindow::load_manifest_balance_clicked);
+    this->connect(ui->manifest_status_load_manifest_button, &QPushButton::clicked, this, &MainWindow::load_manifest_status_clicked);
+
 }
 
 MainWindow::~MainWindow()
@@ -79,8 +80,8 @@ void MainWindow::add_comment_clicked() {
 void MainWindow::refresh_logfile_output_clicked() {
     std::cout << "refresh logfile output" << std::endl;
     
-    QVBoxLayout* newLayout = new QVBoxLayout();
-    QPlainTextEdit* myPlainTextBox = new QPlainTextEdit();
+//    QVBoxLayout* newLayout = new QVBoxLayout();
+//    QPlainTextEdit* myPlainTextBox = new QPlainTextEdit();
     
     // Log to log file
     std::string folderpath = QApplication::applicationDirPath().toStdString() + "/logfiles";
@@ -128,13 +129,14 @@ void MainWindow::refresh_logfile_output_clicked() {
     return;
 }
 
-void MainWindow::load_manifest_clicked() {
+
+void MainWindow::load_manifest_balance_clicked() {
     std::cout << "load manifest clicked" << std::endl;
-    QString filepathQ = this->ui->manifestStatus_ManifestPathLineEdit->text();
+    QString filepathQ = this->ui->balancing_manifest_path->text();
     std::string filepath = filepathQ.toStdString();
 
     if (filepath == "" || filepath.at(0) == ' ') {
-        this->ui->manifestStatus_ManifestPathLineEdit->setPlaceholderText("Error: Please input a valid filepath.");
+        this->ui->balancing_manifest_path->setPlaceholderText("Error: Please input a valid filepath.");
         return;
     }
 
@@ -143,5 +145,39 @@ void MainWindow::load_manifest_clicked() {
     std::string comment = "Uploaded Manifest " + manifestShip->get_manifest_name() + ".txt";
 
     logger->logRawComment(comment);
-
 }
+void MainWindow::load_manifest_status_clicked() {
+    std::cout << "load manifest clicked" << std::endl;
+    QString filepathQ = this->ui->manifest_status_manifest_path->text();
+    std::string filepath = filepathQ.toStdString();
+
+    if (filepath == "" || filepath.at(0) == ' ') {
+        this->ui->manifest_status_manifest_path->setPlaceholderText("Error: Please input a valid filepath.");
+        return;
+    }
+
+    this->manifestShip->load_manifest(filepath);
+
+    std::string comment = "Uploaded Manifest " + manifestShip->get_manifest_name() + ".txt";
+
+    logger->logRawComment(comment);
+}
+
+
+void MainWindow::load_manifest_onload_clicked() {
+    std::cout << "load manifest clicked" << std::endl;
+    QString filepathQ = this->ui->onload_offload_manifest_path->text();
+    std::string filepath = filepathQ.toStdString();
+
+    if (filepath == "" || filepath.at(0) == ' ') {
+        this->ui->onload_offload_manifest_path->setPlaceholderText("Error: Please input a valid filepath.");
+        return;
+    }
+
+    this->manifestShip->load_manifest(filepath);
+
+    std::string comment = "Uploaded Manifest " + manifestShip->get_manifest_name() + ".txt";
+
+    logger->logRawComment(comment);
+}
+
