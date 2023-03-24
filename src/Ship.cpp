@@ -211,28 +211,269 @@ int Ship::print_ship() const {
 }
 
 double Ship::balance_score() const {
-    double right =0; 
-    double left=0; 
+
+    int right_mass = 0;
+    int left_mass = 0; 
     
     for (int i = 0; i < Coordinates.size(); i++) {
         if (Names.at(i) != "NAN" && Names.at(i) != "UNUSED") {
             if (Coordinates.at(i).second <= 6) {
-                left++;
+                left_mass+= stoi(Mass.at(i));
             }
             else {
-                right++; 
+                right_mass += stoi(Mass.at(i)); 
             }
         }
     }
-    cout << endl; 
-    cout << "right: " << right << endl; 
-    cout << "left: " <<left << endl; 
+
     double balance; 
-    if (left > right) {
-        balance = right/left;
+ 
+    if (left_mass > right_mass) {
+        balance = (right_mass * 1.0) /left_mass;
+        
     }
     else {
-        balance = left/right; 
-    } 
+        balance = (left_mass*1.0)/right_mass; 
+    }
+
+    cout << "Ship has a balance score of: " << balance << endl; 
+    cout << "right: " << right_mass << endl; 
+    cout << "left: " <<left_mass << endl; 
+    
     return balance;
 }
+
+
+int Ship::balance_ship() {
+
+    vector<pair<int, int>> left_items;    // mass values, coord index
+    vector<pair<int, int>> right_items;   // mass values, coord index 
+    
+    int right_mass = 0; 
+    int left_mass = 0; 
+    
+    for (int i = 0; i < Coordinates.size(); i++) {
+        if (Names.at(i) != "NAN" && Names.at(i) != "UNUSED") {
+            if (Coordinates.at(i).second <= 6) {
+                left_items.push_back(pair<int, int> (stoi(Mass.at(i)), i));
+                left_mass+= stoi(Mass.at(i));
+            }
+            else {
+                right_items.push_back(pair<int, int> (stoi(Mass.at(i)), i));
+                right_mass += stoi(Mass.at(i)); 
+            }
+        }
+    }
+
+    double balance; 
+    double balanceMass = (left_mass+right_mass)/2.0;
+    double deficit; 
+    if (left_mass > right_mass) {
+        balance = (right_mass * 1.0) /left_mass ;
+        deficit = abs(balanceMass - left_mass);
+    }
+    else {
+        balance = (left_mass*1.0)/right_mass; 
+        deficit = abs(balanceMass - right_mass);
+    }
+
+    // sort left and right vectors + coordinates
+    sort(left_items.begin(), left_items.begin());
+    sort(right_items.begin(), right_items.begin()); 
+
+
+    cout << "balance factor: " << balance << endl; 
+    cout << "balance mass: " << balanceMass << endl; 
+    cout << "deficit: " << deficit << endl;
+    cout << "left: " << left_mass << " - "; 
+    for (int i = 0; i < left_items.size(); i++) {
+        cout << left_items.at(i).first << " ";
+    }
+    cout << endl; 
+    cout << "right: " << right_mass << " - "; 
+    for (int i = 0; i < right_items.size(); i++) {
+        cout << right_items.at(i).first << " ";
+    }
+    cout << endl; 
+
+
+    double sacrifice = 0; 
+    vector<int> free_spaces;    
+    // get all possible free spaces even if you can't place it yet 
+    if (left_mass > right_mass) {
+        for (int i =0; i < Coordinates.size(); i++) {
+            if (Names.at(i)== "UNUSED" && Coordinates.at(i).second>6) {
+                free_spaces.push_back(i); 
+            }
+        }
+    }
+    else {
+        for (int i =0; i < Coordinates.size(); i++) {
+            if (Names.at(i)== "UNUSED" && Coordinates.at(i).second <=6) {
+                free_spaces.push_back(i); 
+            }
+        }
+    }
+
+    vector<int> possible_spaces; 
+    for (int i = 0; i < free_spaces.size(); i++) {
+        if ( Coordinates.at(free_spaces.at(i)).first == 1 ) {
+            possible_spaces.push_back(free_spaces.at(i)); 
+        }
+        else {
+            // check if box underneath it is NAN or a container 
+            for (int j = 0; j < Coordinates.size(); j++) {
+                if (Coordinates.at(j).first == (Coordinates.at(free_spaces.at(i)).first - 1 )) {
+                    if (Coordinates.at(j).second == Coordinates.at(free_spaces.at(i)).second) {
+                        possible_spaces.push_back(free_spaces.at(i)); 
+                        break; 
+                    }
+                }
+            }
+            
+        }
+    }
+
+    vector<int> best_index; 
+    vector<int> best_manhattan; 
+    if (left_mass > right_mass) {
+        for (int i = 0; i < left_items.size(); i++) {
+            // find best possible for each of the items 
+            // get their manhattan 
+            int best_val = calculate_manhattan(left_items.at(i).second, possible_spaces.at(0));
+            int best_ind = possible_spaces.at(0); 
+            for (int j = 0; j < possible_spaces.size(); j++) {
+                int temp = calculate_manhattan(left_items.at(i).second, possible_spaces.at(j));
+                if (temp < best_val) {
+                    best_ind = (j);
+                    best_val = (temp); 
+                }
+            }
+            best_index.push_back(best_ind);
+            best_manhattan.push_back(best_val); 
+        }
+    }
+    else {
+        if (left_mass > right_mass) {
+        for (int i = 0; i < right_items.size(); i++) {
+            // find best possible for each of the items 
+            // get their manhattan 
+            int best_val = calculate_manhattan(right_items.at(i).second, possible_spaces.at(0));
+            int best_ind = possible_spaces.at(0); 
+            for (int j = 0; j < possible_spaces.size(); j++) {
+                int temp = calculate_manhattan(right_items.at(i).second, possible_spaces.at(j));
+                if (temp < best_val) {
+                    best_ind = (j);
+                    best_val = (temp); 
+                }
+            }
+            best_index.push_back(best_ind);
+            best_manhattan.push_back(best_val); 
+        }
+    }
+    }
+
+    // calculate which item to sacrifice 
+    int sacrifice_index = 0; 
+    int best_man = best_manhattan.at(0); 
+
+    for (int i = 0; i < best_index.size(); i++) {
+        if (best_manhattan.at(i) < best_man) {
+            best_man = best_manhattan.at(i); 
+            sacrifice_index = i; // same index for left and best place to move to 
+        }
+        // original items in left list 
+        cout << "Left item: "; 
+        cout << Coordinates.at(left_items.at(i).second).first <<  ", "; 
+        cout << Coordinates.at(left_items.at(i).second).second << endl; 
+        // find best free place to move and it's manhattan distance to it 
+        cout << "Move to: "; 
+        cout << Coordinates.at(best_index.at(i)).first << ", ";
+        cout << Coordinates.at(best_index.at(i)).second << endl; 
+        cout << "Manhattan: " << best_manhattan.at(i) << endl; 
+    }
+    
+    // original items in left list 
+    cout << "BEST MOVE" << endl; 
+    cout << "Move item: "; 
+    cout << Coordinates.at(left_items.at(sacrifice_index).second).first <<  ", "; 
+    cout << Coordinates.at(left_items.at(sacrifice_index).second).second << endl; 
+    // find best free place to move and it's manhattan distance to it 
+    cout << "Move to: "; 
+    cout << Coordinates.at(best_index.at(sacrifice_index)).first << ", ";
+    cout << Coordinates.at(best_index.at(sacrifice_index)).second << endl; 
+    cout << "Manhattan: " << best_manhattan.at(sacrifice_index) << endl; 
+
+    if (left_mass > right_mass) {
+        // swap the names 
+        string temp_name = Names.at(best_index.at(sacrifice_index));
+        Names.at(best_index.at(sacrifice_index)) = Names.at(left_items.at(sacrifice_index).second); 
+        Names.at(left_items.at(sacrifice_index).second) = temp_name; 
+        
+        // update coordinates 
+        // mass remains the same 
+        left_items.at(sacrifice_index).second = best_index.at(sacrifice_index); 
+
+        // update left and right mass 
+        right_mass += left_items.at(sacrifice_index).first; 
+        left_mass -= left_items.at(sacrifice_index).first; 
+        
+        // add item to right items 
+        right_items.push_back(left_items.at(sacrifice_index));
+
+        // get rid of item in left items list 
+        left_items.at(left_items.size()-1) = left_items.at(sacrifice_index); 
+        left_items.pop_back(); 
+    }
+    else {
+        // swap the names 
+        string temp_name = Names.at(best_index.at(sacrifice_index));
+        Names.at(best_index.at(sacrifice_index)) = Names.at(right_items.at(sacrifice_index).second); 
+        Names.at(right_items.at(sacrifice_index).second) = temp_name; 
+        
+        // update coordinates 
+        // mass remains the same 
+        right_items.at(sacrifice_index).second = best_index.at(sacrifice_index); 
+
+        // update left and right mass 
+        left_mass += right_items.at(sacrifice_index).first; 
+        right_mass -= right_items.at(sacrifice_index).first; 
+        
+        // add item to right items 
+        left_items.push_back(right_items.at(sacrifice_index));
+
+        // get rid of item in left items list 
+        right_items.at(left_items.size()-1) = right_items.at(sacrifice_index); 
+        right_items.pop_back(); 
+    }
+    
+
+    cout << "New balance factor after moving item" << endl; 
+    cout << "balance factor: " << balance << endl; 
+    cout << "balance mass: " << balanceMass << endl; 
+    cout << "left: " << left_mass << " - "; 
+    for (int i = 0; i < left_items.size(); i++) {
+        cout << left_items.at(i).first << " ";
+    }
+    cout << endl; 
+    cout << "right: " << right_mass << " - "; 
+    for (int i = 0; i < right_items.size(); i++) {
+        cout << right_items.at(i).first << " ";
+    }
+    cout << endl; 
+
+    
+    return 0; 
+    
+}
+
+// pass in the index to a coordinate 
+double Ship::calculate_manhattan(int index_a, int index_b) const {
+
+    return calculate_manhattan(Coordinates.at(index_a).first, Coordinates.at(index_a).second, Coordinates.at(index_b).first, Coordinates.at(index_b).second); 
+}  
+
+double Ship::calculate_manhattan(int y_1, int x_1, int y_2, int x_2) const {
+    double distance = abs(y_1 - y_2) + abs(x_1-x_2); 
+    return distance;
+} 

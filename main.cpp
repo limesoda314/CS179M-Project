@@ -26,6 +26,7 @@ void menu() {
         cout << "5: View logfile" << endl; 
         cout << "6: Print ship" << endl; 
         cout << "7: Print balance score" << endl; 
+        cout << "8: Balance ship" << endl; 
         cout << "9: Quit" << endl; 
 
         cin >> option; 
@@ -85,9 +86,18 @@ void menu() {
             if (Ship1.get_manifest_name() == "") {
                 cout << "Load a manifest first" << endl; 
             } else {
-                cout << "Ship has a balance score of: "; 
-                cout << Ship1.balance_score();
-                cout << endl; 
+                 
+                Ship1.balance_score();
+                
+            }
+        }
+        if (option == 8) {
+            if (Ship1.get_manifest_name() == "") {
+                cout << "Load a manifest first" << endl; 
+            } else {
+                
+                Ship1.balance_ship();
+                 
             }
         }
 
