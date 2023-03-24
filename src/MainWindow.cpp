@@ -26,8 +26,6 @@ MainWindow::MainWindow(QWidget *parent)
     this->connect(ui->manifest_status_load_manifest_button, &QPushButton::clicked, this, &MainWindow::load_manifest_status_clicked);
     this->connect(ui->manifest_status_view_ship_button, &QPushButton::clicked, this, &MainWindow::refresh_view_ship_clicked);
 
-
-
 }
 
 MainWindow::~MainWindow()
