@@ -30,31 +30,31 @@ void menu() {
     Ship Ship1 = Ship();
 
     while ( !( (option == 'q') && (option == 'Q') ) )  {
-        cout << "MENU" << endl; 
+        std::cout << "MENU" << std::endl; 
 
-        cout << "1: Load Manifest" << endl;
-        cout << "2: Read Manifest (Output to console)" << endl; 
-        cout << "3: Create Outbound Manifest" << endl; 
-        cout << "4: Log comment" << endl; 
-        cout << "5: View logfile" << endl; 
-        cout << "6: Print ship" << endl; 
-        cout << "7: Print balance score" << endl; 
-        cout << "8: Balance ship" << endl; 
-        cout << "q: Quit" << endl; 
+        std::cout << "1: Load Manifest" << std::endl;
+        std::cout << "2: Read Manifest (Output to console)" << std::endl; 
+        std::cout << "3: Create Outbound Manifest" << std::endl; 
+        std::cout << "4: Log comment" << std::endl; 
+        std::cout << "5: View logfile" << std::endl; 
+        std::cout << "6: Print ship" << std::endl; 
+        std::cout << "7: Print balance score" << std::endl; 
+        std::cout << "8: Balance ship" << std::endl; 
+        std::cout << "q: Quit" << std::endl; 
 
-        cin >> option; 
+        std::cin >> option; 
         
         if (option == '1') {
             int test; 
-            cout << "Test 1-5: ";
-            cin >> test; 
-            string testpath = "Manifests/ShipCase" + to_string(test) + ".txt";
+            std::cout << "Test 1-5: ";
+            std::cin >> test; 
+            std::string testpath = "Manifests/ShipCase" + std::to_string(test) + ".txt";
             Ship1.load_manifest(testpath);
             
         }
         else if (option == '2') {
             if (Ship1.get_manifest_name() == "") {
-                cout << "Load a manifest first" << endl; 
+                std::cout << "Load a manifest first" << std::endl; 
             }
             else {
                 Ship1.read_manifest();
@@ -63,7 +63,7 @@ void menu() {
         }
         else if (option == '3') {
             if (Ship1.get_manifest_name() == "") {
-                cout << "Load a manifest first" << endl; 
+                std::cout << "Load a manifest first" << std::endl; 
             }
             else {
                 Ship1.create_outbound();
@@ -73,11 +73,11 @@ void menu() {
             time_t now = time(0); 
             tm *ltm = localtime(&now);
 
-            cout << "Will log to logfile_" << to_string(1900 + ltm->tm_year) << ".txt" << endl; 
-            cout << "Single line comment: " << endl; 
-            string comment;
-            cin.ignore(); 
-            getline(cin, comment);
+            std::cout << "Will log to logfile_" << std::to_string(1900 + ltm->tm_year) << ".txt" << std::endl; 
+            std::cout << "Single line comment: " << std::endl; 
+            std::string comment;
+            std::cin.ignore(); 
+            getline(std::cin, comment);
 
             Ship1.log_comment(comment); 
         }
@@ -86,28 +86,28 @@ void menu() {
         }
         else if (option == '6') {
             if (Ship1.get_manifest_name() == "") {
-                cout << "Load a manifest first" << endl; 
+                std::cout << "Load a manifest first" << std::endl; 
             } else {
                 Ship1.print_ship();
             }
         }
         else if (option == '7') {
             if (Ship1.get_manifest_name() == "") {
-                cout << "Load a manifest first" << endl; 
+                std::cout << "Load a manifest first" << std::endl; 
             } else {
                 Ship1.balance_score();
             }
         }
         else if (option == '8') {
             if (Ship1.get_manifest_name() == "") {
-                cout << "Load a manifest first" << endl; 
+                std::cout << "Load a manifest first" << std::endl; 
             } else {
                 Ship1.balance_ship();
             }
         }
         else if (option == '9') {
             if (Ship1.get_manifest_name() == "") {
-                cout << "Load a manifest first" << endl;
+                std::cout << "Load a manifest first" << std::endl;
             } else {
                 Ship1.load_unload_ship();
             }
@@ -116,7 +116,7 @@ void menu() {
             break; 
         }
         else {
-            cout << "Error: please use one of the given options." << endl;
+            std::cout << "Error: please use one of the given options." << std::endl;
             continue;
         }
 

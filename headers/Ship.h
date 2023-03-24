@@ -5,15 +5,14 @@
 #include <vector>
 #include <fstream>
 #include <string> 
-#include<algorithm>
-using namespace std; 
+#include <algorithm> 
 
 class Ship {
     private:
-        vector<pair<int,int>> Coordinates; 
-        vector<string> Mass; 
-        vector<string> Names;
-        string manifest_name = ""; 
+        std::vector<std::pair<int,int>> Coordinates; 
+        std::vector<std::string> Mass; 
+        std::vector<std::string> Names;
+        std::string manifest_name = ""; 
 
     public: 
         // constructors 
@@ -33,7 +32,7 @@ class Ship {
         // START GETTERS
 
         /* Gets the manifest name */
-        string get_manifest_name() const {return manifest_name; }
+        std::string get_manifest_name() const {return manifest_name; }
 
         // END GETTERS
 
@@ -41,7 +40,7 @@ class Ship {
 
         /* Option 1 - Loads the manifest into our internal representation of container coordinates,
                       names, masses, and manifest_name */
-        int load_manifest(const string &filepath);
+        int load_manifest(const std::string &filepath);
 
         /* Option 2 - Outputs the manifest onto the console */
         int read_manifest(); // likely for development/testing only  
@@ -51,7 +50,7 @@ class Ship {
         int create_outbound(); 
 
         /* Option 4 - Allows operator to input comment */
-        int log_comment(const string &comment);
+        int log_comment(const std::string &comment);
 
         /* Option 5 - Prints out the entire log file */
         int view_logfile(); 
@@ -75,12 +74,12 @@ class Ship {
     
     // START HELPERS
     private:
-        double print_balance_info(vector<pair<int, int>>&, vector<pair<int,int>>&, const double &, const double &);
-        void calculate_possible_places(vector<int> &, int, int); 
-        void calculate_best_manhattan(vector<pair<int,int>> &, vector<int> &, vector<double> &, vector<int> &);
-        void calculate_best_place(int&, int &, const vector<int> &, const vector<double> &, const vector<pair<int,int>> &); 
+        double print_balance_info(std::vector<std::pair<int, int>>&, std::vector<std::pair<int,int>>&, const double &, const double &);
+        void calculate_possible_places(std::vector<int> &, int, int); 
+        void calculate_best_manhattan(std::vector<std::pair<int,int>> &, std::vector<int> &, std::vector<double> &, std::vector<int> &);
+        void calculate_best_place(int&, int &, const std::vector<int> &, const std::vector<double> &, const std::vector<std::pair<int,int>> &); 
         double calculate_manhattan(int index_a, int index_b) const;  
-        void calculate_swap_coordinates(double &, double &, const int &, const vector<int>&, vector<pair<int, int>> &, vector<pair<int, int>> &);
+        void calculate_swap_coordinates(double &, double &, const int &, const std::vector<int>&, std::vector<std::pair<int, int>> &, std::vector<std::pair<int, int>> &);
         double calculate_manhattan(int y_1, int x_1, int y_2, int x_2) const;  
 
     // END HELPERS

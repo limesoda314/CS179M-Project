@@ -14,12 +14,12 @@ int Ship::reset_ship() {
 }
 
 // load manifest from filepath
-int Ship::load_manifest(const string &filepath) {
+int Ship::load_manifest(const std::string &filepath) {
     if (manifest_name != "") {
         reset_ship(); 
     }
     
-    fstream fin(filepath); 
+    std::fstream fin(filepath); 
     
     // save manifest name 
     for (int i = filepath.size()-1; i >=0; i--) {
@@ -31,30 +31,30 @@ int Ship::load_manifest(const string &filepath) {
     this->manifest_name = this->manifest_name.substr(0, manifest_name.size()-4); 
 
     if (!fin.is_open()) {
-        cout << "Error opening file, please try again" << endl;
+        std::cout << "Error opening file, please try again" << std::endl;
         return -1; 
     }
  
     while(!fin.eof()) {
-        string cargo_y;
-        string cargo_x;
-        string cargo_mass;
-        string cargo_name;
+        std::string cargo_y;
+        std::string cargo_x;
+        std::string cargo_mass;
+        std::string cargo_name;
 
         getline(fin, cargo_y, ','); 
         getline(fin, cargo_x, ',');
-        cout << stoi(cargo_x.substr(0, 2)) << endl; 
-        cout << stoi(cargo_y.substr(1, 2)) << endl; 
-        this->Coordinates.push_back(pair<int,int> ( stoi(cargo_y.substr(1,2)),  stoi(cargo_x.substr(0,2)) )); 
+        std::cout << stoi(cargo_x.substr(0, 2)) << std::endl; 
+        std::cout << stoi(cargo_y.substr(1, 2)) << std::endl; 
+        this->Coordinates.push_back(std::pair<int,int> ( stoi(cargo_y.substr(1,2)),  stoi(cargo_x.substr(0,2)) )); 
         getline(fin, cargo_mass, ','); 
-        cout << cargo_mass.substr(2, cargo_mass.length() - 3) << endl;
+        std::cout << cargo_mass.substr(2, cargo_mass.length() - 3) << std::endl;
         this->Mass.push_back(cargo_mass.substr(2, cargo_mass.length()-3)); 
         
         getline(fin, cargo_name);
 
         // cargo_name = cargo_name.substr(1, cargo_name.length() - 1);
 
-        cout << cargo_name.substr(1, cargo_name.length() - 1) << endl;
+        std::cout << cargo_name.substr(1, cargo_name.length() - 1) << std::endl;
 
         this->Names.push_back(cargo_name.substr(1, cargo_name.length() - 1));
        
@@ -62,7 +62,7 @@ int Ship::load_manifest(const string &filepath) {
     
     fin.close(); 
 
-    string comment = "Uploaded Manifest " + manifest_name + ".txt"; 
+    std::string comment = "Uploaded Manifest " + manifest_name + ".txt"; 
     log_comment(comment);
 
     return 0;
@@ -70,39 +70,39 @@ int Ship::load_manifest(const string &filepath) {
 
 // output manifest contents to console 
 int Ship::read_manifest() {
-    cout << "Manifest" << endl; 
+    std::cout << "Manifest" << std::endl; 
     for (int i = 0 ; i < Coordinates.size(); i++) {
-        cout << "coordinates: ";
+        std::cout << "coordinates: ";
         if (Coordinates.at(i).first < 10) {
-            cout << " "; 
+            std::cout << " "; 
         }
-        cout << Coordinates.at(i).first << ", ";
+        std::cout << Coordinates.at(i).first << ", ";
         if (Coordinates.at(i).second < 10) {
-            cout << " "; 
+            std::cout << " "; 
         }
-        cout << Coordinates.at(i).second << "     "; 
-        cout << "mass: " << Mass.at(i) << "     "; 
-        cout << "name/status: " << Names.at(i) << endl;
+        std::cout << Coordinates.at(i).second << "     "; 
+        std::cout << "mass: " << Mass.at(i) << "     "; 
+        std::cout << "name/status: " << Names.at(i) << std::endl;
     }
     return 0; 
 } 
 
 // save ship manifest to outbound file 
 int Ship::create_outbound() {
-    string filepath = "Outbound/"; 
+    std::string filepath = "Outbound/"; 
     char save = 'n';  
     while (save != 'y') {
-        cout << "Save to: " << filepath << manifest_name << "OUTBOUND.txt" << " y/n: "; 
-        cin >> save; 
+        std::cout << "Save to: " << filepath << manifest_name << "OUTBOUND.txt" << " y/n: "; 
+        std::cin >> save; 
         if (save != 'y') {
-            cin >> filepath; 
+            std::cin >> filepath; 
         }
     }
     
-    ofstream fout(filepath + manifest_name + "OUTBOUND.txt"); 
+    std::ofstream fout(filepath + manifest_name + "OUTBOUND.txt"); 
 
     if (!fout.is_open()) {
-        cout << "Unable to open file" << endl; 
+        std::cout << "Unable to open file" << std::endl; 
         return -1; 
     }
 
@@ -118,52 +118,52 @@ int Ship::create_outbound() {
         fout << Coordinates.at(i).second << "], "; 
 
         fout << "{" << Mass.at(i) << "}, ";
-        fout << Names.at(i) << endl; 
+        fout << Names.at(i) << std::endl; 
     }
 
-    string comment = "Finished a Cycle. Manifest " + manifest_name + "OUTBOUND.txt was written to deskop, and a reminder to operator to send file was displayed."; 
+    std::string comment = "Finished a Cycle. Manifest " + manifest_name + "OUTBOUND.txt was written to deskop, and a reminder to operator to send file was displayed."; 
     log_comment(comment); 
 
     return 0; 
 }  
 
-int Ship::log_comment(const string &comment) {
-    string filepath = "logfiles/logfile_";
+int Ship::log_comment(const std::string &comment) {
+    std::string filepath = "logfiles/logfile_";
     time_t now = time(0); 
     tm *ltm = localtime(&now);
-    filepath += to_string(1900 + ltm->tm_year) + ".txt";  
+    filepath += std::to_string(1900 + ltm->tm_year) + ".txt";  
     
-    ofstream fout(filepath, ios_base::app); 
+    std::ofstream fout(filepath, std::ios_base::app); 
 
     if (!fout.is_open()) {
-        cout << "Unable to open file" << endl; 
+        std::cout << "Unable to open file" << std::endl; 
         return -1; 
     }
     
     fout << 1+ltm->tm_mon << "-" << ltm->tm_mday << "-" << 1900 + ltm->tm_year << ": ";
     fout << ltm->tm_hour << ":" << ltm->tm_min << "  ";
-    fout << comment << endl;  
+    fout << comment << std::endl;  
     return 0; 
 }
 
 int Ship::view_logfile() {
-    string year; 
-    cout << "Input year: "; 
-    cin >> year; 
+    std::string year; 
+    std::cout << "Input year: "; 
+    std::cin >> year; 
 
-    string filepath = "logfiles/logfile_" + year + ".txt"; 
-    fstream fin(filepath); 
+    std::string filepath = "logfiles/logfile_" + year + ".txt"; 
+    std::fstream fin(filepath); 
 
     if (!fin.is_open()) {
-        cout << "Error opening file, please try again" << endl;
+        std::cout << "Error opening file, please try again" << std::endl;
         return -1; 
     }
-    cout << "Log File " << year << endl;
-    string line; 
+    std::cout << "Log File " << year << std::endl;
+    std::string line; 
     while (getline(fin, line)) {
-        cout << line << endl; 
+        std::cout << line << std::endl; 
     }
-    cout << "End of Log File" << endl; 
+    std::cout << "End of Log File" << std::endl; 
     return 0; 
 } 
 
@@ -177,9 +177,9 @@ int Ship::print_ship() const {
    
     for (int i = 7; i >= 0; i--) {
         for (int j = 0; j < 12; j++)  {
-            // cout << Names.at(i*j).size() << " "; 
+            // std::cout << Names.at(i*j).size() << " "; 
             
-            string status; 
+            std::string status; 
             if (i == 0)  {
                 status = Names.at(j);      
             }
@@ -188,24 +188,24 @@ int Ship::print_ship() const {
             }
            
             if (status == "UNUSED") {
-                cout << "-U-";
-                //cout << status;
-                //cout << i << " " << j << endl;
+                std::cout << "-U-";
+                //std::cout << status;
+                //std::cout << i << " " << j << std::endl;
             }
             else if (status == "NAN") {
-                cout << "-N-";
-                //cout << status;
-                //cout << i << " " << j << endl;
+                std::cout << "-N-";
+                //std::cout << status;
+                //std::cout << i << " " << j << std::endl;
             } 
             else {
-                cout << "-X-";
-                //cout << status.size(); 
-                //cout << status;
-                //cout << i << " " << j << endl; 
+                std::cout << "-X-";
+                //std::cout << status.size(); 
+                //std::cout << status;
+                //std::cout << i << " " << j << std::endl; 
             }
             
         }
-        cout << endl; 
+        std::cout << std::endl; 
     }
     
     return 0;
@@ -237,21 +237,21 @@ double Ship::balance_score() const {
         balance = (left_mass*1.0)/right_mass; 
     }
 
-    cout << "Ship has a balance score of: " << balance << endl; 
-    cout << "right: " << right_mass << endl; 
-    cout << "left: " <<left_mass << endl; 
+    std::cout << "Ship has a balance score of: " << balance << std::endl; 
+    std::cout << "right: " << right_mass << std::endl; 
+    std::cout << "left: " <<left_mass << std::endl; 
     
     return balance;
 }
 
 int Ship::balance_ship() {
 
-    vector<pair<int, int>> left_items;    // mass values, coord index
-    vector<pair<int, int>> right_items;   // mass values, coord index 
-    vector<pair<int,int>> heavier_side;
-    vector<int> possible_spaces;          // vector of indices of possible free spaces to move items to 
-    vector<int> best_index;               // corresponds to heavier_side; stores index from possible_spaces, value at this index in possible_spaces is the best space to move to 
-    vector<double> best_manhattan;        // corresponds to heavier_side; stores value of best manhattan 
+    std::vector<std::pair<int, int>> left_items;    // mass values, coord index
+    std::vector<std::pair<int, int>> right_items;   // mass values, coord index 
+    std::vector<std::pair<int,int>> heavier_side;
+    std::vector<int> possible_spaces;          // vector of indices of possible free spaces to move items to 
+    std::vector<int> best_index;               // corresponds to heavier_side; stores index from possible_spaces, value at this index in possible_spaces is the best space to move to 
+    std::vector<double> best_manhattan;        // corresponds to heavier_side; stores value of best manhattan 
     
     double right_mass = 0; 
     double left_mass = 0; 
@@ -263,11 +263,11 @@ int Ship::balance_ship() {
  
         if (Names.at(i) != "NAN" && Names.at(i) != "UNUSED") {
             if (Coordinates.at(i).second <= 6) {
-                left_items.push_back(pair<int, int> (stoi(Mass.at(i)), i));
+                left_items.push_back(std::pair<int, int> (stoi(Mass.at(i)), i));
                 left_mass+= stoi(Mass.at(i));
             }
             else {
-                right_items.push_back(pair<int, int> (stoi(Mass.at(i)), i));
+                right_items.push_back(std::pair<int, int> (stoi(Mass.at(i)), i));
                 right_mass += stoi(Mass.at(i)); 
             }
         }
@@ -302,17 +302,17 @@ int Ship::balance_ship() {
     calculate_swap_coordinates(left_mass, right_mass, sacrifice_index, best_index, left_items, right_items); 
     
     
-    cout << "-----------------UPDATED INFO AFTER MOVING ITEM----------------------------" << endl; 
+    std::cout << "-----------------UPDATED INFO AFTER MOVING ITEM----------------------------" << std::endl; 
     
     double balance = print_balance_info(left_items, right_items, left_mass, right_mass); 
     
-    string comment = "Balanced ship. Balance factor is now " + to_string(balance); 
+    std::string comment = "Balanced ship. Balance factor is now " + std::to_string(balance); 
     log_comment(comment); 
     return 0; 
     
 }
 
-void Ship::calculate_possible_places(vector<int> &possible_spaces, int right_mass, int left_mass) {
+void Ship::calculate_possible_places(std::vector<int> &possible_spaces, int right_mass, int left_mass) {
     
     for (int i = 0; i < Coordinates.size(); i++) {
         if (left_mass > right_mass) {
@@ -342,7 +342,7 @@ void Ship::calculate_possible_places(vector<int> &possible_spaces, int right_mas
 }
 
 
-void Ship::calculate_best_manhattan(vector<pair<int,int>> & heavier_side, vector<int> & best_index, vector<double> &best_manhattan, vector<int> &possible_spaces) {
+void Ship::calculate_best_manhattan(std::vector<std::pair<int,int>> & heavier_side, std::vector<int> & best_index, std::vector<double> &best_manhattan, std::vector<int> &possible_spaces) {
     for (int i = 0; i < heavier_side.size(); i++) {
         // find best coordinate to move to for each item in list 
         // calculate manhattan is overloaded to also take two different coordinate indices 
@@ -363,7 +363,7 @@ void Ship::calculate_best_manhattan(vector<pair<int,int>> & heavier_side, vector
     }
 }
 
-double Ship::print_balance_info(vector<pair<int, int>> &left_side, vector<pair<int,int>> &right_side, const double &left_mass, const double &right_mass)  {
+double Ship::print_balance_info(std::vector<std::pair<int, int>> &left_side, std::vector<std::pair<int,int>> &right_side, const double &left_mass, const double &right_mass)  {
     double balance, balanceMass, deficit; 
 
     balanceMass = (left_mass+right_mass)/2.0;
@@ -380,24 +380,24 @@ double Ship::print_balance_info(vector<pair<int, int>> &left_side, vector<pair<i
     sort(left_side.begin(), left_side.begin());
     sort(right_side.begin(), right_side.begin()); 
 
-    cout << "balance factor: " << balance << endl; 
-    cout << "balance mass: " << balanceMass << endl; 
-    cout << "deficit: " << deficit << endl;
-    cout << "left mass: " << left_mass << " item mass - "; 
+    std::cout << "balance factor: " << balance << std::endl; 
+    std::cout << "balance mass: " << balanceMass << std::endl; 
+    std::cout << "deficit: " << deficit << std::endl;
+    std::cout << "left mass: " << left_mass << " item mass - "; 
     for (int i = 0; i < left_side.size(); i++) {
-        cout << left_side.at(i).first << " ";
+        std::cout << left_side.at(i).first << " ";
     }
-    cout << endl; 
-    cout << "right mass: " << right_mass << " item mass - "; 
+    std::cout << std::endl; 
+    std::cout << "right mass: " << right_mass << " item mass - "; 
     for (int i = 0; i < right_side.size(); i++) {
-        cout << right_side.at(i).first << " ";
+        std::cout << right_side.at(i).first << " ";
     }
-    cout << endl; 
+    std::cout << std::endl; 
     return balance; 
 }
 
-void Ship::calculate_best_place(int& sacrifice_index, int &best_man, const vector<int> &best_index, const vector<double> &best_manhattan, const vector<pair<int,int>> &heavier_side) {
-    cout << "--------------Calculating best place to move each item----------------" << endl; 
+void Ship::calculate_best_place(int& sacrifice_index, int &best_man, const std::vector<int> &best_index, const std::vector<double> &best_manhattan, const std::vector<std::pair<int,int>> &heavier_side) {
+    std::cout << "--------------Calculating best place to move each item----------------" << std::endl; 
     for (int i = 0; i < best_index.size(); i++) {
         if (best_manhattan.at(i) < best_man) {
             best_man = best_manhattan.at(i); 
@@ -406,40 +406,40 @@ void Ship::calculate_best_place(int& sacrifice_index, int &best_man, const vecto
 
         // COMMENT OUT LATER, used for testing 
         // original items in heavier side list
-        cout << "Move item: "; 
-        cout << Coordinates.at(heavier_side.at(i).second).first <<  ", "; 
-        cout << Coordinates.at(heavier_side.at(i).second).second << endl; 
+        std::cout << "Move item: "; 
+        std::cout << Coordinates.at(heavier_side.at(i).second).first <<  ", "; 
+        std::cout << Coordinates.at(heavier_side.at(i).second).second << std::endl; 
 
         // best free place to move and it's manhattan distance to it 
-        cout << "Move to: "; 
-        cout << Coordinates.at(best_index.at(i)).first << ", ";
-        cout << Coordinates.at(best_index.at(i)).second << endl; 
-        cout << "Manhattan: " << best_manhattan.at(i) << endl; 
+        std::cout << "Move to: "; 
+        std::cout << Coordinates.at(best_index.at(i)).first << ", ";
+        std::cout << Coordinates.at(best_index.at(i)).second << std::endl; 
+        std::cout << "Manhattan: " << best_manhattan.at(i) << std::endl; 
     }
     
     // original items in heavier side 
-    cout << "---------------------BEST MOVE------------------" << endl; 
-    cout << "Move item: "; 
-    cout << Coordinates.at(heavier_side.at(sacrifice_index).second).first <<  ", "; 
-    cout << Coordinates.at(heavier_side.at(sacrifice_index).second).second << endl; 
+    std::cout << "---------------------BEST MOVE------------------" << std::endl; 
+    std::cout << "Move item: "; 
+    std::cout << Coordinates.at(heavier_side.at(sacrifice_index).second).first <<  ", "; 
+    std::cout << Coordinates.at(heavier_side.at(sacrifice_index).second).second << std::endl; 
     // find best free place to move and it's manhattan distance to it 
-    cout << "Move to: "; 
-    cout << Coordinates.at(best_index.at(sacrifice_index)).first << ", ";
-    cout << Coordinates.at(best_index.at(sacrifice_index)).second << endl; 
-    cout << "Manhattan: " << best_manhattan.at(sacrifice_index) << endl; 
-    cout << "--------------------END MOVE------------------" << endl; 
+    std::cout << "Move to: "; 
+    std::cout << Coordinates.at(best_index.at(sacrifice_index)).first << ", ";
+    std::cout << Coordinates.at(best_index.at(sacrifice_index)).second << std::endl; 
+    std::cout << "Manhattan: " << best_manhattan.at(sacrifice_index) << std::endl; 
+    std::cout << "--------------------END MOVE------------------" << std::endl; 
 
 
 }
 
-void Ship::calculate_swap_coordinates(double & left_mass, double &right_mass, const int &sacrifice_index, const vector<int>&best_index, vector<pair<int, int>> & left_items, vector<pair<int, int>> & right_items) {
+void Ship::calculate_swap_coordinates(double & left_mass, double &right_mass, const int &sacrifice_index, const std::vector<int>&best_index, std::vector<std::pair<int, int>> & left_items, std::vector<std::pair<int, int>> & right_items) {
     if (left_mass > right_mass) {
         // swap the names 
-        string temp_name = Names.at(best_index.at(sacrifice_index));
+        std::string temp_name = Names.at(best_index.at(sacrifice_index));
         Names.at(best_index.at(sacrifice_index)) = Names.at(left_items.at(sacrifice_index).second); 
         Names.at(left_items.at(sacrifice_index).second) = temp_name; 
         // swap mass 
-        string temp_mass = Mass.at(best_index.at(sacrifice_index));
+        std::string temp_mass = Mass.at(best_index.at(sacrifice_index));
         Mass.at(best_index.at(sacrifice_index)) = Mass.at(left_items.at(sacrifice_index).second); 
         Mass.at(left_items.at(sacrifice_index).second) = temp_mass; 
 
@@ -459,12 +459,12 @@ void Ship::calculate_swap_coordinates(double & left_mass, double &right_mass, co
     }
     else {
         // swap the names 
-        string temp_name = Names.at(best_index.at(sacrifice_index));
+        std::string temp_name = Names.at(best_index.at(sacrifice_index));
         Names.at(best_index.at(sacrifice_index)) = Names.at(right_items.at(sacrifice_index).second); 
         Names.at(right_items.at(sacrifice_index).second) = temp_name; 
         
         // swap mass 
-        string temp_mass = Mass.at(best_index.at(sacrifice_index));
+        std::string temp_mass = Mass.at(best_index.at(sacrifice_index));
         Mass.at(best_index.at(sacrifice_index)) = Mass.at(right_items.at(sacrifice_index).second); 
         Mass.at(right_items.at(sacrifice_index).second) = temp_mass; 
         
@@ -495,6 +495,6 @@ double Ship::calculate_manhattan(int y_1, int x_1, int y_2, int x_2) const {
 } 
 
 int Ship::load_unload_ship() {
-    cout << "STUB: load or unload the ship..." << endl;
+    std::cout << "STUB: load or unload the ship..." << std::endl;
     return 0; // 0 if no error happened
 }

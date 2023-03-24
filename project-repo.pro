@@ -11,11 +11,13 @@ CONFIG += c++17
 SOURCES += \
     main.cpp \
     src/Ship.cpp \
-    src/MainWindow.cpp
+    src/MainWindow.cpp \
+    src/Logger.cpp
 
 HEADERS += \
     headers/Ship.h \
-    headers/MainWindow.h 
+    headers/MainWindow.h \
+    headers/Logger.h
     
 FORMS += \
     forms/MainWindow.ui
