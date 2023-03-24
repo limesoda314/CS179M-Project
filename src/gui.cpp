@@ -30,34 +30,42 @@ int main(int argc, char ** argv)
 }
 
 void menu() {
+
+    WINDOW *menu_win;
+    
+    menu_win = newwin(30, 10, (80-30)/2, (24-10)/2);
+    noecho();
+	cbreak();	/* Line buffering disabled. pass on everything */
     
     int option = 0;
     Ship Ship1 = Ship();
     
-        int row = 1;
-        int col = 10; 
+    int row = 1;
+    int col = 10; 
 
-        
-        vector<string> Options = {
-            "1: Load Manifest",
-            "2: Read Manifest (Output to console)",
-            "3: Create Outbound Manifest",
-            "4: Log comment",
-            "5: View logfile",
-            "6: Print ship",
-            "7: Print balance score",
-            "8: Balance ship",
-            "9: Quit"
-        }; 
+    // char *Options[] = {};   
+    vector<string> Options = {
+        "1: Load Manifest",
+        "2: Read Manifest (Output to console)",
+        "3: Create Outbound Manifest",
+        "4: Log comment",
+        "5: View logfile",
+        "6: Print ship",
+        "7: Print balance score",
+        "8: Balance ship",
+        "9: Quit"
+    }; 
 
     while (1) {
-        refresh(); 
+        clear(); 
+        row = 1; 
+        col = 10; 
         mvprintw(0, 5, "-------MENU------"); 
         for (int i = 0; i < 9; i++) {
             mvprintw(row+i, col, "%s\n", Options.at(i).c_str()); 
         }
 
-        int option = getch();
+        char option = getch();
         // getline ?? getnstr( users_name, sizeof( users_name ) - 1 );
         
          
@@ -65,12 +73,28 @@ void menu() {
         if (option == '1') {
             clear(); 
             char test; 
-            mvprintw(0, 10,  "1: Load Manifest");
-            mvprintw(1, 10,  "Test 1-5: ");
-            test = getch();  
-
-            string testpath = "Manifests/ShipCase" + test + ".txt";
-            Ship1.load_manifest(testpath);
+            row = 0; 
+            col = 10; 
+            while (1) {
+                refresh(); 
+                mvprintw(row, col/2,  "Load Manifest: ");
+                mvprintw(row+1, col,  "Test 1-5: ");
+                test = wgetch();  
+                
+                if (test == '1') {
+                    string testpath = "Manifests/ShipCase";
+                    testpath.push_back(test);
+                    testpath += ".txt"; 
+                    Ship1.load_manifest(testpath);
+                    mvprintw(row+5, col,  "Loaded Manifest %s", testpath.c_str());
+                    mvprintw(row+6, col,  "Returning to menu");
+                    break; 
+                }
+                else {
+                    mvprintw(row+6, col,  "Returning to menu");
+                }
+            }
+            
         }
 
         // if (option == 2) {
