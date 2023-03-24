@@ -57,7 +57,7 @@ class Ship {
         int view_logfile(); 
 
         /* Option 6 - Prints the current state of the Ship class internal variables */
-        int print_ship() const; 
+        std::string print_ship() const;
 
         /* Option 7 - Prints out the balance score of the current ship */
         double balance_score() const; // TODO

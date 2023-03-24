@@ -597,10 +597,10 @@
            <widget class="QWidget" name="formLayoutWidget_4">
             <property name="geometry">
              <rect>
-              <x>10</x>
-              <y>10</y>
-              <width>751</width>
-              <height>86</height>
+              <x>0</x>
+              <y>0</y>
+              <width>771</width>
+              <height>121</height>
              </rect>
             </property>
             <layout class="QFormLayout" name="formLayout_4">
@@ -625,6 +625,27 @@
               <widget class="QLabel" name="label_5">
                <property name="text">
                 <string>Enters information from manifest file</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QPushButton" name="manifest_status_view_ship_button">
+               <property name="text">
+                <string>View Ship</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QLabel" name="label_6">
+               <property name="text">
+                <string>View Ship based on Manifest</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QLabel" name="viewShipLabel">
+               <property name="text">
+                <string/>
                </property>
               </widget>
              </item>
@@ -670,6 +691,25 @@
               </widget>
              </item>
             </layout>
+           </widget>
+           <widget class="QPlainTextEdit" name="manifest_status_view_ship_text">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>10</y>
+              <width>751</width>
+              <height>389</height>
+             </rect>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>389</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">font: 14pt &quot;Courier New&quot;;</string>
+            </property>
            </widget>
           </widget>
          </item>

@@ -168,13 +168,15 @@ int Ship::view_logfile() {
     return 0; 
 } 
 
-int Ship::print_ship() const {
+std::string Ship::print_ship() const {
     /*
     i = 0 1 2 3 4 5 6 7 
     j = 0 1 2 3 4 5 6 7 8 9 10 11 12
     index = 0 - 95
 
     */
+
+    std::string ship_view = "";
    
     for (int i = 7; i >= 0; i--) {
         for (int j = 0; j < 12; j++)  {
@@ -189,27 +191,34 @@ int Ship::print_ship() const {
             }
            
             if (status == "UNUSED") {
-                std::cout << "-U-";
+                ship_view += "|---|";
+                std::cout << "|---|";
+                //std::cout << "-U-";
                 //std::cout << status;
                 //std::cout << i << " " << j << std::endl;
             }
             else if (status == "NAN") {
-                std::cout << "-N-";
+                ship_view += "|NAN|";
+                std::cout << "|NAN|";
+                //std::cout << "-N-";
                 //std::cout << status;
                 //std::cout << i << " " << j << std::endl;
             } 
             else {
-                std::cout << "-X-";
+                ship_view += "|" + status.substr(0, 3) + "|";
+                std::cout << "|" + status.substr(0,3) + "|";
+                //std::cout << "-X-";
                 //std::cout << status.size(); 
                 //std::cout << status;
                 //std::cout << i << " " << j << std::endl; 
             }
             
         }
+        ship_view += "\n";
         std::cout << std::endl; 
     }
     
-    return 0;
+    return ship_view;
 }
 
 double Ship::balance_score() const {

@@ -24,6 +24,9 @@ MainWindow::MainWindow(QWidget *parent)
     this->connect(ui->onload_offload_load_manifest, &QPushButton::clicked, this, &MainWindow::load_manifest_onload_clicked);
     this->connect(ui->balancing_manifest_button, &QPushButton::clicked, this, &MainWindow::load_manifest_balance_clicked);
     this->connect(ui->manifest_status_load_manifest_button, &QPushButton::clicked, this, &MainWindow::load_manifest_status_clicked);
+    this->connect(ui->manifest_status_view_ship_button, &QPushButton::clicked, this, &MainWindow::refresh_view_ship_clicked);
+
+
 
 }
 
@@ -129,6 +132,24 @@ void MainWindow::refresh_logfile_output_clicked() {
     return;
 }
 
+
+void MainWindow::refresh_view_ship_clicked() {
+    std::cout << "refresh ship" << std::endl;
+
+//    QVBoxLayout* newLayout = new QVBoxLayout();
+//    QPlainTextEdit* myPlainTextBox = new QPlainTextEdit();
+
+    if (manifestShip->get_manifest_name().size() == 0) {
+        std::cout << "Error: manifest empty."  << std::endl;
+        return;
+    }
+
+    std::string ship_view = manifestShip->print_ship();
+
+    this->ui->manifest_status_view_ship_text->setPlainText(QString::fromStdString(ship_view));
+
+    return;
+}
 
 void MainWindow::load_manifest_balance_clicked() {
     std::cout << "load manifest clicked" << std::endl;
