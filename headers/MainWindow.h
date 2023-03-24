@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QtWidgets>
 #include <QLayout>
+#include <QVBoxLayout>
 
 class Logger;
 
