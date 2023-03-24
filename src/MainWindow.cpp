@@ -61,6 +61,9 @@ void MainWindow::add_comment_clicked() {
         this->ui->add_comment_text_box->setPlaceholderText("Error: Please input a valid name.");
         return;
     }
+    
+    // clear the plain text editor
+    this->ui->add_comment_text_box->setPlainText(QString::fromStdString(""));
 
     // set the current logger string to commentString
 
