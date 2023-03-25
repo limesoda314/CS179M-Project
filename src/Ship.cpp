@@ -254,7 +254,6 @@ double Ship::balance_score() const {
     return balance;
 }
 
-
 std::vector<std::pair<int,int>> Ship::balance_list() {
 
     std::vector<std::pair<int,int>> balance_pair_list = {{1,2},{1,11}, {1,3}, {2,11}, {2,11},{1,10}};
@@ -264,71 +263,141 @@ std::vector<std::pair<int,int>> Ship::balance_list() {
 
 int Ship::balance_ship() {
 
-    std::vector<std::pair<int, int>> left_items;    // mass values, coord index
-    std::vector<std::pair<int, int>> right_items;   // mass values, coord index 
-    std::vector<std::pair<int,int>> heavier_side;
-    std::vector<int> possible_spaces;          // vector of indices of possible free spaces to move items to 
-    std::vector<int> best_index;               // corresponds to heavier_side; stores index from possible_spaces, value at this index in possible_spaces is the best space to move to 
-    std::vector<double> best_manhattan;        // corresponds to heavier_side; stores value of best manhattan 
+    Balanceshi
     
-    double right_mass = 0; 
-    double left_mass = 0; 
-    
-    // put items into left and right list
-    // first is the mass value 
-    // second is the coordinate index 
-    for (int i = 0; i < Coordinates.size(); i++) {
- 
-        if (Names.at(i) != "NAN" && Names.at(i) != "UNUSED") {
-            if (Coordinates.at(i).second <= 6) {
-                left_items.push_back(std::pair<int, int> (stoi(Mass.at(i)), i));
-                left_mass+= stoi(Mass.at(i));
-            }
-            else {
-                right_items.push_back(std::pair<int, int> (stoi(Mass.at(i)), i));
-                right_mass += stoi(Mass.at(i)); 
-            }
-        }
+    // Initialize the frontier using the initial state of problem
+    this->frontier.push(problem->getRoot());
+    this->frontier_set.insert(problem->getRoot()->getMat());
+
+    // Tracking max frontier length
+    if (this->frontier.size() > this->maxFrontierLength) {
+        this->maxFrontierLength = this->frontier.size();
     }
+
+    // loop do
+    while (true) {
+
+        // If frontier is empty, then return failure
+        if (this->frontier.size() == 0) { return nullptr; }
+
+        // Pick the smallest leaf, based on algorithm
+        Board* leaf = this->frontier.top();
+
+        this->frontier.pop();
+        this->frontier_set.erase(leaf->getMat());
+
+        // If leaf is the goal, return it
+        if ((*(this->goal) == *leaf)) { 
+            return leaf;
+        } // Overloaded==
+
+        // Add to explored set if not
+        this->explored.insert(leaf->getMat());
+
+        // If not in explored, expand
+        std::cout << "==============================================================\nCurrent expanding node with g(n) = "
+                  << leaf->getCost() << ", h(n) = " << problem->heuristicOf(leaf) << ", and f(n) = " << leaf->f_valueFrom() << "\n";
+        leaf->draw(std::cout);
+        problem->expand(leaf);
+        this->count++;
+        std::cout << "Expanding node " << this->count << "...\n";
+        std::cout << "Size: " << this->frontier_set.size() << "\n\n";
+
+        // Add the children to the frontier if not there or in explored
+        for (int i = 0; i < 4; i++) {
+
+            // Child is not in frontier
+            bool in_frontier = ( this->frontier_set.find(leaf->getChild(i)->getMat()) != this->frontier_set.end() );
+
+            // Child is not in explored
+            bool in_explored = ( this->explored.find(leaf->getChild(i)->getMat()) != this->explored.end() );
+
+            // If both conditions are met, push into frontier
+            if ( !in_frontier && !in_explored ) {
+                this->frontier.push( leaf->getChild(i) );
+                this->frontier_set.insert( leaf->getChild(i)->getMat() );
+
+                // Tracking maximum frontier length
+                if (this->frontier.size() > this->maxFrontierLength) {
+                    this->maxFrontierLength = this->frontier.size();
+                }
+            }
+
+        }
+    } 
+
+    return 0;
+}
+
+
+// // legacy code
+// int Ship::balance_ship() {
+
+//     std::vector<std::pair<int, int>> left_items;    // mass values, coord index
+//     std::vector<std::pair<int, int>> right_items;   // mass values, coord index 
+//     std::vector<std::pair<int,int>> heavier_side;
+//     std::vector<int> possible_spaces;          // vector of indices of possible free spaces to move items to 
+//     std::vector<int> best_index;               // corresponds to heavier_side; stores index from possible_spaces, value at this index in possible_spaces is the best space to move to 
+//     std::vector<double> best_manhattan;        // corresponds to heavier_side; stores value of best manhattan 
+    
+//     double right_mass = 0; 
+//     double left_mass = 0; 
+    
+//     // put items into left and right list
+//     // first is the mass value 
+//     // second is the coordinate index 
+//     for (int i = 0; i < Coordinates.size(); i++) {
+ 
+//         if (Names.at(i) != "NAN" && Names.at(i) != "UNUSED") {
+//             if (Coordinates.at(i).second <= 6) {
+//                 left_items.push_back(std::pair<int, int> (stoi(Mass.at(i)), i));
+//                 left_mass+= stoi(Mass.at(i));
+//             }
+//             else {
+//                 right_items.push_back(std::pair<int, int> (stoi(Mass.at(i)), i));
+//                 right_mass += stoi(Mass.at(i)); 
+//             }
+//         }
+//     }
 
      
-    if (left_mass > right_mass) {
-        heavier_side = left_items; 
-    }
-    else {
-        heavier_side = right_items; 
-    }
+//     if (left_mass > right_mass) {
+//         heavier_side = left_items; 
+//     }
+//     else {
+//         heavier_side = right_items; 
+//     }
 
-    print_balance_info(left_items, right_items, left_mass, right_mass); 
+//     print_balance_info(left_items, right_items, left_mass, right_mass); 
 
-    // calculate the possible spaces to place the items 
-    calculate_possible_places(possible_spaces, right_mass, left_mass); 
+//     // calculate the possible spaces to place the items 
+//     calculate_possible_places(possible_spaces, right_mass, left_mass); 
 
-    // calculate best coordinates for heavier side based on the possible spaces and best manhattann  
-    calculate_best_manhattan(heavier_side, best_index, best_manhattan, possible_spaces); 
+//     // calculate best coordinates for heavier side based on the possible spaces and best manhattann  
+//     calculate_best_manhattan(heavier_side, best_index, best_manhattan, possible_spaces); 
 
-    // calculate which item to sacrifice 
-    int sacrifice_index = 0;                // index in the list 
-    int best_man = best_manhattan.at(0);  
+//     // calculate which item to sacrifice 
+//     int sacrifice_index = 0;                // index in the list 
+//     int best_man = best_manhattan.at(0);  
 
-    // calculates the best place to move 
-    // saves index and manhattan 
-    calculate_best_place(sacrifice_index, best_man, best_index, best_manhattan, heavier_side); 
+//     // calculates the best place to move 
+//     // saves index and manhattan 
+//     calculate_best_place(sacrifice_index, best_man, best_index, best_manhattan, heavier_side); 
 
-    // based on the sacrifice index and best index to move to
-    // we swap the mass, names, and update the lists 
-    calculate_swap_coordinates(left_mass, right_mass, sacrifice_index, best_index, left_items, right_items); 
+//     // based on the sacrifice index and best index to move to
+//     // we swap the mass, names, and update the lists 
+//     calculate_swap_coordinates(left_mass, right_mass, sacrifice_index, best_index, left_items, right_items); 
     
     
-    std::cout << "-----------------UPDATED INFO AFTER MOVING ITEM----------------------------" << std::endl; 
+//     std::cout << "-----------------UPDATED INFO AFTER MOVING ITEM----------------------------" << std::endl; 
     
-    double balance = print_balance_info(left_items, right_items, left_mass, right_mass); 
+//     double balance = print_balance_info(left_items, right_items, left_mass, right_mass); 
     
-    std::string comment = "Balanced ship. Balance factor is now " + std::to_string(balance); 
-    log_comment(comment); 
-    return 0; 
+//     std::string comment = "Balanced ship. Balance factor is now " + std::to_string(balance); 
+//     log_comment(comment); 
+//     return 0; 
     
-}
+// }
 
 void Ship::calculate_possible_places(std::vector<int> &possible_spaces, int right_mass, int left_mass) {
     

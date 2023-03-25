@@ -1,28 +1,102 @@
-#ifndef SHIP_STATE__H
-#define SHIP_STATE__H
+#ifndef BALANCE__H
+#define BALANCE__H
 
-#include <iostream>
 #include <vector>
 #include <fstream>
 #include <string> 
-#include<algorithm>
-#include "Ship.h"
-using namespace std; 
+#include <algorithm>
 
+#include "../headers/HeuristicStrategy.h"
+
+/* Stores the current state of the containers within a ship */
 class ShipState {
     private:
-        Ship *BalanceShip;
-         
+        // physical coordinates
+        std::vector<std::pair<int,int>> coords;
+
+        // masses 
+        std::vector<std::string> mass; 
+
+        // contains every possible (perhaps not every possible one, given
+        // a heuristic-based graph search algorithm) ShipState given the
+        // free_spaces and move_spaces vectors
+        std::vector<ShipState*> children;
+
+        // possible places to move boxes into - literally the spaces above 
+        // the surface of the container boxes
+        std::vector<std::pair<int,int>> free_spaces;
+
+        // every box that can move - the surface of the container boxes
+        std::vector<std::pair<int,int>> move_spaces; 
+
+        Heuristic* ctx;
+
+        ShipState* parent;
+
+        int cost;
+
     public: 
         // constructors 
-        ShipState   (Ship *ship) : BalanceShip(ship) {}
+        ShipState(
+            const std::vector<std::pair<int,int>> &ship_coords,
+            const std::vector<std::string> &ship_mass,
+            const std::vector<std::string>&ship_names,
+            Heuristic* ctx,
+            ShipState* par
+            );  
 
-        double balance_score() const; 
-        int balance_ship();
-        double calculate_manhattan(int index_a, int index_b) const;  
-        // pass in the index to a coordinate 
-        double calculate_manhattan(int y_1, int x_1, int y_2, int x_2) const;  
+        ShipState(
+            const std::vector<std::pair<int,int>> &ship_coords,
+            const std::vector<std::string> &ship_mass,
+            const std::vector<std::pair<int,int>>& ship_free_spaces,
+            const std::vector<std::pair<int,int>>& ship_move_spaces,
+            Heuristic* ctx,
+            ShipState* par
+            ); 
 
-}; 
+        /* Expands node into its possibility of movements */
+        int expandNode(); 
+
+        /* Generates possible spaces to move boxes to */
+        int generate_possible(); 
+
+        /* Generates possible boxes we can make */
+        int generate_move(); 
+        
+        /* Updates new coordinates given the free coordinates and move coordinates */
+        int swap_coords(
+            std::vector<std::pair<int,int>> &new_coords,
+            const std::pair<int,int> &free_space,
+            const std::pair<int,int> &move_space);
+
+        /* Check above a certain x,y position */
+        bool check_above(const int &y_coord, const int &x_coord);
+
+        /* Check under a certain x,y position */
+        bool check_under(const int &y_coord, const int &x_coord);
+
+        /* Check under a certain x,y mass position */ 
+        bool check_under_mass(const int &y_coord, const int &x_coord);
+
+        /* Calculate f factor for current ship state */
+        int f_valueFrom() const;
+
+        /* Calculates the heuristic of the board state for the current
+        selected context */
+        int heuristic() const;
+
+        int getCost() const { return this->cost; }
+        void setCost(int cst) { this->cost = cst; }
+
+        void setContext(Heuristic* ctx);
+
+        // Overloading == operator for the GameDrive driver
+        friend bool operator==(ShipState& lhs, ShipState& rhs);
+
+        ShipState* getChild(int i) const { return this->children.at(i); }
+        ShipState* getParent() const { return this->parent; }
+
+        void draw(std::ostream&);
+};
 
 #endif 

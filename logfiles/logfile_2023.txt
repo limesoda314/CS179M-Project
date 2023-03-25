@@ -41,3 +41,5 @@
 3-24-2023: 0:37  Uploaded Manifest ShipCase1.txt
 3-24-2023: 0:38  Uploaded Manifest ShipCase1.txt
 3-24-2023: 0:38  Uploaded Manifest ShipCase1.txt
+3-25-2023: 7:4  Uploaded Manifest ShipCase1.txt
+3-25-2023: 7:5  Balanced ship. Balance factor is now 0.990000

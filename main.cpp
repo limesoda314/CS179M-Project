@@ -1,27 +1,27 @@
 #include <iostream> 
 #include "headers/Ship.h" 
 
-#include "headers/MainWindow.h"
+// #include "headers/MainWindow.h"
 
-#include <QApplication>
+// #include <QApplication>
 
-int main(int argc, char *argv[])
-{
-    QApplication a(argc, argv);
-    MainWindow w;
-    w.show();
-    return a.exec();
-}
+// int main(int argc, char *argv[])
+// {
+//     QApplication a(argc, argv);
+//     MainWindow w;
+//     w.show();
+//     return a.exec();
+// }
 
 void menu(); 
 
 
-//int main() {
+int main() {
     
-//    menu(); 
+   menu(); 
 
-//    return 0; 
-//}
+   return 0; 
+}
 
 void menu() {
     

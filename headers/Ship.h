@@ -6,7 +6,7 @@
 #include <fstream>
 #include <string> 
 #include <algorithm> 
-
+#include <queue>
 
 class Ship {
     private:
@@ -14,6 +14,9 @@ class Ship {
         std::vector<std::string> Mass; 
         std::vector<std::string> Names;
         std::string manifest_name = ""; 
+
+        // needed for balance and onload/offload
+        // std::priority_queue<BalanceShip*, std::vector<BalanceShip*>, > frontier;
 
     public: 
         // constructors 
@@ -63,7 +66,7 @@ class Ship {
         double balance_score() const; // TODO
 
         /* Option 8 - Performs balancing operations */
-        int balance_ship(); // TODO
+        int balance_ship();
 
         /* Option 9 - Load/Unload contains from and to ship */
         int load_unload_ship();
@@ -91,7 +94,6 @@ class Ship {
         double calculate_manhattan(int y_1, int x_1, int y_2, int x_2) const;  
 
     // END HELPERS
-
 }; 
 
 #endif // SHIP.H
