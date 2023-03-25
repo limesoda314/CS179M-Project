@@ -26,6 +26,8 @@ MainWindow::MainWindow(QWidget *parent)
     this->connect(ui->manifest_status_load_manifest_button, &QPushButton::clicked, this, &MainWindow::load_manifest_status_clicked);
     this->connect(ui->manifest_status_view_ship_button, &QPushButton::clicked, this, &MainWindow::refresh_view_ship_clicked);
     this->connect(ui->balancing_start_button, &QPushButton::clicked, this, &MainWindow::generate_balancing_states_clicked);
+    this->connect(ui->balancing_next_button, &QPushButton::clicked, this, &MainWindow::load_next_balance_states_clicked);
+
 
 }
 
@@ -212,14 +214,110 @@ void MainWindow::generate_balancing_states_clicked() {
         std::cout << "Error: manifest empty."  << std::endl;
         return;
     }
-    std::vector<std::string> saved_states;
 
-    manifestShip->save_ship_states(saved_states, manifestShip->balance_list());
+    manifestShip->balance_list(manifestShip->balanced_list);
+    manifestShip->save_ship_states(manifestShip->balanced_list);
 
-    this->ui->balancing_plain_text->setPlainText(QString::fromStdString(saved_states.at(0)));
+    std::reverse(manifestShip->balanced_list.begin(), manifestShip->balanced_list.end());
+    std::reverse(manifestShip->saved_states.begin(), manifestShip->saved_states.end());
+
+//    for (int i = 0; i < manifestShip->balanced_list.size(); i++) {
+//        std::cout << manifestShip->balanced_list.at(i).first << ", " << manifestShip->balanced_list.at(i).second << std::endl;
+//    }
+
+    if (manifestShip->saved_states.size() < 2) {
+        std::string balance_info = "Ship balanced!\n";
+        balance_info += "balance factor: ";
+        balance_info += std::to_string(manifestShip->balance_score());
+        balance_info += "\n";
+        balance_info += manifestShip->print_ship();
+        this->ui->balancing_plain_text->setPlainText(QString::fromStdString(balance_info));
+    }
+    else {
+
+        std::string move_instru = "Move (";
+        move_instru += std::to_string(manifestShip->balanced_list.at(manifestShip->balanced_list.size()-1).first);
+        move_instru += ", ";
+        move_instru += std::to_string(manifestShip->balanced_list.at(manifestShip->balanced_list.size()-1).second);
+        move_instru += ") to (";
+        move_instru += std::to_string(manifestShip->balanced_list.at(manifestShip->balanced_list.size()-2).first);
+        move_instru += ", ";
+        move_instru += std::to_string(manifestShip->balanced_list.at(manifestShip->balanced_list.size()-2).second);
+        move_instru += ")\n";
+        manifestShip->balanced_list.pop_back();
+        manifestShip->balanced_list.pop_back();
+
+
+        this->ui->balancing_next_move_text->setPlainText(QString::fromStdString(move_instru));
+
+
+        int manifestsize =  this->manifestShip->saved_states.size();
+
+        std::string first_move = "Current Ship State\n\n";
+        first_move += this->manifestShip->saved_states.at(manifestsize-1);
+        first_move += "\n------------------------------------------------------------\n\n";
+        first_move += "After Moving\n";
+        first_move += this->manifestShip->saved_states.at(manifestsize-2);
+
+        this->ui->balancing_plain_text->setPlainText(QString::fromStdString(first_move));
+
+        this->manifestShip->saved_states.pop_back();
+        this->manifestShip->saved_states.pop_back();
+    }
 
     //this->ui->balancing_plain_text->clear();
     //this->ui->balancing_plain_text->setPlainText(QString::fromStdString(saved_states.at(1)));
 
+}
+
+void MainWindow::load_next_balance_states_clicked() {
+
+    if (this->manifestShip->saved_states.size() < 2) {
+        this->ui->balancing_plain_text->clear();
+
+        std::string balance_info = "Ship balanced!\n";
+        balance_info += "balance factor: ";
+        balance_info += std::to_string(manifestShip->balance_score());
+        balance_info += "\n";
+        balance_info += manifestShip->print_ship();
+        this->ui->balancing_plain_text->setPlainText(QString::fromStdString(balance_info));
+    }
+    else {
+        this->ui->balancing_next_move_text->clear();
+
+        std::string move_instru = "Move (";
+        move_instru += std::to_string(manifestShip->balanced_list.at(manifestShip->balanced_list.size()-1).first);
+        move_instru += ", ";
+        move_instru += std::to_string(manifestShip->balanced_list.at(manifestShip->balanced_list.size()-1).second);
+        move_instru += ") to (";
+        move_instru += std::to_string(manifestShip->balanced_list.at(manifestShip->balanced_list.size()-2).first);
+        move_instru += ", ";
+        move_instru += std::to_string(manifestShip->balanced_list.at(manifestShip->balanced_list.size()-2).second);
+        move_instru += ")\n";
+        if (this->manifestShip->balanced_list.size() >= 2) {
+            manifestShip->balanced_list.pop_back();
+            manifestShip->balanced_list.pop_back();
+        }
+
+
+        this->ui->balancing_next_move_text->setPlainText(QString::fromStdString(move_instru));
+
+        this->ui->balancing_plain_text->clear();
+        int manifestsize =  this->manifestShip->saved_states.size();
+        std::string next_move = "Current Ship State\n\n";
+        next_move += this->manifestShip->saved_states.at(manifestsize-1);
+        next_move += "\n------------------------------------------------------------\n\n";
+        next_move += "After Moving\n";
+        next_move += this->manifestShip->saved_states.at(manifestsize-2);
+
+        if (this->manifestShip->saved_states.size() == 2) {
+            next_move += "\n\nFinished! Ship balanced!";
+        }
+
+        this->ui->balancing_plain_text->setPlainText(QString::fromStdString(next_move));
+
+        this->manifestShip->saved_states.pop_back();
+        this->manifestShip->saved_states.pop_back();
+    }
 }
 

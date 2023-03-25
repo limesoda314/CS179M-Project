@@ -107,7 +107,7 @@ int Ship::create_outbound() {
         return -1; 
     }
 
-    for (int i = 0; i < Coordinates.size(); i++) {
+    for (long long unsigned int i = 0; i < Coordinates.size(); i++) {
         fout << "["; 
         if (Coordinates.at(i).first < 10) {
             fout << "0"; 
@@ -255,11 +255,17 @@ double Ship::balance_score() const {
 }
 
 
-std::vector<std::pair<int,int>> Ship::balance_list() {
+std::vector<std::pair<int,int>> Ship::create_balance_list() {
 
     std::vector<std::pair<int,int>> balance_pair_list = {{1,2},{1,11}, {1,3}, {2,11}, {2,11},{1,10}};
     return balance_pair_list;
 
+}
+
+
+int Ship::balance_list(std::vector< std::pair<int,int> > &bal_list) {
+    bal_list = {{1,2},{1,11}, {1,3}, {2,11}, {2,11},{1,10}};
+    return 0;
 }
 
 int Ship::balance_ship() {
@@ -532,12 +538,25 @@ std::string Ship::swap_coordinates(std::pair<int,int>& coord1, std::pair<int,int
     return print_ship();
 }
 
-void Ship::save_ship_states(std::vector<std::string> &saved_states, std::vector<std::pair<int, int> > balance_list) {
+void Ship::save_ship_states(std::vector<std::string> &saved_states_list, std::vector<std::pair<int, int> > balance_list) {
 
-    saved_states.push_back(print_ship());
+    saved_states_list.push_back(print_ship());
     for (int i = 0; i < balance_list.size() -1; i++) {
         // saves the printed ship string after swapping
-        saved_states.push_back(swap_coordinates(balance_list.at(i), balance_list.at(i+1)));
+        // 1,2 -> 1,11
+        // 1,3 -> 2,11
+        // 2,11 -> 1,10
+        saved_states_list.push_back(swap_coordinates(balance_list.at(i), balance_list.at(i+1)));
+    }
+
+}
+
+void Ship::save_ship_states(std::vector<std::pair<int, int> > balance_list) {
+
+    this->saved_states.push_back(print_ship());
+    for (int i = 0; i < balance_list.size() -1; i++) {
+        // saves the printed ship string after swapping
+        this->saved_states.push_back(swap_coordinates(balance_list.at(i), balance_list.at(i+1)));
     }
 
 }

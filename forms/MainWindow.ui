@@ -383,35 +383,11 @@
              <rect>
               <x>10</x>
               <y>10</y>
-              <width>292</width>
-              <height>212</height>
+              <width>241</width>
+              <height>391</height>
              </rect>
             </property>
-            <layout class="QHBoxLayout" name="horizontalLayout">
-             <item>
-              <widget class="QWidget" name="entermove" native="true">
-               <widget class="QWidget" name="verticalLayoutWidget_3">
-                <property name="geometry">
-                 <rect>
-                  <x>10</x>
-                  <y>80</y>
-                  <width>211</width>
-                  <height>191</height>
-                 </rect>
-                </property>
-                <layout class="QVBoxLayout" name="verticalLayout_5">
-                 <item>
-                  <widget class="QPushButton" name="balancing_next_button">
-                   <property name="text">
-                    <string>Next Move</string>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </widget>
-              </widget>
-             </item>
-            </layout>
+            <layout class="QHBoxLayout" name="horizontalLayout"/>
            </widget>
            <widget class="QWidget" name="pictureframe" native="true">
             <property name="geometry">
@@ -437,6 +413,38 @@
               </widget>
              </item>
             </layout>
+           </widget>
+           <widget class="QWidget" name="entermove" native="true">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>90</y>
+              <width>290</width>
+              <height>210</height>
+             </rect>
+            </property>
+            <widget class="QWidget" name="verticalLayoutWidget_3">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>0</y>
+               <width>211</width>
+               <height>191</height>
+              </rect>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_5">
+              <item>
+               <widget class="QPushButton" name="balancing_next_button">
+                <property name="text">
+                 <string>Next Move</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPlainTextEdit" name="balancing_next_move_text"/>
+              </item>
+             </layout>
+            </widget>
            </widget>
           </widget>
          </item>

@@ -15,7 +15,10 @@ class Ship {
         std::vector<std::string> Names;
         std::string manifest_name = ""; 
 
+
     public: 
+        std::vector<std::string> saved_states; // printed ship states
+        std::vector<std::pair<int,int>> balanced_list;
         // constructors 
         Ship() {}; 
 
@@ -69,11 +72,14 @@ class Ship {
         int load_unload_ship();
 
         /* Option 10 - Balgitance */
-        std::vector<std::pair<int,int>> balance_list();
+        std::vector<std::pair<int,int>> create_balance_list();
+        int balance_list(std::vector<std::pair<int,int>> &);
 
         std::string swap_coordinates(std::pair<int,int>& coord1, std::pair<int,int>& coord2);
 
         void save_ship_states(std::vector<std::string> &, std::vector<std::pair<int, int>> );
+        void save_ship_states(std::vector<std::pair<int, int>> );
+
 
         /* Option q - Already built into the main.cpp source file */
         // ---
