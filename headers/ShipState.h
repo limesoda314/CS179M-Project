@@ -1,5 +1,5 @@
-#ifndef BALANCE__H
-#define BALANCE__H
+#ifndef SHIP_STATE__H
+#define SHIP_STATE__H
 
 #include <iostream>
 #include <vector>

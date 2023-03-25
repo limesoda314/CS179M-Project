@@ -1,5 +1,7 @@
 ## Notes 
 
+C:\Users\lime\Documents\CS179M\CS179M-Project\Manifests\ShipCase1.txt
+
 ### inputs 
 - inbound manifest 
 - transfer list 

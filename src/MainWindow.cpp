@@ -25,6 +25,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->connect(ui->balancing_manifest_button, &QPushButton::clicked, this, &MainWindow::load_manifest_balance_clicked);
     this->connect(ui->manifest_status_load_manifest_button, &QPushButton::clicked, this, &MainWindow::load_manifest_status_clicked);
     this->connect(ui->manifest_status_view_ship_button, &QPushButton::clicked, this, &MainWindow::refresh_view_ship_clicked);
+    this->connect(ui->balancing_start_button, &QPushButton::clicked, this, &MainWindow::generate_balancing_states_clicked);
 
 }
 
@@ -133,7 +134,7 @@ void MainWindow::refresh_logfile_output_clicked() {
     return;
 }
 
-
+// --------------------------manifest status - print current ship---------------------------------
 void MainWindow::refresh_view_ship_clicked() {
     std::cout << "refresh ship" << std::endl;
 
@@ -151,6 +152,7 @@ void MainWindow::refresh_view_ship_clicked() {
 
     return;
 }
+// ---------------------------balance - load manifest----------------------------------
 
 void MainWindow::load_manifest_balance_clicked() {
     std::cout << "load manifest clicked" << std::endl;
@@ -168,6 +170,8 @@ void MainWindow::load_manifest_balance_clicked() {
 
     logger->logRawComment(comment);
 }
+
+// ----------------------------manifest status - load manifest---------------------------------------------------
 void MainWindow::load_manifest_status_clicked() {
     std::cout << "load manifest clicked" << std::endl;
     QString filepathQ = this->ui->manifest_status_manifest_path->text();
@@ -185,7 +189,7 @@ void MainWindow::load_manifest_status_clicked() {
     logger->logRawComment(comment);
 }
 
-
+// ---------------------------load/unload - load manifest----------------------------------
 void MainWindow::load_manifest_onload_clicked() {
     std::cout << "load manifest clicked" << std::endl;
     QString filepathQ = this->ui->onload_offload_manifest_path->text();
@@ -201,5 +205,24 @@ void MainWindow::load_manifest_onload_clicked() {
     std::string comment = "Uploaded Manifest " + manifestShip->get_manifest_name() + ".txt";
 
     logger->logRawComment(comment);
+}
+
+
+// -------------------------balance - generate ship states----------------------------------------------------------------
+void MainWindow::generate_balancing_states_clicked() {
+
+    if (manifestShip->get_manifest_name().size() == 0) {
+        std::cout << "Error: manifest empty."  << std::endl;
+        return;
+    }
+    std::vector<std::string> saved_states;
+
+    manifestShip->save_ship_states(saved_states, manifestShip->balance_list());
+
+    this->ui->balancing_plain_text->setPlainText(QString::fromStdString(saved_states.at(0)));
+
+    //this->ui->balancing_plain_text->clear();
+    //this->ui->balancing_plain_text->setPlainText(QString::fromStdString(saved_states.at(1)));
+
 }
 
