@@ -45,7 +45,7 @@ class ShippingPortDriver {
         
         void defaultTest();
 
-        void balance_ship();
+        void balance_ship(std::vector<std::pair<int, int>>&);
 
         void drawBalanceList(std::ostream&) const;
 };

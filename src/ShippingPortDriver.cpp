@@ -126,7 +126,6 @@ void ShippingPortDriver::menu() {
             else {
                 this->ship->read_manifest();
             }
-            
         }
         else if (option == '3') {
             if (this->ship->get_manifest_name() == "") {
@@ -169,7 +168,18 @@ void ShippingPortDriver::menu() {
             if (this->ship->get_manifest_name() == "") {
                 std::cout << "Load a manifest first" << std::endl; 
             } else {
-                this->balance_ship();
+                std::vector<std::pair<int, int>> return_vector;
+
+                this->balance_ship(return_vector);
+
+                std::cout << "printing from the GUI" << std::endl;
+
+                std::cout << "{ ";
+                for (int i = 0; i < return_vector.size(); i++) {
+                    std::cout << "(" << return_vector.at(i).first << ","
+                              << return_vector.at(i).second << "), ";
+                }
+                std::cout << " }" << std::endl;
             }
         }
         else if (option == '9') {
@@ -234,7 +244,9 @@ void ShippingPortDriver::defaultTest() {
 
 }
 
-void ShippingPortDriver::balance_ship() {
+void ShippingPortDriver::balance_ship(
+    std::vector<std::pair<int, int>>& send_back
+) {
 
     std::cout << "Attempting to balance ship. Loading..." << std::endl;
 
@@ -258,6 +270,7 @@ void ShippingPortDriver::balance_ship() {
         solution->draw(std::cout);
         std::cout << "\n";
         this->printPath(std::cout, solution, 0);
+        send_back = this->balance_list;
         this->drawBalanceList(std::cout);
     }
     else {
