@@ -4,7 +4,7 @@
 #include <QMainWindow>
 #include <QtWidgets>
 #include <QLayout>
-#include "Ship.h"
+#include "ShippingPortDriver.h"
 #include <QVBoxLayout>
 
 class Logger;
@@ -22,8 +22,10 @@ class MainWindow : public QMainWindow
         ~MainWindow();
 
         Logger* logger;
-        Ship *manifestShip;
-        
+        ShippingPortDriver* shipDriver;
+        std::vector<std::pair<int, int>> GUI_balanced_list;
+        std::vector<std::string> GUI_move_save_states;
+
     private:
         Ui::MainWindow *ui;
     
@@ -42,7 +44,5 @@ class MainWindow : public QMainWindow
         void add_another_transfer_item_clicked();
         void generate_transfer_moves_clicked();
         void next_transfer_moves_clicked();
-
-
 };
 #endif // MAINWINDOW_H

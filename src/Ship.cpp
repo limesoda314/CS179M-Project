@@ -166,8 +166,8 @@ int Ship::create_outbound(std::string file_path) {
 
 int Ship::log_comment(const std::string &comment) {
     std::string filepath = "logfiles/logfile_";
-    time_t now = time(0); 
-    tm *ltm = localtime(&now);
+    time_t now = std::time(0); 
+    tm *ltm = std::localtime(&now);
     filepath += std::to_string(1900 + ltm->tm_year) + ".txt";  
     
     std::ofstream fout(filepath, std::ios_base::app); 
@@ -290,74 +290,82 @@ double Ship::balance_score() const {
     return balance;
 }
 
+// OLD, for debugging purposes
+std::vector<std::pair<int,int>> Ship::balance_list() {
 
-int Ship::balance_ship() {
+    std::vector<std::pair<int,int>> balance_pair_list = {{1,2},{1,11}, {1,3}, {2,11}, {2,11},{1,10}};
+    return balance_pair_list;
 
-    std::vector<std::pair<int, int>> left_items;    // mass values, coord index
-    std::vector<std::pair<int, int>> right_items;   // mass values, coord index 
-    std::vector<std::pair<int,int>> heavier_side;
-    std::vector<int> possible_spaces;          // vector of indices of possible free spaces to move items to 
-    std::vector<int> best_index;               // corresponds to heavier_side; stores index from possible_spaces, value at this index in possible_spaces is the best space to move to 
-    std::vector<double> best_manhattan;        // corresponds to heavier_side; stores value of best manhattan 
+}
+
+//// // legacy code
+//int Ship::balance_ship() {
+
+//    std::vector<std::pair<int, int>> left_items;    // mass values, coord index
+//    std::vector<std::pair<int, int>> right_items;   // mass values, coord index
+//    std::vector<std::pair<int,int>> heavier_side;
+//    std::vector<int> possible_spaces;          // vector of indices of possible free spaces to move items to
+//    std::vector<int> best_index;               // corresponds to heavier_side; stores index from possible_spaces, value at this index in possible_spaces is the best space to move to
+//    std::vector<double> best_manhattan;        // corresponds to heavier_side; stores value of best manhattan
     
-    double right_mass = 0; 
-    double left_mass = 0; 
+//    double right_mass = 0;
+//    double left_mass = 0;
     
-    // put items into left and right list
-    // first is the mass value 
-    // second is the coordinate index 
-    for (int i = 0; i < Coordinates.size(); i++) {
+//    // put items into left and right list
+//    // first is the mass value
+//    // second is the coordinate index
+//    for (int i = 0; i < Coordinates.size(); i++) {
  
-        if (Names.at(i) != "NAN" && Names.at(i) != "UNUSED") {
-            if (Coordinates.at(i).second <= 6) {
-                left_items.push_back(std::pair<int, int> (stoi(Mass.at(i)), i));
-                left_mass+= stoi(Mass.at(i));
-            }
-            else {
-                right_items.push_back(std::pair<int, int> (stoi(Mass.at(i)), i));
-                right_mass += stoi(Mass.at(i)); 
-            }
-        }
-    }
+//        if (Names.at(i) != "NAN" && Names.at(i) != "UNUSED") {
+//            if (Coordinates.at(i).second <= 6) {
+//                left_items.push_back(std::pair<int, int> (stoi(Mass.at(i)), i));
+//                left_mass+= stoi(Mass.at(i));
+//            }
+//            else {
+//                right_items.push_back(std::pair<int, int> (stoi(Mass.at(i)), i));
+//                right_mass += stoi(Mass.at(i));
+//            }
+//        }
+//    }
 
      
-    if (left_mass > right_mass) {
-        heavier_side = left_items; 
-    }
-    else {
-        heavier_side = right_items; 
-    }
+//    if (left_mass > right_mass) {
+//        heavier_side = left_items;
+//    }
+//    else {
+//        heavier_side = right_items;
+//    }
 
-    print_balance_info(left_items, right_items, left_mass, right_mass); 
+//    print_balance_info(left_items, right_items, left_mass, right_mass);
 
-    // calculate the possible spaces to place the items 
-    calculate_possible_places(possible_spaces, right_mass, left_mass); 
+//    // calculate the possible spaces to place the items
+//    calculate_possible_places(possible_spaces, right_mass, left_mass);
 
-    // calculate best coordinates for heavier side based on the possible spaces and best manhattann  
-    calculate_best_manhattan(heavier_side, best_index, best_manhattan, possible_spaces); 
+//    // calculate best coordinates for heavier side based on the possible spaces and best manhattann
+//    calculate_best_manhattan(heavier_side, best_index, best_manhattan, possible_spaces);
 
-    // calculate which item to sacrifice 
-    int sacrifice_index = 0;                // index in the list 
-    int best_man = best_manhattan.at(0);  
+//    // calculate which item to sacrifice
+//    int sacrifice_index = 0;                // index in the list
+//    int best_man = best_manhattan.at(0);
 
-    // calculates the best place to move 
-    // saves index and manhattan 
-    calculate_best_place(sacrifice_index, best_man, best_index, best_manhattan, heavier_side); 
+//    // calculates the best place to move
+//    // saves index and manhattan
+//    calculate_best_place(sacrifice_index, best_man, best_index, best_manhattan, heavier_side);
 
-    // based on the sacrifice index and best index to move to
-    // we swap the mass, names, and update the lists 
-    calculate_swap_coordinates(left_mass, right_mass, sacrifice_index, best_index, left_items, right_items); 
+//    // based on the sacrifice index and best index to move to
+//    // we swap the mass, names, and update the lists
+//    calculate_swap_coordinates(left_mass, right_mass, sacrifice_index, best_index, left_items, right_items);
     
     
-    std::cout << "-----------------UPDATED INFO AFTER MOVING ITEM----------------------------" << std::endl; 
+//    std::cout << "-----------------UPDATED INFO AFTER MOVING ITEM----------------------------" << std::endl;
     
-    double balance = print_balance_info(left_items, right_items, left_mass, right_mass); 
+//    double balance = print_balance_info(left_items, right_items, left_mass, right_mass);
     
-    std::string comment = "Balanced ship. Balance factor is now " + std::to_string(balance); 
-    log_comment(comment); 
-    return 0; 
+//    std::string comment = "Balanced ship. Balance factor is now " + std::to_string(balance);
+//    log_comment(comment);
+//    return 0;
     
-}
+//}
 
 void Ship::calculate_possible_places(std::vector<int> &possible_spaces, int right_mass, int left_mass) {
     
@@ -546,19 +554,19 @@ int Ship::load_unload_ship() {
     return 0; // 0 if no error happened
 }
 
+// OLD, for debugging
+// std::vector<std::pair<int,int>> Ship::create_balance_list() {
 
-std::vector<std::pair<int,int>> Ship::create_balance_list() {
+//     std::vector<std::pair<int,int>> balance_pair_list = {{1,2},{1,11}, {1,3}, {2,11}, {2,11},{1,10}};
+//     return balance_pair_list;
 
-    std::vector<std::pair<int,int>> balance_pair_list = {{1,2},{1,11}, {1,3}, {2,11}, {2,11},{1,10}};
-    return balance_pair_list;
+// }
 
-}
-
-
-int Ship::balance_list(std::vector< std::pair<int,int> > &bal_list) {
-    bal_list = {{1,2},{1,11}, {1,3}, {2,11}, {2,11},{1,10}};
-    return 0;
-}
+// OLD, for debugging
+// int Ship::balance_list(std::vector< std::pair<int,int> > &bal_list) {
+//     bal_list = {{1,2},{1,11}, {1,3}, {2,11}, {2,11},{1,10}};
+//     return 0;
+// }
 
 
 std::vector<std::pair<int,int>> Ship::create_transfer_moves() {
@@ -602,7 +610,7 @@ void Ship::save_ship_states(std::vector<std::string> &saved_states_list, std::ve
 
 }
 
-void Ship::save_ship_states(std::vector<std::pair<int,int> > move_list) {
+void Ship::save_ship_states(std::vector<std::pair<int,int>> move_list) {
 
     this->saved_states.push_back(print_ship());
     for (int i = 0; i < move_list.size() -1; i++) {
@@ -611,7 +619,6 @@ void Ship::save_ship_states(std::vector<std::pair<int,int> > move_list) {
     }
 
 }
-
 
 int Ship::num_boxes() const {
     int sum = 0;

@@ -4,7 +4,6 @@
 #include <QtWidgets>
 
 #include "../headers/Logger.h"
-#include "../headers/Ship.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -13,7 +12,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     this->logger = new Logger(this);
-    this->manifestShip = new Ship();
+    this->shipDriver = new ShippingPortDriver();
 
     QPushButton tmp;
 
@@ -83,6 +82,9 @@ void MainWindow::add_comment_clicked() {
         this->ui->add_comment_text_box->setPlaceholderText("Error: Please input a valid name.");
         return;
     }
+    
+    // clear the plain text editor
+    this->ui->add_comment_text_box->setPlainText(QString::fromStdString(""));
 
     // set the current logger string to commentString
 
@@ -152,12 +154,12 @@ void MainWindow::refresh_view_ship_clicked() {
 //    QVBoxLayout* newLayout = new QVBoxLayout();
 //    QPlainTextEdit* myPlainTextBox = new QPlainTextEdit();
 
-    if (manifestShip->get_manifest_name().size() == 0) {
+    if (this->shipDriver->getShip()->get_manifest_name().size() == 0) {
         std::cout << "Error: manifest empty."  << std::endl;
         return;
     }
 
-    std::string ship_view = manifestShip->print_ship();
+    std::string ship_view = this->shipDriver->getShip()->print_ship();
 
     this->ui->manifest_status_view_ship_text->setPlainText(QString::fromStdString(ship_view));
 
@@ -175,10 +177,10 @@ void MainWindow::load_manifest_balance_clicked() {
         return;
     }
 
-    this->manifestShip->load_manifest(filepath);
+    this->shipDriver->getShip()->load_manifest(filepath);
 
-    std::string comment = "Opened Manifest " + manifestShip->get_manifest_name() + ".txt. There are ";
-    comment += std::to_string(manifestShip->num_boxes());
+    std::string comment = "Opened Manifest " + this->shipDriver->getShip()->get_manifest_name() + ".txt. There are ";
+    comment += std::to_string(this->shipDriver->getShip()->num_boxes());
     comment += " containers on the ship.";
 
     logger->logRawComment(comment);
@@ -195,10 +197,10 @@ void MainWindow::load_manifest_status_clicked() {
         return;
     }
 
-    this->manifestShip->load_manifest(filepath);
+    this->shipDriver->getShip()->load_manifest(filepath);
 
-    std::string comment = "Opened Manifest " + manifestShip->get_manifest_name() + ".txt. There are ";
-    comment += std::to_string(manifestShip->num_boxes());
+    std::string comment = "Opened Manifest " + this->shipDriver->getShip()->get_manifest_name() + ".txt. There are ";
+    comment += std::to_string(this->shipDriver->getShip()->num_boxes());
     comment += " containers on the ship.";
 
     logger->logRawComment(comment);
@@ -215,10 +217,10 @@ void MainWindow::load_manifest_onload_clicked() {
         return;
     }
 
-    this->manifestShip->load_manifest(filepath);
+    this->shipDriver->getShip()->load_manifest(filepath);
 
-    std::string comment = "Opened Manifest " + manifestShip->get_manifest_name() + ".txt. There are ";
-    comment += std::to_string(manifestShip->num_boxes());
+    std::string comment = "Opened Manifest " + this->shipDriver->getShip()->get_manifest_name() + ".txt. There are ";
+    comment += std::to_string(this->shipDriver->getShip()->num_boxes());
     comment += " containers on the ship.";
 
     logger->logRawComment(comment);
@@ -228,110 +230,107 @@ void MainWindow::load_manifest_onload_clicked() {
 // -------------------------balance - generate ship states----------------------------------------------------------------
 void MainWindow::generate_balancing_states_clicked() {
 
-    if (manifestShip->get_manifest_name().size() == 0) {
+    if (this->shipDriver->getShip()->get_manifest_name().size() == 0) {
         std::cout << "Error: manifest empty."  << std::endl;
         return;
     }
 
-    manifestShip->balance_list(manifestShip->balanced_list);
-    manifestShip->save_ship_states(manifestShip->balanced_list);
+    this->shipDriver->balance_ship(this->GUI_balanced_list);
+    this->shipDriver->getShip()->save_ship_states(this->GUI_move_save_states, this->GUI_balanced_list);
 
-    std::reverse(manifestShip->balanced_list.begin(), manifestShip->balanced_list.end());
-    std::reverse(manifestShip->saved_states.begin(), manifestShip->saved_states.end());
+    std::reverse(this->GUI_move_save_states.begin()  , this->GUI_move_save_states.end());
+    std::reverse(this->GUI_balanced_list.begin()     , this->GUI_balanced_list.end());
 
 //    for (int i = 0; i < manifestShip->balanced_list.size(); i++) {
 //        std::cout << manifestShip->balanced_list.at(i).first << ", " << manifestShip->balanced_list.at(i).second << std::endl;
 //    }
 
-    if (manifestShip->saved_states.size() < 2) {
+    if (this->GUI_move_save_states.size() < 2) {
+
         this->ui->balancing_plain_text->clear();
 
         std::string balance_info = "Finished balancing Ship! Manifest \n";
-        balance_info += manifestShip->get_manifest_name();
+        balance_info += this->shipDriver->getShip()->get_manifest_name();
         balance_info += "OUTBOUND.txt was written to desktop. email file.\n";
-        balance_info += manifestShip->print_ship();
+        balance_info += this->shipDriver->getShip()->print_ship();
 
         balance_info += "\nbalance factor: ";
-        balance_info += std::to_string(manifestShip->balance_score());
+        balance_info += std::to_string(this->shipDriver->getShip()->balance_score());
         balance_info += "\n";
-        balance_info += manifestShip->print_ship();
+        balance_info += this->shipDriver->getShip()->print_ship();
         this->ui->balancing_plain_text->setPlainText(QString::fromStdString(balance_info));
 
+        QString outbound_filepath = QString("%1/").arg(QStandardPaths::writableLocation(QStandardPaths::DesktopLocation));
 
-        QString outbound_filepath =
-                  QString("%1/").arg(QStandardPaths::writableLocation(QStandardPaths::DesktopLocation));
-        manifestShip->create_outbound(outbound_filepath.toStdString());
+        this->shipDriver->getShip()->create_outbound(outbound_filepath.toStdString());
 
-        std::string comment = "Finished a cycle. Manifest " + manifestShip->get_manifest_name() + "OUTBOUND.txt was written to desktop, and a reminder pop-up to operator to send file was displayed.";
+        std::string comment = "Finished a cycle. Manifest " + this->shipDriver->getShip()->get_manifest_name() + "OUTBOUND.txt was written to desktop, and a reminder pop-up to operator to send file was displayed.";
         logger->logRawComment(comment);
     }
     else {
-        manifestShip->move_num.first = manifestShip->balanced_list.size()/2;
-        manifestShip->move_num.second = 1;
+        this->shipDriver->getShip()->move_num.first = this->shipDriver->getShip()->balanced_list.size()/2;
+        this->shipDriver->getShip()->move_num.second = 1;
         std::string move_instru = "Now doing move number ";
-        move_instru += std::to_string(manifestShip->move_num.second);
+        move_instru += std::to_string(this->shipDriver->getShip()->move_num.second);
         move_instru += " of ";
-        move_instru += std::to_string(manifestShip->move_num.first);
+        move_instru += std::to_string(this->shipDriver->getShip()->move_num.first);
         move_instru += ". Move (";
-        move_instru += std::to_string(manifestShip->balanced_list.at(manifestShip->balanced_list.size()-1).first);
+        move_instru += std::to_string(this->GUI_balanced_list.at(this->GUI_balanced_list.size()-1).first);
         move_instru += ", ";
-        move_instru += std::to_string(manifestShip->balanced_list.at(manifestShip->balanced_list.size()-1).second);
+        move_instru += std::to_string(this->GUI_balanced_list.at(this->GUI_balanced_list.size()-1).second);
         move_instru += ") to (";
-        move_instru += std::to_string(manifestShip->balanced_list.at(manifestShip->balanced_list.size()-2).first);
+        move_instru += std::to_string(this->GUI_balanced_list.at(this->GUI_balanced_list.size()-2).first);
         move_instru += ", ";
-        move_instru += std::to_string(manifestShip->balanced_list.at(manifestShip->balanced_list.size()-2).second);
+        move_instru += std::to_string(this->GUI_balanced_list.at(this->GUI_balanced_list.size()-2).second);
         move_instru += ")\n";
-        manifestShip->balanced_list.pop_back();
-        manifestShip->balanced_list.pop_back();
-        manifestShip->move_num.second++;
-
+        this->GUI_balanced_list.pop_back();
+        this->GUI_balanced_list.pop_back();
+        this->shipDriver->getShip()->move_num.second++;
 
         this->ui->balancing_next_move_text->setPlainText(QString::fromStdString(move_instru));
 
-
-        int manifestsize =  this->manifestShip->saved_states.size();
+        int manifestsize =  this->shipDriver->getShip()->saved_states.size();
 
         std::string first_move = "Current Ship State\n\n";
-        first_move += this->manifestShip->saved_states.at(manifestsize-1);
+        first_move += this->shipDriver->getShip()->saved_states.at(manifestsize-1);
         first_move += "\n------------------------------------------------------------\n\n";
         first_move += "After Moving\n";
-        first_move += this->manifestShip->saved_states.at(manifestsize-2);
+        first_move += this->shipDriver->getShip()->saved_states.at(manifestsize-2);
 
         this->ui->balancing_plain_text->setPlainText(QString::fromStdString(first_move));
-        this->manifestShip->saved_states.pop_back();
-        this->manifestShip->saved_states.pop_back();
+        this->shipDriver->getShip()->saved_states.pop_back();
+        this->shipDriver->getShip()->saved_states.pop_back();
     }
 
     //this->ui->balancing_plain_text->clear();
     //this->ui->balancing_plain_text->setPlainText(QString::fromStdString(saved_states.at(1)));
-
 }
 
 void MainWindow::load_next_balance_states_clicked() {
 
-    if (this->manifestShip->get_manifest_name().size() == 0) {
+    if (this->shipDriver->getShip()->get_manifest_name().size() == 0) {
         this->ui->balancing_plain_text->setPlainText(QString::fromStdString("Error: Empty Manifest. Try loading manifest again"));
     }
 
-    if (this->manifestShip->saved_states.size() < 2) {
+    if (this->shipDriver->getShip()->saved_states.size() < 2) {
         this->ui->balancing_plain_text->clear();
 
         std::string balance_info = "Finished balancing Ship! Manifest \n";
-        balance_info += manifestShip->get_manifest_name();
+        balance_info += shipDriver->getShip()->get_manifest_name();
         balance_info += "OUTBOUND.txt was written to desktop. email file.\n";
-        balance_info += manifestShip->print_ship();
+        balance_info += shipDriver->getShip()->print_ship();
 
         balance_info += "\nbalance factor: ";
-        balance_info += std::to_string(manifestShip->balance_score());
+        balance_info += std::to_string(shipDriver->getShip()->balance_score());
         balance_info += "\n";
-        balance_info += manifestShip->print_ship();
+        balance_info += shipDriver->getShip()->print_ship();
         this->ui->balancing_plain_text->setPlainText(QString::fromStdString(balance_info));
 
         QString outbound_filepath =
                   QString("%1/").arg(QStandardPaths::writableLocation(QStandardPaths::DesktopLocation));
-        manifestShip->create_outbound(outbound_filepath.toStdString());
+        shipDriver->getShip()->create_outbound(outbound_filepath.toStdString());
 
-        std::string comment = "Finished a cycle. Manifest " + manifestShip->get_manifest_name() + "OUTBOUND.txt was written to desktop, and a reminder pop-up to operator to send file was displayed.";
+        std::string comment = "Finished a cycle. Manifest " + shipDriver->getShip()->get_manifest_name() + "OUTBOUND.txt was written to desktop, and a reminder pop-up to operator to send file was displayed.";
 
         logger->logRawComment(comment);
     }
@@ -339,50 +338,49 @@ void MainWindow::load_next_balance_states_clicked() {
         this->ui->balancing_next_move_text->clear();
 
         std::string move_instru = "Now doing move number ";
-        move_instru += std::to_string(manifestShip->move_num.second);
+        move_instru += std::to_string(shipDriver->getShip()->move_num.second);
         move_instru += " of ";
-        move_instru += std::to_string(manifestShip->move_num.first);
+        move_instru += std::to_string(shipDriver->getShip()->move_num.first);
         move_instru += ". Move (";
-        move_instru += std::to_string(manifestShip->balanced_list.at(manifestShip->balanced_list.size()-1).first);
+        move_instru += std::to_string(this->GUI_balanced_list.at(this->GUI_balanced_list.size()-1).first);
         move_instru += ", ";
-        move_instru += std::to_string(manifestShip->balanced_list.at(manifestShip->balanced_list.size()-1).second);
+        move_instru += std::to_string(this->GUI_balanced_list.at(this->GUI_balanced_list.size()-1).second);
         move_instru += ") to (";
-        move_instru += std::to_string(manifestShip->balanced_list.at(manifestShip->balanced_list.size()-2).first);
+        move_instru += std::to_string(this->GUI_balanced_list.at(this->GUI_balanced_list.size()-2).first);
         move_instru += ", ";
-        move_instru += std::to_string(manifestShip->balanced_list.at(manifestShip->balanced_list.size()-2).second);
+        move_instru += std::to_string(this->GUI_balanced_list.at(this->GUI_balanced_list.size()-2).second);
         move_instru += ")\n";
-        manifestShip->move_num.second++;
+        this->shipDriver->getShip()->move_num.second++;
 
-        if (this->manifestShip->balanced_list.size() >= 2) {
-            manifestShip->balanced_list.pop_back();
-            manifestShip->balanced_list.pop_back();
+        if (this->GUI_balanced_list.size() >= 2) {
+            this->GUI_balanced_list.pop_back();
+            this->GUI_balanced_list.pop_back();
         }
 
 
         this->ui->balancing_next_move_text->setPlainText(QString::fromStdString(move_instru));
 
         this->ui->balancing_plain_text->clear();
-        int manifestsize =  this->manifestShip->saved_states.size();
+        int manifestsize =  this->shipDriver->getShip()->saved_states.size();
         std::string next_move = "Current Ship State\n\n";
-        next_move += this->manifestShip->saved_states.at(manifestsize-1);
+        next_move += this->shipDriver->getShip()->saved_states.at(manifestsize-1);
         next_move += "\n------------------------------------------------------------\n\n";
         next_move += "After Moving\n";
-        next_move += this->manifestShip->saved_states.at(manifestsize-2);
+        next_move += this->shipDriver->getShip()->saved_states.at(manifestsize-2);
 
-        if (this->manifestShip->saved_states.size() == 2) {
+        if (this->shipDriver->getShip()->saved_states.size() == 2) {
             next_move += "\n\nFinished! Ship balanced!";
         }
 
         this->ui->balancing_plain_text->setPlainText(QString::fromStdString(next_move));
 
-        this->manifestShip->saved_states.pop_back();
-        this->manifestShip->saved_states.pop_back();
+        this->shipDriver->getShip()->saved_states.pop_back();
+        this->shipDriver->getShip()->saved_states.pop_back();
     }
 }
 
-
 void MainWindow::input_transfer_list_clicked() {
-    if (manifestShip->get_manifest_name().size() == 0) {
+    if (shipDriver->getShip()->get_manifest_name().size() == 0) {
         this->ui->Onload_offload_popup->hide();
         this->ui->onload_offload_textbox->clear();
         this->ui->onload_offload_textbox->setPlainText(QString::fromStdString("Please input manifest first"));
@@ -408,8 +406,8 @@ void MainWindow::submit_transfer_list_clicked() {
     if (unloadname.size() !=0 && unloadquantity.size() != 0) {
         // at max we have 96 containers
         if (unloadquantity.size() <=2) {
-            manifestShip->unload_names.push_back(unloadname);
-            manifestShip->unload_quantity.push_back(unloadquantity);
+            shipDriver->getShip()->unload_names.push_back(unloadname);
+            shipDriver->getShip()->unload_quantity.push_back(unloadquantity);
             std::cout << "unload quantity: " << unloadquantity << std::endl;
             std::cout << "unload name: " << unloadname << std::endl;
 
@@ -431,9 +429,9 @@ void MainWindow::submit_transfer_list_clicked() {
     std::string loadmass= loadQmass.toStdString();
     if (unloadname.size() !=0 && unloadquantity.size() != 0) {
         if (loadmass.size() <= 5) {
-            manifestShip->load_mass.push_back(loadmass);
-            manifestShip->load_mass.push_back(loadmass);
-            manifestShip->load_names.push_back(loadname);
+            shipDriver->getShip()->load_mass.push_back(loadmass);
+            shipDriver->getShip()->load_mass.push_back(loadmass);
+            shipDriver->getShip()->load_names.push_back(loadname);
             std::cout << "load mass: " << loadmass << std::endl;
             std::cout << "load name: " <<loadname << std::endl;
 
@@ -463,8 +461,8 @@ void MainWindow::add_another_transfer_item_clicked() {
     std::string unloadquantity= unloadQquantity.toStdString();
     if (unloadname.size() !=0 && unloadquantity.size() != 0) {
         if (unloadquantity.size() <=2) {
-            manifestShip->unload_names.push_back(unloadname);
-            manifestShip->unload_quantity.push_back(unloadquantity);
+            shipDriver->getShip()->unload_names.push_back(unloadname);
+            shipDriver->getShip()->unload_quantity.push_back(unloadquantity);
             std::cout << "unload quantity: " << unloadquantity << std::endl;
             std::cout << "unload name: " << unloadname << std::endl;
         }
@@ -483,9 +481,9 @@ void MainWindow::add_another_transfer_item_clicked() {
     std::string loadmass= loadQmass.toStdString();
     if (unloadname.size() !=0 && unloadquantity.size() != 0) {
         if (loadmass.size() <= 5) {
-            manifestShip->load_mass.push_back(loadmass);
-            manifestShip->load_mass.push_back(loadmass);
-            manifestShip->load_names.push_back(loadname);
+            shipDriver->getShip()->load_mass.push_back(loadmass);
+            shipDriver->getShip()->load_mass.push_back(loadmass);
+            shipDriver->getShip()->load_names.push_back(loadname);
             std::cout << "load mass: " << loadmass << std::endl;
             std::cout << "load name: " <<loadname << std::endl;
         }
@@ -509,74 +507,74 @@ void MainWindow::add_another_transfer_item_clicked() {
 
 void MainWindow::generate_transfer_moves_clicked() {
 
-    if (manifestShip->get_manifest_name().size() == 0) {
+    if (shipDriver->getShip()->get_manifest_name().size() == 0) {
         std::cout << "Error: manifest empty."  << std::endl;
         return;
     }
-    if (manifestShip->unload_names.size() == 0 && manifestShip->load_names.size() == 0) {
+    if (shipDriver->getShip()->unload_names.size() == 0 && shipDriver->getShip()->load_names.size() == 0) {
         std::cout << "Error: no moves to calculate" << std::endl;
         return;
     }
 
     //
-    manifestShip->create_transfer_list(manifestShip->transfer_moves);
-    manifestShip->save_ship_states(manifestShip->transfer_moves);
+    shipDriver->getShip()->create_transfer_list(this->shipDriver->getShip()->transfer_moves);
+    shipDriver->getShip()->save_ship_states(this->shipDriver->getShip()->transfer_moves);
 
-    std::reverse(manifestShip->transfer_moves.begin(), manifestShip->transfer_moves.end());
-    std::reverse(manifestShip->saved_states.begin(), manifestShip->saved_states.end());
+    std::reverse(shipDriver->getShip()->transfer_moves.begin(), shipDriver->getShip()->transfer_moves.end());
+    std::reverse(shipDriver->getShip()->saved_states.begin(), shipDriver->getShip()->saved_states.end());
 
 
-    if (manifestShip->saved_states.size() < 2) {
+    if (shipDriver->getShip()->saved_states.size() < 2) {
         std::string transfer_info = "Finished Unloading and Loading! Manifest \n";
-        transfer_info += manifestShip->get_manifest_name();
+        transfer_info += shipDriver->getShip()->get_manifest_name();
         transfer_info += "OUTBOUND.txt was written to desktop. email file.\n";
-        transfer_info += manifestShip->print_ship();
+        transfer_info += shipDriver->getShip()->print_ship();
         this->ui->onload_offload_textbox->setPlainText(QString::fromStdString(transfer_info));
         this->ui->transfer_update_coords_text->clear();
         this->ui->transfer_update_coords_text->setPlainText(QString::fromStdString("No more moves!"));
 
         QString outbound_filepath =
                   QString("%1/").arg(QStandardPaths::writableLocation(QStandardPaths::DesktopLocation));
-        manifestShip->create_outbound(outbound_filepath.toStdString());
-        std::string comment = "Finished a cycle. Manifest " + manifestShip->get_manifest_name() + "OUTBOUND.txt was written to desktop, and a reminder pop-up to operator to send file was displayed.";
+        shipDriver->getShip()->create_outbound(outbound_filepath.toStdString());
+        std::string comment = "Finished a cycle. Manifest " + shipDriver->getShip()->get_manifest_name() + "OUTBOUND.txt was written to desktop, and a reminder pop-up to operator to send file was displayed.";
 
         logger->logRawComment(comment);
     }
     else {
-        manifestShip->move_num.first = manifestShip->transfer_moves.size() / 2;
-        manifestShip->move_num.second = 1;
+        shipDriver->getShip()->move_num.first = shipDriver->getShip()->transfer_moves.size() / 2;
+        shipDriver->getShip()->move_num.second = 1;
         std::string move_instru = "Now doing move number ";
-        move_instru += std::to_string(manifestShip->move_num.second);
+        move_instru += std::to_string(shipDriver->getShip()->move_num.second);
         move_instru += " of ";
-        move_instru += std::to_string(manifestShip->move_num.first);
+        move_instru += std::to_string(shipDriver->getShip()->move_num.first);
         move_instru += ". Move (";
-        move_instru += std::to_string(manifestShip->transfer_moves.at(manifestShip->transfer_moves.size()-1).first);
+        move_instru += std::to_string(shipDriver->getShip()->transfer_moves.at(this->shipDriver->getShip()->transfer_moves.size()-1).first);
         move_instru += ", ";
-        move_instru += std::to_string(manifestShip->transfer_moves.at(manifestShip->transfer_moves.size()-1).second);
+        move_instru += std::to_string(shipDriver->getShip()->transfer_moves.at(this->shipDriver->getShip()->transfer_moves.size()-1).second);
         move_instru += ") to (";
-        move_instru += std::to_string(manifestShip->transfer_moves.at(manifestShip->transfer_moves.size()-2).first);
+        move_instru += std::to_string(shipDriver->getShip()->transfer_moves.at(this->shipDriver->getShip()->transfer_moves.size()-2).first);
         move_instru += ", ";
-        move_instru += std::to_string(manifestShip->transfer_moves.at(manifestShip->transfer_moves.size()-2).second);
+        move_instru += std::to_string(shipDriver->getShip()->transfer_moves.at(this->shipDriver->getShip()->transfer_moves.size()-2).second);
         move_instru += ")\n";
-        manifestShip->transfer_moves.pop_back();
-        manifestShip->transfer_moves.pop_back();
-        manifestShip->move_num.second++;
+        shipDriver->getShip()->transfer_moves.pop_back();
+        shipDriver->getShip()->transfer_moves.pop_back();
+        shipDriver->getShip()->move_num.second++;
 
 
         this->ui->transfer_update_coords_text->setPlainText(QString::fromStdString(move_instru));
 
 
-        int manifestsize =  this->manifestShip->saved_states.size();
+        int manifestsize =  this->shipDriver->getShip()->saved_states.size();
 
         std::string first_move = "Current Ship State\n\n";
-        first_move += this->manifestShip->saved_states.at(manifestsize-1);
+        first_move += this->shipDriver->getShip()->saved_states.at(manifestsize-1);
         first_move += "\n------------------------------------------------------------\n\n";
         first_move += "After Moving\n";
-        first_move += this->manifestShip->saved_states.at(manifestsize-2);
+        first_move += this->shipDriver->getShip()->saved_states.at(manifestsize-2);
 
         this->ui->onload_offload_textbox->setPlainText(QString::fromStdString(first_move));
-        this->manifestShip->saved_states.pop_back();
-        this->manifestShip->saved_states.pop_back();
+        this->shipDriver->getShip()->saved_states.pop_back();
+        this->shipDriver->getShip()->saved_states.pop_back();
     }
 
     //this->ui->balancing_plain_text->clear();
@@ -586,61 +584,61 @@ void MainWindow::generate_transfer_moves_clicked() {
 
 void MainWindow::next_transfer_moves_clicked() {
 
-    if (manifestShip->get_manifest_name().size() == 0) {
+    if (shipDriver->getShip()->get_manifest_name().size() == 0) {
         std::cout << "Error: manifest empty."  << std::endl;
         return;
     }
 
-    if (manifestShip->saved_states.size() < 2) {
+    if (shipDriver->getShip()->saved_states.size() < 2) {
         std::string transfer_info = "Finished Unloading and Loading! Manifest \n";
-        transfer_info += manifestShip->get_manifest_name();
+        transfer_info += shipDriver->getShip()->get_manifest_name();
         transfer_info += "OUTBOUND.txt was written to desktop. email file.\n";
-        transfer_info += manifestShip->print_ship();
+        transfer_info += shipDriver->getShip()->print_ship();
         this->ui->onload_offload_textbox->setPlainText(QString::fromStdString(transfer_info));
         this->ui->transfer_update_coords_text->clear();
         this->ui->transfer_update_coords_text->setPlainText(QString::fromStdString("No more moves!"));
 
         QString outbound_filepath =
                   QString("%1/").arg(QStandardPaths::writableLocation(QStandardPaths::DesktopLocation));
-        manifestShip->create_outbound(outbound_filepath.toStdString());
-        std::string comment = "Finished a cycle. Manifest " + manifestShip->get_manifest_name() + "OUTBOUND.txt was written to desktop, and a reminder pop-up to operator to send file was displayed.";
+        shipDriver->getShip()->create_outbound(outbound_filepath.toStdString());
+        std::string comment = "Finished a cycle. Manifest " + shipDriver->getShip()->get_manifest_name() + "OUTBOUND.txt was written to desktop, and a reminder pop-up to operator to send file was displayed.";
 
         logger->logRawComment(comment);
     }
     else {
 
         std::string move_instru = "Now doing move number ";
-        move_instru += std::to_string(manifestShip->move_num.second);
+        move_instru += std::to_string(shipDriver->getShip()->move_num.second);
         move_instru += " of ";
-        move_instru += std::to_string(manifestShip->move_num.first); //size
+        move_instru += std::to_string(shipDriver->getShip()->move_num.first); //size
         move_instru += ". Move (";
-        move_instru += std::to_string(manifestShip->transfer_moves.at(manifestShip->transfer_moves.size()-1).first);
+        move_instru += std::to_string(shipDriver->getShip()->transfer_moves.at(this->shipDriver->getShip()->transfer_moves.size()-1).first);
         move_instru += ", ";
-        move_instru += std::to_string(manifestShip->transfer_moves.at(manifestShip->transfer_moves.size()-1).second);
+        move_instru += std::to_string(shipDriver->getShip()->transfer_moves.at(this->shipDriver->getShip()->transfer_moves.size()-1).second);
         move_instru += ") to (";
-        move_instru += std::to_string(manifestShip->transfer_moves.at(manifestShip->transfer_moves.size()-2).first);
+        move_instru += std::to_string(shipDriver->getShip()->transfer_moves.at(this->shipDriver->getShip()->transfer_moves.size()-2).first);
         move_instru += ", ";
-        move_instru += std::to_string(manifestShip->transfer_moves.at(manifestShip->transfer_moves.size()-2).second);
+        move_instru += std::to_string(shipDriver->getShip()->transfer_moves.at(this->shipDriver->getShip()->transfer_moves.size()-2).second);
         move_instru += ")\n";
-        manifestShip->transfer_moves.pop_back();
-        manifestShip->transfer_moves.pop_back();
-        manifestShip->move_num.second++;
+        shipDriver->getShip()->transfer_moves.pop_back();
+        shipDriver->getShip()->transfer_moves.pop_back();
+        shipDriver->getShip()->move_num.second++;
 
 
         this->ui->transfer_update_coords_text->setPlainText(QString::fromStdString(move_instru));
 
 
-        int manifestsize =  this->manifestShip->saved_states.size();
+        int manifestsize =  this->shipDriver->getShip()->saved_states.size();
 
         std::string first_move = "Current Ship State\n\n";
-        first_move += this->manifestShip->saved_states.at(manifestsize-1);
+        first_move += this->shipDriver->getShip()->saved_states.at(manifestsize-1);
         first_move += "\n------------------------------------------------------------\n\n";
         first_move += "After Moving\n";
-        first_move += this->manifestShip->saved_states.at(manifestsize-2);
+        first_move += this->shipDriver->getShip()->saved_states.at(manifestsize-2);
 
         this->ui->onload_offload_textbox->setPlainText(QString::fromStdString(first_move));
-        this->manifestShip->saved_states.pop_back();
-        this->manifestShip->saved_states.pop_back();
+        this->shipDriver->getShip()->saved_states.pop_back();
+        this->shipDriver->getShip()->saved_states.pop_back();
     }
 
     //this->ui->balancing_plain_text->clear();

@@ -6,3 +6,6 @@
 CMakeCache.txt
 CMakeFiles/
 *.cmake
+
+# IDE
+*.autosave

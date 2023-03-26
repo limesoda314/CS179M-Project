@@ -6,7 +6,8 @@
 #include <fstream>
 #include <string> 
 #include <algorithm> 
-
+#include <queue>
+#include <ctime>
 
 class Ship {
     private:
@@ -14,8 +15,6 @@ class Ship {
         std::vector<std::string> Mass; 
         std::vector<std::string> Names;
         std::string manifest_name = ""; 
-
-
 
     public: 
         std::vector<std::string> saved_states; // printed ship states
@@ -74,7 +73,7 @@ class Ship {
         double balance_score() const; // TODO
 
         /* Option 8 - Performs balancing operations */
-        int balance_ship(); // TODO
+        // int balance_ship();
 
         /* Option 9 - Load/Unload contains from and to ship */
         int load_unload_ship();
@@ -82,6 +81,7 @@ class Ship {
         /* Option 10 - Balance */
         std::vector<std::pair<int,int>> create_balance_list();
         int balance_list(std::vector<std::pair<int,int>> &);
+        std::vector<std::pair<int, int>> balance_list();
         /* Option 11 - Unload/load */
         std::vector<std::pair<int,int>> create_transfer_moves();
         int create_transfer_list(std::vector<std::pair<int,int>> &);
@@ -95,6 +95,9 @@ class Ship {
         void save_ship_states(std::vector<std::pair<int, int>> );
         int num_boxes() const;
 
+        std::vector<std::pair<int,int>> getCoords() const { return this->Coordinates; }
+        std::vector<std::string> getMasses() const { return this->Mass; }
+        std::vector<std::string> getNames() const { return this->Names; }
 
         /* Option q - Already built into the main.cpp source file */
         // ---
@@ -112,7 +115,6 @@ class Ship {
         double calculate_manhattan(int y_1, int x_1, int y_2, int x_2) const;  
 
     // END HELPERS
-
 }; 
 
 #endif // SHIP.H
