@@ -27,6 +27,14 @@ MainWindow::MainWindow(QWidget *parent)
     this->connect(ui->manifest_status_view_ship_button, &QPushButton::clicked, this, &MainWindow::refresh_view_ship_clicked);
     this->connect(ui->balancing_start_button, &QPushButton::clicked, this, &MainWindow::generate_balancing_states_clicked);
     this->connect(ui->balancing_next_button, &QPushButton::clicked, this, &MainWindow::load_next_balance_states_clicked);
+    this->connect(ui->enter_transfer_info_button, &QPushButton::clicked, this, &MainWindow::input_transfer_list_clicked);
+    this->ui->Onload_offload_popup->hide();
+
+
+    this->connect(ui->load_unload_submit_button, &QPushButton::clicked, this, &MainWindow::submit_transfer_list_clicked);
+    this->connect(ui->add_yet_another_transfer_list_button, &QPushButton::clicked, this, &MainWindow::add_another_transfer_item_clicked);
+
+
 
 
 }
@@ -260,7 +268,6 @@ void MainWindow::generate_balancing_states_clicked() {
         first_move += this->manifestShip->saved_states.at(manifestsize-2);
 
         this->ui->balancing_plain_text->setPlainText(QString::fromStdString(first_move));
-
         this->manifestShip->saved_states.pop_back();
         this->manifestShip->saved_states.pop_back();
     }
@@ -320,4 +327,86 @@ void MainWindow::load_next_balance_states_clicked() {
         this->manifestShip->saved_states.pop_back();
     }
 }
+
+
+void MainWindow::input_transfer_list_clicked() {
+    if (manifestShip->get_manifest_name().size() == 0) {
+        this->ui->Onload_offload_popup->hide();
+        this->ui->onload_offload_textbox->clear();
+        this->ui->onload_offload_textbox->setPlainText(QString::fromStdString("Please input manifest first"));
+        return;
+    }
+    else {
+        this->ui->unload_name_line->clear();
+        this->ui->unload_quantity_line->clear();
+        this->ui->load_name_line->clear();
+        this->ui->load_mass_line->clear();
+        this->ui->Onload_offload_popup->show();
+    }
+
+}
+
+
+void MainWindow::submit_transfer_list_clicked() {
+
+    QString unloadQname = this->ui->unload_name_line->text();
+    std::string unloadname = unloadQname.toStdString();
+    QString unloadQquantity = this->ui->unload_quantity_line->text();
+    std::string unloadquantity= unloadQquantity.toStdString();
+    if (unloadname.size() !=0 && unloadquantity.size() != 0) {
+        manifestShip->unload_names.push_back(unloadname);
+        manifestShip->unload_quantity.push_back(unloadquantity);
+
+        std::cout << "unload quantity: " << unloadquantity << std::endl;
+        std::cout << "unload name: " << unloadname << std::endl;
+    }
+
+    QString loadQname = this->ui->load_name_line->text();
+    std::string loadname = loadQname.toStdString();
+    QString loadQmass = this->ui->load_mass_line->text();
+    std::string loadmass= loadQmass.toStdString();
+    if (unloadname.size() !=0 && unloadquantity.size() != 0) {
+        manifestShip->load_mass.push_back(loadmass);
+        manifestShip->load_names.push_back(loadname);
+        std::cout << "load mass: " << loadmass << std::endl;
+        std::cout << "load name: " <<loadname << std::endl;
+    }
+
+    this->ui->Onload_offload_popup->hide();
+}
+
+
+void MainWindow::add_another_transfer_item_clicked() {
+    // save state
+    QString unloadQname = this->ui->unload_name_line->text();
+    std::string unloadname = unloadQname.toStdString();
+    QString unloadQquantity = this->ui->unload_quantity_line->text();
+    std::string unloadquantity= unloadQquantity.toStdString();
+    if (unloadname.size() !=0 && unloadquantity.size() != 0) {
+        manifestShip->unload_names.push_back(unloadname);
+        manifestShip->unload_quantity.push_back(unloadquantity);
+        std::cout << "unload quantity: " << unloadquantity << std::endl;
+        std::cout << "unload name: " << unloadname << std::endl;
+    }
+
+    QString loadQname = this->ui->load_name_line->text();
+    std::string loadname = loadQname.toStdString();
+    QString loadQmass = this->ui->load_mass_line->text();
+    std::string loadmass= loadQmass.toStdString();
+    if (unloadname.size() !=0 && unloadquantity.size() != 0) {
+        manifestShip->load_mass.push_back(loadmass);
+        manifestShip->load_names.push_back(loadname);
+
+        std::cout << "load mass: " << loadmass << std::endl;
+        std::cout << "load name: " <<loadname << std::endl;
+    }
+    this->ui->unload_name_line->clear();
+    this->ui->unload_quantity_line->clear();
+    this->ui->load_name_line->clear();
+    this->ui->load_mass_line->clear();
+
+    this->ui->Onload_offload_popup->show();
+
+}
+
 

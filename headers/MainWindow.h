@@ -37,5 +37,9 @@ class MainWindow : public QMainWindow
         void load_manifest_onload_clicked();
         void generate_balancing_states_clicked();
         void load_next_balance_states_clicked();
+        void input_transfer_list_clicked();
+        void submit_transfer_list_clicked();
+        void add_another_transfer_item_clicked();
+
 };
 #endif // MAINWINDOW_H

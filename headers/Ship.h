@@ -16,9 +16,14 @@ class Ship {
         std::string manifest_name = ""; 
 
 
+
     public: 
         std::vector<std::string> saved_states; // printed ship states
         std::vector<std::pair<int,int>> balanced_list;
+        std::vector<std::string> load_mass;
+        std::vector<std::string> load_names;
+        std::vector<std::string> unload_quantity;
+        std::vector<std::string> unload_names;
         // constructors 
         Ship() {}; 
 

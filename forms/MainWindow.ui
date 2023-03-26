@@ -25,7 +25,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>2</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="logintab">
        <attribute name="title">
@@ -158,7 +158,7 @@
               <x>10</x>
               <y>10</y>
               <width>751</width>
-              <height>108</height>
+              <height>154</height>
              </rect>
             </property>
             <layout class="QFormLayout" name="formLayout_3">
@@ -168,6 +168,9 @@
                 <string>Manifest Path</string>
                </property>
               </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QLineEdit" name="onload_offload_manifest_path"/>
              </item>
              <item row="1" column="0">
               <widget class="QPushButton" name="onload_offload_load_manifest">
@@ -184,7 +187,7 @@
               </widget>
              </item>
              <item row="2" column="0">
-              <widget class="QPushButton" name="pushButton_6">
+              <widget class="QPushButton" name="onload_offload_calculate_button">
                <property name="text">
                 <string>Calculate</string>
                </property>
@@ -196,9 +199,6 @@
                 <string>Runs the onloading/offloading operation and outputs animation to the screen</string>
                </property>
               </widget>
-             </item>
-             <item row="0" column="1">
-              <widget class="QLineEdit" name="onload_offload_manifest_path"/>
              </item>
             </layout>
            </widget>
@@ -236,22 +236,22 @@
                <widget class="QWidget" name="verticalLayoutWidget_5">
                 <property name="geometry">
                  <rect>
-                  <x>49</x>
-                  <y>79</y>
-                  <width>291</width>
+                  <x>30</x>
+                  <y>80</y>
+                  <width>211</width>
                   <height>191</height>
                  </rect>
                 </property>
                 <layout class="QVBoxLayout" name="verticalLayout_7">
                  <item>
-                  <widget class="QPushButton" name="pushButton_8">
+                  <widget class="QPushButton" name="enter_transfer_info_button">
                    <property name="text">
                     <string>Enter Transfer List Information</string>
                    </property>
                   </widget>
                  </item>
                  <item>
-                  <widget class="QPushButton" name="pushButton_7">
+                  <widget class="QPushButton" name="next_move">
                    <property name="text">
                     <string>Next Move</string>
                    </property>
@@ -259,16 +259,32 @@
                  </item>
                 </layout>
                </widget>
-              </widget>
-             </item>
-             <item>
-              <widget class="QWidget" name="pictureframe_2" native="true">
-               <property name="autoFillBackground">
-                <bool>false</bool>
-               </property>
-               <property name="styleSheet">
-                <string notr="true">background-color: lightgray; border: 2px solid gray;</string>
-               </property>
+               <widget class="QWidget" name="pictureframe_2" native="true">
+                <property name="geometry">
+                 <rect>
+                  <x>280</x>
+                  <y>10</y>
+                  <width>461</width>
+                  <height>371</height>
+                 </rect>
+                </property>
+                <property name="autoFillBackground">
+                 <bool>false</bool>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">background-color: lightgray; border: 2px solid gray;</string>
+                </property>
+                <widget class="QPlainTextEdit" name="onload_offload_textbox">
+                 <property name="geometry">
+                  <rect>
+                   <x>0</x>
+                   <y>0</y>
+                   <width>461</width>
+                   <height>371</height>
+                  </rect>
+                 </property>
+                </widget>
+               </widget>
               </widget>
              </item>
             </layout>
@@ -276,6 +292,180 @@
           </widget>
          </item>
         </layout>
+       </widget>
+       <widget class="QStackedWidget" name="Onload_offload_popup">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="geometry">
+         <rect>
+          <x>90</x>
+          <y>0</y>
+          <width>611</width>
+          <height>451</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
+        <property name="currentIndex">
+         <number>0</number>
+        </property>
+        <widget class="QWidget" name="input_transfer_list_pop_up">
+         <property name="autoFillBackground">
+          <bool>true</bool>
+         </property>
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
+         <widget class="QWidget" name="horizontalLayoutWidget_5">
+          <property name="geometry">
+           <rect>
+            <x>20</x>
+            <y>90</y>
+            <width>281</width>
+            <height>261</height>
+           </rect>
+          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_3">
+           <item>
+            <layout class="QFormLayout" name="formLayout_12">
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_7">
+               <property name="text">
+                <string>Name</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QLineEdit" name="unload_name_line"/>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="label_12">
+               <property name="text">
+                <string>Quantiy/All(A)</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QLineEdit" name="unload_quantity_line"/>
+             </item>
+             <item row="2" column="0">
+              <widget class="QLabel" name="label_13">
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0" colspan="2">
+              <widget class="QPlainTextEdit" name="plainTextEdit">
+               <property name="plainText">
+                <string>Input the number to unload or A for all</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="horizontalLayoutWidget_6">
+          <property name="geometry">
+           <rect>
+            <x>309</x>
+            <y>90</y>
+            <width>275</width>
+            <height>261</height>
+           </rect>
+          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_7">
+           <item>
+            <layout class="QFormLayout" name="formLayout_11">
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_8">
+               <property name="text">
+                <string>Name</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QLineEdit" name="load_name_line"/>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="label_11">
+               <property name="styleSheet">
+                <string notr="true">text-color: rgb(0, 0, 0)</string>
+               </property>
+               <property name="text">
+                <string>Mass</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QLineEdit" name="load_mass_line"/>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QLabel" name="label_9">
+          <property name="geometry">
+           <rect>
+            <x>400</x>
+            <y>60</y>
+            <width>49</width>
+            <height>16</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Load</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_10">
+          <property name="geometry">
+           <rect>
+            <x>100</x>
+            <y>60</y>
+            <width>49</width>
+            <height>16</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Unload</string>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="load_unload_submit_button">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="geometry">
+           <rect>
+            <x>40</x>
+            <y>370</y>
+            <width>229</width>
+            <height>24</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Finish</string>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="add_yet_another_transfer_list_button">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="geometry">
+           <rect>
+            <x>330</x>
+            <y>370</y>
+            <width>229</width>
+            <height>24</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Add Another</string>
+          </property>
+         </widget>
+        </widget>
        </widget>
       </widget>
       <widget class="QWidget" name="balancetab">
