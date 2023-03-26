@@ -51,6 +51,8 @@ class ShippingPortDriver {
 
         Ship* getShip() const { return this->ship; }
 
+        void setShip(Ship*);
+
         int QTGUI(int, char**);
 };
 

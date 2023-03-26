@@ -100,6 +100,10 @@ int ShippingPortDriver::QTGUI(int argc, char** argv) {
     return app.exec();
 }
 
+void ShippingPortDriver::setShip(Ship* newShip) {
+    this->ship = newShip;
+}
+
 void ShippingPortDriver::menu() {
     char option = 'l'; // l means nothing
 
