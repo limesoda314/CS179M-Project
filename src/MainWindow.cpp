@@ -28,6 +28,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->connect(ui->balancing_next_button, &QPushButton::clicked, this, &MainWindow::load_next_balance_states_clicked);
     this->connect(ui->enter_transfer_info_button, &QPushButton::clicked, this, &MainWindow::input_transfer_list_clicked);
     this->ui->Onload_offload_popup->hide();
+    this->ui->balancing_start_button->setEnabled(false);
 
     this->connect(ui->load_unload_submit_button, &QPushButton::clicked, this, &MainWindow::submit_transfer_list_clicked);
     this->connect(ui->add_yet_another_transfer_list_button, &QPushButton::clicked, this, &MainWindow::add_another_transfer_item_clicked);
@@ -161,8 +162,15 @@ void MainWindow::refresh_view_ship_clicked() {
 // ---------------------------balance - load manifest----------------------------------
 
 void MainWindow::load_manifest_balance_clicked() {
+
+    this->ui->balancing_start_button->setEnabled(true);
+
     this->GUI_balanced_list.clear();
     this->GUI_move_save_states.clear();
+    this->shipDriver->getShip()->move_num.first = 1;
+    this->shipDriver->getShip()->move_num.first = 1;
+
+    std::cout << "curr size of balanced_list: " << this->GUI_balanced_list.size() << std::endl;
 
     std::cout << "load manifest clicked" << std::endl;
     QString filepathQ = this->ui->balancing_manifest_path->text();
@@ -243,20 +251,36 @@ void MainWindow::generate_balancing_states_clicked() {
 
     this->ui->balancing_plain_text->setPlainText("");
 
+    std::cout << "[1] curr size of balanced_list: " << this->GUI_balanced_list.size() << std::endl;
+
     if (this->shipDriver->getShip()->get_manifest_name().size() == 0) {
         std::cout << "Error: manifest empty."  << std::endl;
         return;
     }
 
+    std::cout << "[2] curr size of balanced_list: " << this->GUI_balanced_list.size() << std::endl;
+
 //    std::cout << "balance:t1" << std::endl;
 
+    std::cout << "[3] curr size of balanced_list: " << this->GUI_balanced_list.size() << std::endl;
+
     this->shipDriver->balance_ship(this->GUI_balanced_list);
+
+//    std::cout << "[4] curr size of balanced_list: " << this->GUI_balanced_list.size() << std::endl;
+
     this->shipDriver->getShip()->save_ship_states(this->GUI_move_save_states, this->GUI_balanced_list);
+
+//    std::cout << "[5] curr size of balanced_list: " << this->GUI_balanced_list.size() << std::endl;
 
 //    std::cout << "balance:t2" << std::endl;
 
     std::reverse(this->GUI_move_save_states.begin()  ,  this->GUI_move_save_states.end());
+
+//    std::cout << "[6] curr size of balanced_list: " << this->GUI_balanced_list.size() << std::endl;
+
     std::reverse(this->GUI_balanced_list.begin()     ,  this->GUI_balanced_list.end()   );
+
+//    std::cout << "[7] curr size of balanced_list: " << this->GUI_balanced_list.size() << std::endl;
 
 //    std::cout << "balance:t3" << std::endl;
 
@@ -292,6 +316,8 @@ void MainWindow::generate_balancing_states_clicked() {
     }
     else {
 //        std::cout << "balance:t8" << std::endl;
+
+        std::cout << "curr size of balanced_list: " << this->GUI_balanced_list.size() << std::endl;
 
         this->shipDriver->getShip()->move_num.first = this->GUI_balanced_list.size()/2;
         this->shipDriver->getShip()->move_num.second = 1;
@@ -338,6 +364,8 @@ void MainWindow::generate_balancing_states_clicked() {
         this->GUI_move_save_states.pop_back();
         this->GUI_move_save_states.pop_back();
     }
+
+    this->ui->balancing_start_button->setEnabled(false);
 
     //this->ui->balancing_plain_text->clear();
     //this->ui->balancing_plain_text->setPlainText(QString::fromStdString(saved_states.at(1)));

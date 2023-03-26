@@ -262,6 +262,10 @@ void ShippingPortDriver::balance_ship(
     std::vector<std::pair<int, int>>& send_back
 )
 {
+    this->balance_list.clear();
+
+    std::cout << "[4] curr size of balanced_list: " << send_back.size() << std::endl;
+
     std::cout << "Attempting to balance ship. Loading..." << std::endl;
 
     std::cout << " > Creating starting ship state" << std::endl;
@@ -273,9 +277,13 @@ void ShippingPortDriver::balance_ship(
         nullptr
     );
 
+    std::cout << "[5] curr size of balanced_list: " << send_back.size() << std::endl;
+
     std::cout << " > curr balance factor: " << startState->balanceFactor() << std::endl;
 
     std::cout << " > Creating solution (may take a while)..." << std::endl;
+
+    std::cout << "[6] curr size of balanced_list: " << send_back.size() << std::endl;
     ShipState* solution;
     if (startState->balanceFactor() >= 0.9 && startState->balanceFactor() <= 1.1) {
         solution = startState;
@@ -284,15 +292,28 @@ void ShippingPortDriver::balance_ship(
         solution = this->graphSearch(startState);
     }
 
+    std::cout << "[7] curr size of balanced_list: " << send_back.size() << std::endl;
+
     std::cout << "   > Done with solution" << std::endl;
 
     if (solution != nullptr) {
         std::cout << "Goal!!!" << std::endl;
         solution->draw(std::cout);
         std::cout << "\n";
+
+        std::cout << "[8] curr size of balanced_list: " << send_back.size() << std::endl;
+
         this->printPath(std::cout, solution, 0);
+
+        std::cout << "[9] curr size of balanced_list: " << send_back.size() << std::endl;
+
         send_back = this->balance_list;
+
+        std::cout << "[10] curr size of balanced_list: " << send_back.size() << std::endl;
+
         this->drawBalanceList(std::cout);
+
+        std::cout << "[11] curr size of balanced_list: " << send_back.size() << std::endl;
     }
     else {
         std::cout << "Failure!!!\n\n"
