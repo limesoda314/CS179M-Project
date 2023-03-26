@@ -7,6 +7,7 @@
 #include <string> 
 #include <algorithm> 
 #include <queue>
+#include <ctime>
 
 class Ship {
     private:
@@ -66,7 +67,7 @@ class Ship {
         double balance_score() const; // TODO
 
         /* Option 8 - Performs balancing operations */
-        int balance_ship();
+        // int balance_ship();
 
         /* Option 9 - Load/Unload contains from and to ship */
         int load_unload_ship();
@@ -77,6 +78,10 @@ class Ship {
         std::string swap_coordinates(std::pair<int,int>& coord1, std::pair<int,int>& coord2);
 
         void save_ship_states(std::vector<std::string> &, std::vector<std::pair<int, int>> );
+
+        std::vector<std::pair<int,int>> getCoords() const { return this->Coordinates; }
+        std::vector<std::string> getMasses() const { return this->Mass; }
+        std::vector<std::string> getNames() const { return this->Names; }
 
         /* Option q - Already built into the main.cpp source file */
         // ---

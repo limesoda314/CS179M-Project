@@ -12,12 +12,18 @@ SOURCES += \
     main.cpp \
     src/Ship.cpp \
     src/MainWindow.cpp \
-    src/Logger.cpp
+    src/Logger.cpp \
+    src/HeuristicStrategy.cpp \
+    src/ShippingPortDriver.cpp \
+    src/ShipState.cpp
 
 HEADERS += \
     headers/Ship.h \
     headers/MainWindow.h \
-    headers/Logger.h
+    headers/Logger.h \
+    headers/HeuristicStrategy.h \
+    headers/ShippingPortDriver.h \
+    headers/ShipState.h
     
 FORMS += \
     forms/MainWindow.ui

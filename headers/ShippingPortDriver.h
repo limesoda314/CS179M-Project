@@ -7,6 +7,9 @@
 #include "ShipState.h"
 #include <string>
 #include <iostream>
+#include <ctime>
+
+#include "./Ship.h"
 
 /* Comparator to push ShipState poiters into priority queue */
 class Comp {
@@ -25,7 +28,7 @@ class ShippingPortDriver {
         std::set<ShipState*> explored;
         int count;
         int maxFrontierLength;
-        Ship* root;
+        Ship* ship;
 
     public:
         // Constructors
@@ -33,9 +36,14 @@ class ShippingPortDriver {
 
         // Control
         ShipState* graphSearch(ShipState*);
+        
         void menu();
-        void printPath(std::ostream&, ShipState*, int);
+        
+        void printPath(std::ostream&, ShipState*, int i);
+        
         void defaultTest();
+
+        void balance_ship();
 };
 
 #endif

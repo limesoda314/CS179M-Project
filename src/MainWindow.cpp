@@ -225,4 +225,3 @@ void MainWindow::generate_balancing_states_clicked() {
     //this->ui->balancing_plain_text->setPlainText(QString::fromStdString(saved_states.at(1)));
 
 }
-

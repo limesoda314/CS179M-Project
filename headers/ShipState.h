@@ -1,5 +1,5 @@
-#ifndef BALANCE__H
-#define BALANCE__H
+#ifndef SHIPSTATE__H
+#define SHIPSTATE__H
 
 #include <vector>
 #include <fstream>
@@ -15,7 +15,7 @@ class ShipState {
         std::vector<std::pair<int,int>> coords;
 
         // masses 
-        std::vector<std::string> mass; 
+        std::vector<std::string> mass;
 
         // contains every possible (perhaps not every possible one, given
         // a heuristic-based graph search algorithm) ShipState given the
@@ -40,10 +40,10 @@ class ShipState {
         ShipState(
             const std::vector<std::pair<int,int>> &ship_coords,
             const std::vector<std::string> &ship_mass,
-            const std::vector<std::string>&ship_names,
+            const std::vector<std::string>& ship_names,
             Heuristic* ctx,
             ShipState* par
-            );  
+        );  
 
         ShipState(
             const std::vector<std::pair<int,int>> &ship_coords,
@@ -52,7 +52,7 @@ class ShipState {
             const std::vector<std::pair<int,int>>& ship_move_spaces,
             Heuristic* ctx,
             ShipState* par
-            ); 
+        ); 
 
         /* Expands node into its possibility of movements */
         int expandNode(); 
@@ -96,7 +96,19 @@ class ShipState {
         ShipState* getChild(int i) const { return this->children.at(i); }
         ShipState* getParent() const { return this->parent; }
 
+        int getChildrenLength() const { return this->children.size(); }
+
+        std::vector<std::pair<int,int>> getCoords() const { return this->coords; }
+        std::vector<std::string> getMass() const { return this->mass; }
+
         void draw(std::ostream&);
+
+        int balanceFactor() const;
+
+        bool coordInCoords(std::pair<int, int>);
+
+    private:
+        void drawCoords(std::ostream&, std::vector<std::pair<int, int>>) const;
 };
 
 #endif 

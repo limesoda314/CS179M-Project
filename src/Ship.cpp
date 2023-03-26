@@ -130,8 +130,8 @@ int Ship::create_outbound() {
 
 int Ship::log_comment(const std::string &comment) {
     std::string filepath = "logfiles/logfile_";
-    time_t now = time(0); 
-    tm *ltm = localtime(&now);
+    time_t now = std::time(0); 
+    tm *ltm = std::localtime(&now);
     filepath += std::to_string(1900 + ltm->tm_year) + ".txt";  
     
     std::ofstream fout(filepath, std::ios_base::app); 
@@ -260,75 +260,6 @@ std::vector<std::pair<int,int>> Ship::balance_list() {
     return balance_pair_list;
 
 }
-
-int Ship::balance_ship() {
-
-    Balanceshi
-    
-    // Initialize the frontier using the initial state of problem
-    this->frontier.push(problem->getRoot());
-    this->frontier_set.insert(problem->getRoot()->getMat());
-
-    // Tracking max frontier length
-    if (this->frontier.size() > this->maxFrontierLength) {
-        this->maxFrontierLength = this->frontier.size();
-    }
-
-    // loop do
-    while (true) {
-
-        // If frontier is empty, then return failure
-        if (this->frontier.size() == 0) { return nullptr; }
-
-        // Pick the smallest leaf, based on algorithm
-        Board* leaf = this->frontier.top();
-
-        this->frontier.pop();
-        this->frontier_set.erase(leaf->getMat());
-
-        // If leaf is the goal, return it
-        if ((*(this->goal) == *leaf)) { 
-            return leaf;
-        } // Overloaded==
-
-        // Add to explored set if not
-        this->explored.insert(leaf->getMat());
-
-        // If not in explored, expand
-        std::cout << "==============================================================\nCurrent expanding node with g(n) = "
-                  << leaf->getCost() << ", h(n) = " << problem->heuristicOf(leaf) << ", and f(n) = " << leaf->f_valueFrom() << "\n";
-        leaf->draw(std::cout);
-        problem->expand(leaf);
-        this->count++;
-        std::cout << "Expanding node " << this->count << "...\n";
-        std::cout << "Size: " << this->frontier_set.size() << "\n\n";
-
-        // Add the children to the frontier if not there or in explored
-        for (int i = 0; i < 4; i++) {
-
-            // Child is not in frontier
-            bool in_frontier = ( this->frontier_set.find(leaf->getChild(i)->getMat()) != this->frontier_set.end() );
-
-            // Child is not in explored
-            bool in_explored = ( this->explored.find(leaf->getChild(i)->getMat()) != this->explored.end() );
-
-            // If both conditions are met, push into frontier
-            if ( !in_frontier && !in_explored ) {
-                this->frontier.push( leaf->getChild(i) );
-                this->frontier_set.insert( leaf->getChild(i)->getMat() );
-
-                // Tracking maximum frontier length
-                if (this->frontier.size() > this->maxFrontierLength) {
-                    this->maxFrontierLength = this->frontier.size();
-                }
-            }
-
-        }
-    } 
-
-    return 0;
-}
-
 
 // // legacy code
 // int Ship::balance_ship() {
