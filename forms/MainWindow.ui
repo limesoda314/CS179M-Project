@@ -25,7 +25,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="logintab">
        <attribute name="title">
@@ -816,10 +816,10 @@
            <widget class="QWidget" name="formLayoutWidget_4">
             <property name="geometry">
              <rect>
-              <x>0</x>
-              <y>0</y>
+              <x>10</x>
+              <y>10</y>
               <width>771</width>
-              <height>121</height>
+              <height>190</height>
              </rect>
             </property>
             <layout class="QFormLayout" name="formLayout_4">

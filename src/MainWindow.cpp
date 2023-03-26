@@ -177,7 +177,7 @@ void MainWindow::load_manifest_balance_clicked() {
 
     this->manifestShip->load_manifest(filepath);
 
-    std::string comment = "Uploaded Manifest " + manifestShip->get_manifest_name() + ".txt. There are ";
+    std::string comment = "Opened Manifest " + manifestShip->get_manifest_name() + ".txt. There are ";
     comment += std::to_string(manifestShip->num_boxes());
     comment += " containers on the ship.";
 
@@ -197,7 +197,7 @@ void MainWindow::load_manifest_status_clicked() {
 
     this->manifestShip->load_manifest(filepath);
 
-    std::string comment = "Uploaded Manifest " + manifestShip->get_manifest_name() + ".txt. There are ";
+    std::string comment = "Opened Manifest " + manifestShip->get_manifest_name() + ".txt. There are ";
     comment += std::to_string(manifestShip->num_boxes());
     comment += " containers on the ship.";
 
@@ -217,7 +217,7 @@ void MainWindow::load_manifest_onload_clicked() {
 
     this->manifestShip->load_manifest(filepath);
 
-    std::string comment = "Uploaded Manifest " + manifestShip->get_manifest_name() + ".txt. There are ";
+    std::string comment = "Opened Manifest " + manifestShip->get_manifest_name() + ".txt. There are ";
     comment += std::to_string(manifestShip->num_boxes());
     comment += " containers on the ship.";
 
@@ -257,8 +257,12 @@ void MainWindow::generate_balancing_states_clicked() {
         balance_info += manifestShip->print_ship();
         this->ui->balancing_plain_text->setPlainText(QString::fromStdString(balance_info));
 
-        std::string comment = "Finished a cycle. Manifest " + manifestShip->get_manifest_name() + "OUTBOUND.txt was written to desktop, and a reminder pop-up to operator to send file was displayed.";
 
+        QString outbound_filepath =
+                  QString("%1/").arg(QStandardPaths::writableLocation(QStandardPaths::DesktopLocation));
+        manifestShip->create_outbound(outbound_filepath.toStdString());
+
+        std::string comment = "Finished a cycle. Manifest " + manifestShip->get_manifest_name() + "OUTBOUND.txt was written to desktop, and a reminder pop-up to operator to send file was displayed.";
         logger->logRawComment(comment);
     }
     else {
@@ -299,6 +303,10 @@ void MainWindow::generate_balancing_states_clicked() {
 
 void MainWindow::load_next_balance_states_clicked() {
 
+    if (this->manifestShip->get_manifest_name().size() == 0) {
+        this->ui->balancing_plain_text->setPlainText(QString::fromStdString("Error: Empty Manifest. Try loading manifest again"));
+    }
+
     if (this->manifestShip->saved_states.size() < 2) {
         this->ui->balancing_plain_text->clear();
 
@@ -312,6 +320,10 @@ void MainWindow::load_next_balance_states_clicked() {
         balance_info += "\n";
         balance_info += manifestShip->print_ship();
         this->ui->balancing_plain_text->setPlainText(QString::fromStdString(balance_info));
+
+        QString outbound_filepath =
+                  QString("%1/").arg(QStandardPaths::writableLocation(QStandardPaths::DesktopLocation));
+        manifestShip->create_outbound(outbound_filepath.toStdString());
 
         std::string comment = "Finished a cycle. Manifest " + manifestShip->get_manifest_name() + "OUTBOUND.txt was written to desktop, and a reminder pop-up to operator to send file was displayed.";
 
@@ -510,6 +522,10 @@ void MainWindow::generate_transfer_moves_clicked() {
         this->ui->onload_offload_textbox->setPlainText(QString::fromStdString(transfer_info));
         this->ui->transfer_update_coords_text->clear();
         this->ui->transfer_update_coords_text->setPlainText(QString::fromStdString("No more moves!"));
+
+        QString outbound_filepath =
+                  QString("%1/").arg(QStandardPaths::writableLocation(QStandardPaths::DesktopLocation));
+        manifestShip->create_outbound(outbound_filepath.toStdString());
         std::string comment = "Finished a cycle. Manifest " + manifestShip->get_manifest_name() + "OUTBOUND.txt was written to desktop, and a reminder pop-up to operator to send file was displayed.";
 
         logger->logRawComment(comment);
@@ -565,6 +581,10 @@ void MainWindow::next_transfer_moves_clicked() {
         this->ui->onload_offload_textbox->setPlainText(QString::fromStdString(transfer_info));
         this->ui->transfer_update_coords_text->clear();
         this->ui->transfer_update_coords_text->setPlainText(QString::fromStdString("No more moves!"));
+
+        QString outbound_filepath =
+                  QString("%1/").arg(QStandardPaths::writableLocation(QStandardPaths::DesktopLocation));
+        manifestShip->create_outbound(outbound_filepath.toStdString());
         std::string comment = "Finished a cycle. Manifest " + manifestShip->get_manifest_name() + "OUTBOUND.txt was written to desktop, and a reminder pop-up to operator to send file was displayed.";
 
         logger->logRawComment(comment);

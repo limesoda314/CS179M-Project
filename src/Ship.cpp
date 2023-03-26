@@ -128,6 +128,42 @@ int Ship::create_outbound() {
     return 0; 
 }  
 
+
+int Ship::create_outbound(std::string file_path) {
+
+    std::ofstream fout(file_path + manifest_name + "OUTBOUND.txt");
+
+    if (!fout.is_open()) {
+        std::cout << "Unable to open file" << std::endl;
+        return -1;
+    }
+    else {
+        std::cout << "writing to " << file_path << manifest_name << "OUTBOUND.txt" << std::endl;
+    }
+
+    for (long long unsigned int i = 0; i < Coordinates.size(); i++) {
+        fout << "[";
+        if (Coordinates.at(i).first < 10) {
+            fout << "0";
+        }
+        fout << Coordinates.at(i).first << ",";
+        if (Coordinates.at(i).second < 10) {
+            fout << "0";
+        }
+        fout << Coordinates.at(i).second << "], ";
+        if (Mass.at(i) == "NAN") {
+            fout << "{00000}, ";
+            fout << "NAN";
+        }
+        else {
+            fout << "{" << Mass.at(i) << "}, ";
+            fout << Names.at(i) << std::endl;
+        }
+
+    }
+    fout.close();
+}
+
 int Ship::log_comment(const std::string &comment) {
     std::string filepath = "logfiles/logfile_";
     time_t now = time(0); 

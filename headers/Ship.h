@@ -58,6 +58,7 @@ class Ship {
         /* Option 3 - Creates an outbound manifest based on the current representation of internal
         variables within Ship class */
         int create_outbound(); 
+        int create_outbound(std::string file_path);
 
         /* Option 4 - Allows operator to input comment */
         int log_comment(const std::string &comment);
