@@ -266,8 +266,13 @@ void MainWindow::generate_balancing_states_clicked() {
         logger->logRawComment(comment);
     }
     else {
-
-        std::string move_instru = "Move (";
+        manifestShip->move_num.first = manifestShip->balanced_list.size()/2;
+        manifestShip->move_num.second = 1;
+        std::string move_instru = "Now doing move number ";
+        move_instru += std::to_string(manifestShip->move_num.second);
+        move_instru += " of ";
+        move_instru += std::to_string(manifestShip->move_num.first);
+        move_instru += ". Move (";
         move_instru += std::to_string(manifestShip->balanced_list.at(manifestShip->balanced_list.size()-1).first);
         move_instru += ", ";
         move_instru += std::to_string(manifestShip->balanced_list.at(manifestShip->balanced_list.size()-1).second);
@@ -278,6 +283,7 @@ void MainWindow::generate_balancing_states_clicked() {
         move_instru += ")\n";
         manifestShip->balanced_list.pop_back();
         manifestShip->balanced_list.pop_back();
+        manifestShip->move_num.second++;
 
 
         this->ui->balancing_next_move_text->setPlainText(QString::fromStdString(move_instru));
@@ -332,7 +338,11 @@ void MainWindow::load_next_balance_states_clicked() {
     else {
         this->ui->balancing_next_move_text->clear();
 
-        std::string move_instru = "Move (";
+        std::string move_instru = "Now doing move number ";
+        move_instru += std::to_string(manifestShip->move_num.second);
+        move_instru += " of ";
+        move_instru += std::to_string(manifestShip->move_num.first);
+        move_instru += ". Move (";
         move_instru += std::to_string(manifestShip->balanced_list.at(manifestShip->balanced_list.size()-1).first);
         move_instru += ", ";
         move_instru += std::to_string(manifestShip->balanced_list.at(manifestShip->balanced_list.size()-1).second);
@@ -341,6 +351,8 @@ void MainWindow::load_next_balance_states_clicked() {
         move_instru += ", ";
         move_instru += std::to_string(manifestShip->balanced_list.at(manifestShip->balanced_list.size()-2).second);
         move_instru += ")\n";
+        manifestShip->move_num.second++;
+
         if (this->manifestShip->balanced_list.size() >= 2) {
             manifestShip->balanced_list.pop_back();
             manifestShip->balanced_list.pop_back();
@@ -531,8 +543,13 @@ void MainWindow::generate_transfer_moves_clicked() {
         logger->logRawComment(comment);
     }
     else {
-
-        std::string move_instru = "Move (";
+        manifestShip->move_num.first = manifestShip->transfer_moves.size() / 2;
+        manifestShip->move_num.second = 1;
+        std::string move_instru = "Now doing move number ";
+        move_instru += std::to_string(manifestShip->move_num.second);
+        move_instru += " of ";
+        move_instru += std::to_string(manifestShip->move_num.first);
+        move_instru += ". Move (";
         move_instru += std::to_string(manifestShip->transfer_moves.at(manifestShip->transfer_moves.size()-1).first);
         move_instru += ", ";
         move_instru += std::to_string(manifestShip->transfer_moves.at(manifestShip->transfer_moves.size()-1).second);
@@ -543,6 +560,7 @@ void MainWindow::generate_transfer_moves_clicked() {
         move_instru += ")\n";
         manifestShip->transfer_moves.pop_back();
         manifestShip->transfer_moves.pop_back();
+        manifestShip->move_num.second++;
 
 
         this->ui->transfer_update_coords_text->setPlainText(QString::fromStdString(move_instru));
@@ -591,7 +609,11 @@ void MainWindow::next_transfer_moves_clicked() {
     }
     else {
 
-        std::string move_instru = "Move (";
+        std::string move_instru = "Now doing move number ";
+        move_instru += std::to_string(manifestShip->move_num.second);
+        move_instru += " of ";
+        move_instru += std::to_string(manifestShip->move_num.first); //size
+        move_instru += ". Move (";
         move_instru += std::to_string(manifestShip->transfer_moves.at(manifestShip->transfer_moves.size()-1).first);
         move_instru += ", ";
         move_instru += std::to_string(manifestShip->transfer_moves.at(manifestShip->transfer_moves.size()-1).second);
@@ -602,6 +624,7 @@ void MainWindow::next_transfer_moves_clicked() {
         move_instru += ")\n";
         manifestShip->transfer_moves.pop_back();
         manifestShip->transfer_moves.pop_back();
+        manifestShip->move_num.second++;
 
 
         this->ui->transfer_update_coords_text->setPlainText(QString::fromStdString(move_instru));

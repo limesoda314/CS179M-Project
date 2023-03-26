@@ -21,6 +21,7 @@ class Ship {
         std::vector<std::string> saved_states; // printed ship states
         std::vector<std::pair<int,int>> balanced_list;
         std::vector<std::pair<int,int>> transfer_moves;
+        std::pair <int,int> move_num; // move_num, list size
         std::vector<std::string> load_mass;
         std::vector<std::string> load_names;
         std::vector<std::string> unload_quantity;
