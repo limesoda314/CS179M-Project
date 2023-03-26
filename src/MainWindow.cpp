@@ -248,7 +248,7 @@ void MainWindow::generate_balancing_states_clicked() {
 
         std::string balance_info = "Finished balancing Ship! Manifest \n";
         balance_info += manifestShip->get_manifest_name();
-        balance_info += "OUTBOUND.txt was written to desktop. Email file.";
+        balance_info += "OUTBOUND.txt was written to desktop. email file.\n";
         balance_info += manifestShip->print_ship();
 
         balance_info += "\nbalance factor: ";
@@ -304,7 +304,7 @@ void MainWindow::load_next_balance_states_clicked() {
 
         std::string balance_info = "Finished balancing Ship! Manifest \n";
         balance_info += manifestShip->get_manifest_name();
-        balance_info += "OUTBOUND.txt was written to desktop. Email file.";
+        balance_info += "OUTBOUND.txt was written to desktop. email file.\n";
         balance_info += manifestShip->print_ship();
 
         balance_info += "\nbalance factor: ";
@@ -382,11 +382,23 @@ void MainWindow::submit_transfer_list_clicked() {
     QString unloadQquantity = this->ui->unload_quantity_line->text();
     std::string unloadquantity= unloadQquantity.toStdString();
     if (unloadname.size() !=0 && unloadquantity.size() != 0) {
-        manifestShip->unload_names.push_back(unloadname);
-        manifestShip->unload_quantity.push_back(unloadquantity);
+        // at max we have 96 containers
+        if (unloadquantity.size() <=2) {
+            manifestShip->unload_names.push_back(unloadname);
+            manifestShip->unload_quantity.push_back(unloadquantity);
+            std::cout << "unload quantity: " << unloadquantity << std::endl;
+            std::cout << "unload name: " << unloadname << std::endl;
 
-        std::cout << "unload quantity: " << unloadquantity << std::endl;
-        std::cout << "unload name: " << unloadname << std::endl;
+        }
+        else {
+            std::cout << "Error: Please check unload input. Quantity is greater than 99" << std::endl;
+            this->ui->transfer_description_text_box->clear();
+            this->ui->transfer_description_text_box->setPlainText(QString::fromStdString("Error: Please check unload input. Quantity is greater than 99"));
+            return;
+        }
+
+
+
     }
 
     QString loadQname = this->ui->load_name_line->text();
@@ -394,13 +406,28 @@ void MainWindow::submit_transfer_list_clicked() {
     QString loadQmass = this->ui->load_mass_line->text();
     std::string loadmass= loadQmass.toStdString();
     if (unloadname.size() !=0 && unloadquantity.size() != 0) {
-        manifestShip->load_mass.push_back(loadmass);
-        manifestShip->load_names.push_back(loadname);
-        std::cout << "load mass: " << loadmass << std::endl;
-        std::cout << "load name: " <<loadname << std::endl;
+        if (loadmass.size() <= 5) {
+            manifestShip->load_mass.push_back(loadmass);
+            manifestShip->load_mass.push_back(loadmass);
+            manifestShip->load_names.push_back(loadname);
+            std::cout << "load mass: " << loadmass << std::endl;
+            std::cout << "load name: " <<loadname << std::endl;
+
+        }
+        else {
+            std::cout << "Error: Please check load input. Mass is greater than 99999" << std::endl;
+            this->ui->transfer_description_text_box->clear();
+            this->ui->transfer_description_text_box->setPlainText(QString::fromStdString("Error: Please check load input. Mass is greater than 99999"));
+            return;
+
+
+        }
+
     }
 
     this->ui->Onload_offload_popup->hide();
+
+
 }
 
 
@@ -411,10 +438,19 @@ void MainWindow::add_another_transfer_item_clicked() {
     QString unloadQquantity = this->ui->unload_quantity_line->text();
     std::string unloadquantity= unloadQquantity.toStdString();
     if (unloadname.size() !=0 && unloadquantity.size() != 0) {
-        manifestShip->unload_names.push_back(unloadname);
-        manifestShip->unload_quantity.push_back(unloadquantity);
-        std::cout << "unload quantity: " << unloadquantity << std::endl;
-        std::cout << "unload name: " << unloadname << std::endl;
+        if (unloadquantity.size() <=2) {
+            manifestShip->unload_names.push_back(unloadname);
+            manifestShip->unload_quantity.push_back(unloadquantity);
+            std::cout << "unload quantity: " << unloadquantity << std::endl;
+            std::cout << "unload name: " << unloadname << std::endl;
+        }
+        else {
+            std::cout << "Error: Please check unload input. Quantity is greater than 99" << std::endl;
+            this->ui->transfer_description_text_box->clear();
+            this->ui->transfer_description_text_box->setPlainText(QString::fromStdString("Error: Please check unload input. Quantity is greater than 99"));
+            return;
+        }
+
     }
 
     QString loadQname = this->ui->load_name_line->text();
@@ -422,11 +458,21 @@ void MainWindow::add_another_transfer_item_clicked() {
     QString loadQmass = this->ui->load_mass_line->text();
     std::string loadmass= loadQmass.toStdString();
     if (unloadname.size() !=0 && unloadquantity.size() != 0) {
-        manifestShip->load_mass.push_back(loadmass);
-        manifestShip->load_names.push_back(loadname);
+        if (loadmass.size() <= 5) {
+            manifestShip->load_mass.push_back(loadmass);
+            manifestShip->load_mass.push_back(loadmass);
+            manifestShip->load_names.push_back(loadname);
+            std::cout << "load mass: " << loadmass << std::endl;
+            std::cout << "load name: " <<loadname << std::endl;
+        }
+        else {
+            std::cout << "Error: Please check load input. Mass is greater than 99999" << std::endl;
+            this->ui->transfer_description_text_box->clear();
+            this->ui->transfer_description_text_box->setPlainText(QString::fromStdString("Error: Please check load input. Mass is greater than 99999"));
+            return;
 
-        std::cout << "load mass: " << loadmass << std::endl;
-        std::cout << "load name: " <<loadname << std::endl;
+        }
+
     }
     this->ui->unload_name_line->clear();
     this->ui->unload_quantity_line->clear();
@@ -459,7 +505,7 @@ void MainWindow::generate_transfer_moves_clicked() {
     if (manifestShip->saved_states.size() < 2) {
         std::string transfer_info = "Finished Unloading and Loading! Manifest \n";
         transfer_info += manifestShip->get_manifest_name();
-        transfer_info += "OUTBOUND.txt was written to desktop. Email file.";
+        transfer_info += "OUTBOUND.txt was written to desktop. email file.\n";
         transfer_info += manifestShip->print_ship();
         this->ui->onload_offload_textbox->setPlainText(QString::fromStdString(transfer_info));
         this->ui->transfer_update_coords_text->clear();
@@ -514,7 +560,7 @@ void MainWindow::next_transfer_moves_clicked() {
     if (manifestShip->saved_states.size() < 2) {
         std::string transfer_info = "Finished Unloading and Loading! Manifest \n";
         transfer_info += manifestShip->get_manifest_name();
-        transfer_info += "OUTBOUND.txt was written to desktop. Email file.";
+        transfer_info += "OUTBOUND.txt was written to desktop. email file.\n";
         transfer_info += manifestShip->print_ship();
         this->ui->onload_offload_textbox->setPlainText(QString::fromStdString(transfer_info));
         this->ui->transfer_update_coords_text->clear();
