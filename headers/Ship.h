@@ -20,6 +20,7 @@ class Ship {
     public: 
         std::vector<std::string> saved_states; // printed ship states
         std::vector<std::pair<int,int>> balanced_list;
+        std::vector<std::pair<int,int>> transfer_moves;
         std::vector<std::string> load_mass;
         std::vector<std::string> load_names;
         std::vector<std::string> unload_quantity;
@@ -76,14 +77,21 @@ class Ship {
         /* Option 9 - Load/Unload contains from and to ship */
         int load_unload_ship();
 
-        /* Option 10 - Balgitance */
+        /* Option 10 - Balance */
         std::vector<std::pair<int,int>> create_balance_list();
         int balance_list(std::vector<std::pair<int,int>> &);
+        /* Option 11 - Unload/load */
+        std::vector<std::pair<int,int>> create_transfer_moves();
+        int create_transfer_list(std::vector<std::pair<int,int>> &);
 
+        // swap two coordinates and return the ship state (string, print_ship funct call)
         std::string swap_coordinates(std::pair<int,int>& coord1, std::pair<int,int>& coord2);
 
-        void save_ship_states(std::vector<std::string> &, std::vector<std::pair<int, int>> );
+        // saves the ship state (printed) as a string
+        // can use to print
+        void save_ship_states(std::vector<std::string> &, std::vector<std::pair<int, int>> ); // same function, however one uses a saved_state vector in Ship class
         void save_ship_states(std::vector<std::pair<int, int>> );
+        int num_boxes() const;
 
 
         /* Option q - Already built into the main.cpp source file */

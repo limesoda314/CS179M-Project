@@ -33,6 +33,10 @@ MainWindow::MainWindow(QWidget *parent)
 
     this->connect(ui->load_unload_submit_button, &QPushButton::clicked, this, &MainWindow::submit_transfer_list_clicked);
     this->connect(ui->add_yet_another_transfer_list_button, &QPushButton::clicked, this, &MainWindow::add_another_transfer_item_clicked);
+    this->connect(ui->onload_offload_calculate_button, &QPushButton::clicked, this, &MainWindow::generate_transfer_moves_clicked);
+    this->connect(ui->transfer_next_move_button, &QPushButton::clicked, this, &MainWindow::next_transfer_moves_clicked);
+
+
 
 
 
@@ -173,7 +177,9 @@ void MainWindow::load_manifest_balance_clicked() {
 
     this->manifestShip->load_manifest(filepath);
 
-    std::string comment = "Uploaded Manifest " + manifestShip->get_manifest_name() + ".txt";
+    std::string comment = "Uploaded Manifest " + manifestShip->get_manifest_name() + ".txt. There are ";
+    comment += std::to_string(manifestShip->num_boxes());
+    comment += " containers on the ship.";
 
     logger->logRawComment(comment);
 }
@@ -191,7 +197,9 @@ void MainWindow::load_manifest_status_clicked() {
 
     this->manifestShip->load_manifest(filepath);
 
-    std::string comment = "Uploaded Manifest " + manifestShip->get_manifest_name() + ".txt";
+    std::string comment = "Uploaded Manifest " + manifestShip->get_manifest_name() + ".txt. There are ";
+    comment += std::to_string(manifestShip->num_boxes());
+    comment += " containers on the ship.";
 
     logger->logRawComment(comment);
 }
@@ -209,7 +217,9 @@ void MainWindow::load_manifest_onload_clicked() {
 
     this->manifestShip->load_manifest(filepath);
 
-    std::string comment = "Uploaded Manifest " + manifestShip->get_manifest_name() + ".txt";
+    std::string comment = "Uploaded Manifest " + manifestShip->get_manifest_name() + ".txt. There are ";
+    comment += std::to_string(manifestShip->num_boxes());
+    comment += " containers on the ship.";
 
     logger->logRawComment(comment);
 }
@@ -234,12 +244,22 @@ void MainWindow::generate_balancing_states_clicked() {
 //    }
 
     if (manifestShip->saved_states.size() < 2) {
-        std::string balance_info = "Ship balanced!\n";
-        balance_info += "balance factor: ";
+        this->ui->balancing_plain_text->clear();
+
+        std::string balance_info = "Finished balancing Ship! Manifest \n";
+        balance_info += manifestShip->get_manifest_name();
+        balance_info += "OUTBOUND.txt was written to desktop. Email file.";
+        balance_info += manifestShip->print_ship();
+
+        balance_info += "\nbalance factor: ";
         balance_info += std::to_string(manifestShip->balance_score());
         balance_info += "\n";
         balance_info += manifestShip->print_ship();
         this->ui->balancing_plain_text->setPlainText(QString::fromStdString(balance_info));
+
+        std::string comment = "Finished a cycle. Manifest " + manifestShip->get_manifest_name() + "OUTBOUND.txt was written to desktop, and a reminder pop-up to operator to send file was displayed.";
+
+        logger->logRawComment(comment);
     }
     else {
 
@@ -282,12 +302,20 @@ void MainWindow::load_next_balance_states_clicked() {
     if (this->manifestShip->saved_states.size() < 2) {
         this->ui->balancing_plain_text->clear();
 
-        std::string balance_info = "Ship balanced!\n";
-        balance_info += "balance factor: ";
+        std::string balance_info = "Finished balancing Ship! Manifest \n";
+        balance_info += manifestShip->get_manifest_name();
+        balance_info += "OUTBOUND.txt was written to desktop. Email file.";
+        balance_info += manifestShip->print_ship();
+
+        balance_info += "\nbalance factor: ";
         balance_info += std::to_string(manifestShip->balance_score());
         balance_info += "\n";
         balance_info += manifestShip->print_ship();
         this->ui->balancing_plain_text->setPlainText(QString::fromStdString(balance_info));
+
+        std::string comment = "Finished a cycle. Manifest " + manifestShip->get_manifest_name() + "OUTBOUND.txt was written to desktop, and a reminder pop-up to operator to send file was displayed.";
+
+        logger->logRawComment(comment);
     }
     else {
         this->ui->balancing_next_move_text->clear();
@@ -408,5 +436,128 @@ void MainWindow::add_another_transfer_item_clicked() {
     this->ui->Onload_offload_popup->show();
 
 }
+
+void MainWindow::generate_transfer_moves_clicked() {
+
+    if (manifestShip->get_manifest_name().size() == 0) {
+        std::cout << "Error: manifest empty."  << std::endl;
+        return;
+    }
+    if (manifestShip->unload_names.size() == 0 && manifestShip->load_names.size() == 0) {
+        std::cout << "Error: no moves to calculate" << std::endl;
+        return;
+    }
+
+    //
+    manifestShip->create_transfer_list(manifestShip->transfer_moves);
+    manifestShip->save_ship_states(manifestShip->transfer_moves);
+
+    std::reverse(manifestShip->transfer_moves.begin(), manifestShip->transfer_moves.end());
+    std::reverse(manifestShip->saved_states.begin(), manifestShip->saved_states.end());
+
+
+    if (manifestShip->saved_states.size() < 2) {
+        std::string transfer_info = "Finished Unloading and Loading! Manifest \n";
+        transfer_info += manifestShip->get_manifest_name();
+        transfer_info += "OUTBOUND.txt was written to desktop. Email file.";
+        transfer_info += manifestShip->print_ship();
+        this->ui->onload_offload_textbox->setPlainText(QString::fromStdString(transfer_info));
+        this->ui->transfer_update_coords_text->clear();
+        this->ui->transfer_update_coords_text->setPlainText(QString::fromStdString("No more moves!"));
+        std::string comment = "Finished a cycle. Manifest " + manifestShip->get_manifest_name() + "OUTBOUND.txt was written to desktop, and a reminder pop-up to operator to send file was displayed.";
+
+        logger->logRawComment(comment);
+    }
+    else {
+
+        std::string move_instru = "Move (";
+        move_instru += std::to_string(manifestShip->transfer_moves.at(manifestShip->transfer_moves.size()-1).first);
+        move_instru += ", ";
+        move_instru += std::to_string(manifestShip->transfer_moves.at(manifestShip->transfer_moves.size()-1).second);
+        move_instru += ") to (";
+        move_instru += std::to_string(manifestShip->transfer_moves.at(manifestShip->transfer_moves.size()-2).first);
+        move_instru += ", ";
+        move_instru += std::to_string(manifestShip->transfer_moves.at(manifestShip->transfer_moves.size()-2).second);
+        move_instru += ")\n";
+        manifestShip->transfer_moves.pop_back();
+        manifestShip->transfer_moves.pop_back();
+
+
+        this->ui->transfer_update_coords_text->setPlainText(QString::fromStdString(move_instru));
+
+
+        int manifestsize =  this->manifestShip->saved_states.size();
+
+        std::string first_move = "Current Ship State\n\n";
+        first_move += this->manifestShip->saved_states.at(manifestsize-1);
+        first_move += "\n------------------------------------------------------------\n\n";
+        first_move += "After Moving\n";
+        first_move += this->manifestShip->saved_states.at(manifestsize-2);
+
+        this->ui->onload_offload_textbox->setPlainText(QString::fromStdString(first_move));
+        this->manifestShip->saved_states.pop_back();
+        this->manifestShip->saved_states.pop_back();
+    }
+
+    //this->ui->balancing_plain_text->clear();
+    //this->ui->balancing_plain_text->setPlainText(QString::fromStdString(saved_states.at(1)));
+}
+
+
+void MainWindow::next_transfer_moves_clicked() {
+
+    if (manifestShip->get_manifest_name().size() == 0) {
+        std::cout << "Error: manifest empty."  << std::endl;
+        return;
+    }
+
+    if (manifestShip->saved_states.size() < 2) {
+        std::string transfer_info = "Finished Unloading and Loading! Manifest \n";
+        transfer_info += manifestShip->get_manifest_name();
+        transfer_info += "OUTBOUND.txt was written to desktop. Email file.";
+        transfer_info += manifestShip->print_ship();
+        this->ui->onload_offload_textbox->setPlainText(QString::fromStdString(transfer_info));
+        this->ui->transfer_update_coords_text->clear();
+        this->ui->transfer_update_coords_text->setPlainText(QString::fromStdString("No more moves!"));
+        std::string comment = "Finished a cycle. Manifest " + manifestShip->get_manifest_name() + "OUTBOUND.txt was written to desktop, and a reminder pop-up to operator to send file was displayed.";
+
+        logger->logRawComment(comment);
+    }
+    else {
+
+        std::string move_instru = "Move (";
+        move_instru += std::to_string(manifestShip->transfer_moves.at(manifestShip->transfer_moves.size()-1).first);
+        move_instru += ", ";
+        move_instru += std::to_string(manifestShip->transfer_moves.at(manifestShip->transfer_moves.size()-1).second);
+        move_instru += ") to (";
+        move_instru += std::to_string(manifestShip->transfer_moves.at(manifestShip->transfer_moves.size()-2).first);
+        move_instru += ", ";
+        move_instru += std::to_string(manifestShip->transfer_moves.at(manifestShip->transfer_moves.size()-2).second);
+        move_instru += ")\n";
+        manifestShip->transfer_moves.pop_back();
+        manifestShip->transfer_moves.pop_back();
+
+
+        this->ui->transfer_update_coords_text->setPlainText(QString::fromStdString(move_instru));
+
+
+        int manifestsize =  this->manifestShip->saved_states.size();
+
+        std::string first_move = "Current Ship State\n\n";
+        first_move += this->manifestShip->saved_states.at(manifestsize-1);
+        first_move += "\n------------------------------------------------------------\n\n";
+        first_move += "After Moving\n";
+        first_move += this->manifestShip->saved_states.at(manifestsize-2);
+
+        this->ui->onload_offload_textbox->setPlainText(QString::fromStdString(first_move));
+        this->manifestShip->saved_states.pop_back();
+        this->manifestShip->saved_states.pop_back();
+    }
+
+    //this->ui->balancing_plain_text->clear();
+    //this->ui->balancing_plain_text->setPlainText(QString::fromStdString(saved_states.at(1)));
+}
+
+
 
 

@@ -40,6 +40,9 @@ class MainWindow : public QMainWindow
         void input_transfer_list_clicked();
         void submit_transfer_list_clicked();
         void add_another_transfer_item_clicked();
+        void generate_transfer_moves_clicked();
+        void next_transfer_moves_clicked();
+
 
 };
 #endif // MAINWINDOW_H

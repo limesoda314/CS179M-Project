@@ -255,19 +255,6 @@ double Ship::balance_score() const {
 }
 
 
-std::vector<std::pair<int,int>> Ship::create_balance_list() {
-
-    std::vector<std::pair<int,int>> balance_pair_list = {{1,2},{1,11}, {1,3}, {2,11}, {2,11},{1,10}};
-    return balance_pair_list;
-
-}
-
-
-int Ship::balance_list(std::vector< std::pair<int,int> > &bal_list) {
-    bal_list = {{1,2},{1,11}, {1,3}, {2,11}, {2,11},{1,10}};
-    return 0;
-}
-
 int Ship::balance_ship() {
 
     std::vector<std::pair<int, int>> left_items;    // mass values, coord index
@@ -524,6 +511,34 @@ int Ship::load_unload_ship() {
 }
 
 
+std::vector<std::pair<int,int>> Ship::create_balance_list() {
+
+    std::vector<std::pair<int,int>> balance_pair_list = {{1,2},{1,11}, {1,3}, {2,11}, {2,11},{1,10}};
+    return balance_pair_list;
+
+}
+
+
+int Ship::balance_list(std::vector< std::pair<int,int> > &bal_list) {
+    bal_list = {{1,2},{1,11}, {1,3}, {2,11}, {2,11},{1,10}};
+    return 0;
+}
+
+
+std::vector<std::pair<int,int>> Ship::create_transfer_moves() {
+
+    std::vector<std::pair<int,int>> trans_pair_list = {{1,2},{1,11}, {1,3}, {2,11}, {2,11},{1,10}};
+    return trans_pair_list;
+
+}
+
+
+int Ship::create_transfer_list(std::vector< std::pair<int,int> > &trans_list) {
+    trans_list = {{1,2},{1,11}, {1,3}, {2,11}, {2,11},{1,10}};
+    return 0;
+}
+
+
 std::string Ship::swap_coordinates(std::pair<int,int>& coord1, std::pair<int,int>& coord2) {
 
     // convert coordinate to their index
@@ -538,25 +553,36 @@ std::string Ship::swap_coordinates(std::pair<int,int>& coord1, std::pair<int,int
     return print_ship();
 }
 
-void Ship::save_ship_states(std::vector<std::string> &saved_states_list, std::vector<std::pair<int, int> > balance_list) {
-
+void Ship::save_ship_states(std::vector<std::string> &saved_states_list, std::vector<std::pair<int, int> > move_list) {
+    saved_states_list.clear();
     saved_states_list.push_back(print_ship());
-    for (int i = 0; i < balance_list.size() -1; i++) {
+    for (int i = 0; i < move_list.size() -1; i++) {
         // saves the printed ship string after swapping
         // 1,2 -> 1,11
         // 1,3 -> 2,11
         // 2,11 -> 1,10
-        saved_states_list.push_back(swap_coordinates(balance_list.at(i), balance_list.at(i+1)));
+        saved_states_list.push_back(swap_coordinates(move_list.at(i), move_list.at(i+1)));
     }
 
 }
 
-void Ship::save_ship_states(std::vector<std::pair<int, int> > balance_list) {
+void Ship::save_ship_states(std::vector<std::pair<int,int> > move_list) {
 
     this->saved_states.push_back(print_ship());
-    for (int i = 0; i < balance_list.size() -1; i++) {
+    for (int i = 0; i < move_list.size() -1; i++) {
         // saves the printed ship string after swapping
-        this->saved_states.push_back(swap_coordinates(balance_list.at(i), balance_list.at(i+1)));
+        this->saved_states.push_back(swap_coordinates(move_list.at(i), move_list.at(i+1)));
     }
 
+}
+
+
+int Ship::num_boxes() const {
+    int sum = 0;
+    for (int i = 0; i < Coordinates.size(); i++) {
+        if (Names.at(i) != "NAN" & Names.at(i) != "UNUSED") {
+            sum++;
+        }
+    }
+    return sum;
 }

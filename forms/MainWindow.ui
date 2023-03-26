@@ -251,7 +251,10 @@
                   </widget>
                  </item>
                  <item>
-                  <widget class="QPushButton" name="next_move">
+                  <widget class="QPlainTextEdit" name="transfer_update_coords_text"/>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="transfer_next_move_button">
                    <property name="text">
                     <string>Next Move</string>
                    </property>
@@ -282,6 +285,9 @@
                    <width>461</width>
                    <height>371</height>
                   </rect>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">font: 9pt &quot;Courier New&quot;;</string>
                  </property>
                 </widget>
                </widget>
