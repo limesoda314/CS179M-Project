@@ -20,9 +20,9 @@ ShipState* ShippingPortDriver::graphSearch(ShipState* problem) {
 
     // std::cout << "              > frontier size check" << std::endl;
     // Tracking max frontier length
-    if (this->frontier.size() > this->maxFrontierLength) {
-        this->maxFrontierLength = this->frontier.size();
-    }
+    // if (this->frontier.size() > this->maxFrontierLength) {
+    //     this->maxFrontierLength = this->frontier.size();
+    // }
 
     // loop do
     // std::cout << "              > starting search" << std::endl;
@@ -42,9 +42,9 @@ ShipState* ShippingPortDriver::graphSearch(ShipState* problem) {
 
         // std::cout << "                  > calculating balance factor" << std::endl;
         // If leaf is the goal, return it
-        if (leaf->balanceFactor() >= 0.9 && leaf->balanceFactor() <= 1.1) { 
+        if (leaf->balanceFactor() >= 0.9 && leaf->balanceFactor() <= 1.1) {
             return leaf;
-        } // Overloaded== // TODO - CHECK
+        }
 
         // std::cout << "                  > adding to explored" << std::endl;
         // Add to explored set if not
@@ -53,7 +53,7 @@ ShipState* ShippingPortDriver::graphSearch(ShipState* problem) {
         // If not in explored, expand
         // std::cout << "==============================================================\n Current expanding node with g(n) = "
                 //   << leaf->getCost() << ", h(n) = " << leaf->heuristic() << ", and f(n) = " << leaf->f_valueFrom() << "\n";
-        
+
         // std::cout << "                  > drawing current state" << std::endl;
         leaf->draw(std::cout);
 
@@ -91,7 +91,7 @@ ShipState* ShippingPortDriver::graphSearch(ShipState* problem) {
             }
 
         }
-    } 
+    }
 }
 
 int ShippingPortDriver::QTGUI(int argc, char** argv) {
@@ -111,31 +111,31 @@ void ShippingPortDriver::menu() {
     this->ship = new Ship();
 
     while ( !( (option == 'q') && (option == 'Q') ) )  {
-        std::cout << "MENU" << std::endl; 
+        std::cout << "MENU" << std::endl;
 
         std::cout << "1: Load Manifest" << std::endl;
-        std::cout << "2: Read Manifest (Output to console)" << std::endl; 
-        std::cout << "3: Create Outbound Manifest" << std::endl; 
-        std::cout << "4: Log comment" << std::endl; 
-        std::cout << "5: View logfile" << std::endl; 
-        std::cout << "6: Print ship" << std::endl; 
-        std::cout << "7: Print balance score" << std::endl; 
-        std::cout << "8: Balance ship" << std::endl; 
-        std::cout << "q: Quit" << std::endl; 
+        std::cout << "2: Read Manifest (Output to console)" << std::endl;
+        std::cout << "3: Create Outbound Manifest" << std::endl;
+        std::cout << "4: Log comment" << std::endl;
+        std::cout << "5: View logfile" << std::endl;
+        std::cout << "6: Print ship" << std::endl;
+        std::cout << "7: Print balance score" << std::endl;
+        std::cout << "8: Balance ship" << std::endl;
+        std::cout << "q: Quit" << std::endl;
 
-        std::cin >> option; 
-        
+        std::cin >> option;
+
         if (option == '1') {
-            int test; 
+            int test;
             std::cout << "Test 1-5: ";
-            std::cin >> test; 
+            std::cin >> test;
             std::string testpath = "Manifests/ShipCase" + std::to_string(test) + ".txt";
             this->ship->load_manifest(testpath);
-            
+
         }
         else if (option == '2') {
             if (this->ship->get_manifest_name() == "") {
-                std::cout << "Load a manifest first" << std::endl; 
+                std::cout << "Load a manifest first" << std::endl;
             }
             else {
                 this->ship->read_manifest();
@@ -143,44 +143,44 @@ void ShippingPortDriver::menu() {
         }
         else if (option == '3') {
             if (this->ship->get_manifest_name() == "") {
-                std::cout << "Load a manifest first" << std::endl; 
+                std::cout << "Load a manifest first" << std::endl;
             }
             else {
                 this->ship->create_outbound();
             }
         }
         else if (option == '4') {
-            time_t now = std::time(0); 
+            time_t now = std::time(0);
             tm *ltm = std::localtime(&now);
 
-            std::cout << "Will log to logfile_" << std::to_string(1900 + ltm->tm_year) << ".txt" << std::endl; 
-            std::cout << "Single line comment: " << std::endl; 
+            std::cout << "Will log to logfile_" << std::to_string(1900 + ltm->tm_year) << ".txt" << std::endl;
+            std::cout << "Single line comment: " << std::endl;
             std::string comment;
             std::cin.ignore();
             std::getline(std::cin, comment);
 
-            this->ship->log_comment(comment); 
+            this->ship->log_comment(comment);
         }
         else if (option == '5') {
-            this->ship->view_logfile(); 
+            this->ship->view_logfile();
         }
         else if (option == '6') {
             if (this->ship->get_manifest_name() == "") {
-                std::cout << "Load a manifest first" << std::endl; 
+                std::cout << "Load a manifest first" << std::endl;
             } else {
                 this->ship->print_ship();
             }
         }
         else if (option == '7') {
             if (this->ship->get_manifest_name() == "") {
-                std::cout << "Load a manifest first" << std::endl; 
+                std::cout << "Load a manifest first" << std::endl;
             } else {
                 this->ship->balance_score();
             }
         }
         else if (option == '8') {
             if (this->ship->get_manifest_name() == "") {
-                std::cout << "Load a manifest first" << std::endl; 
+                std::cout << "Load a manifest first" << std::endl;
             } else {
                 std::vector<std::pair<int, int>> return_vector;
 
@@ -204,14 +204,14 @@ void ShippingPortDriver::menu() {
             }
         }
         else if ( (option == 'q') || (option == 'Q') ) {
-            break; 
+            break;
         }
         else {
             std::cout << "Error: please use one of the given options." << std::endl;
             continue;
         }
 
-    } 
+    }
 }
 
 void ShippingPortDriver::printPath(std::ostream& out, ShipState* leaf, int i) {
@@ -224,7 +224,7 @@ void ShippingPortDriver::printPath(std::ostream& out, ShipState* leaf, int i) {
     // std::cout << "printing current" << std::endl;
 
     printPath(out, leaf->getParent(), i + 1);
-    
+
     leaf->draw(std::cout);
     if (leaf->getParent()) {
         leaf->drawChange(out, this->balance_list);
@@ -260,11 +260,11 @@ void ShippingPortDriver::defaultTest() {
 
 void ShippingPortDriver::balance_ship(
     std::vector<std::pair<int, int>>& send_back
-) {
-
+)
+{
     std::cout << "Attempting to balance ship. Loading..." << std::endl;
 
-    std::cout << " > Creating starting ship state" << std::endl; 
+    std::cout << " > Creating starting ship state" << std::endl;
     ShipState* startState = new ShipState(
         this->ship->getCoords(),
         this->ship->getMasses(),
@@ -273,9 +273,16 @@ void ShippingPortDriver::balance_ship(
         nullptr
     );
 
+    std::cout << " > curr balance factor: " << startState->balanceFactor() << std::endl;
+
     std::cout << " > Creating solution (may take a while)..." << std::endl;
-    // Graph search algorithm
-    ShipState* solution = this->graphSearch(startState);
+    ShipState* solution;
+    if (startState->balanceFactor() >= 0.9 && startState->balanceFactor() <= 1.1) {
+        solution = startState;
+    }
+    else {
+        solution = this->graphSearch(startState);
+    }
 
     std::cout << "   > Done with solution" << std::endl;
 

@@ -17,11 +17,11 @@ ShipState::ShipState(
 
     // push back only coordinates that have a cargo or are part of the ship 
     for (int i = 0; i < ship_names.size(); i++) {
-        std::cout << "      curr name..." << ship_names.at(i) << std::endl;
-        std::cout << "      curr coords... ("
-                  << ship_coords.at(i).first
-                  << ", "
-                  << ship_coords.at(i).second << ")" << std::endl;
+        // std::cout << "      curr name..." << ship_names.at(i) << std::endl;
+        // std::cout << "      curr coords... ("
+        //           << ship_coords.at(i).first
+        //           << ", "
+        //           << ship_coords.at(i).second << ")" << std::endl;
         if (ship_names.at(i) == "NAN") {
             this->mass.push_back("NAN");
             this->coords.push_back(ship_coords.at(i)); 
@@ -245,8 +245,8 @@ int ShipState::generate_possible() {
 
     this->free_spaces.clear();
 
-    int max_top = 8 + 1; // maximum y index [1, y_size]
-    int max_right = 12 + 1; // maximum x index [1, x_size]
+    int max_top = 7 + 1; // maximum y index [1, y_size]
+    int max_right = 11 + 1; // maximum x index [1, x_size]
 
     std::pair<int, int> curr_coord(0, 0);
 

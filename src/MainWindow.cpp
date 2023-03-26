@@ -241,40 +241,40 @@ void MainWindow::generate_balancing_states_clicked() {
     this->shipDriver->getShip()->move_num.first = 1;
     this->shipDriver->getShip()->move_num.second = 1;
 
-    this->ui->balancing_plain_text->clear();
+    this->ui->balancing_plain_text->setPlainText("");
 
     if (this->shipDriver->getShip()->get_manifest_name().size() == 0) {
         std::cout << "Error: manifest empty."  << std::endl;
         return;
     }
 
-    std::cout << "balance:t1" << std::endl;
+//    std::cout << "balance:t1" << std::endl;
 
     this->shipDriver->balance_ship(this->GUI_balanced_list);
     this->shipDriver->getShip()->save_ship_states(this->GUI_move_save_states, this->GUI_balanced_list);
 
-    std::cout << "balance:t2" << std::endl;
+//    std::cout << "balance:t2" << std::endl;
 
-    std::reverse(this->GUI_move_save_states.begin()  , this->GUI_move_save_states.end());
-    std::reverse(this->GUI_balanced_list.begin()     , this->GUI_balanced_list.end());
+    std::reverse(this->GUI_move_save_states.begin()  ,  this->GUI_move_save_states.end());
+    std::reverse(this->GUI_balanced_list.begin()     ,  this->GUI_balanced_list.end()   );
 
-    std::cout << "balance:t3" << std::endl;
+//    std::cout << "balance:t3" << std::endl;
 
 //    for (int i = 0; i < manifestShip->balanced_list.size(); i++) {
 //        std::cout << manifestShip->balanced_list.at(i).first << ", " << manifestShip->balanced_list.at(i).second << std::endl;
 //    }
 
-    std::cout << "balance:t4" << std::endl;
+//    std::cout << "balance:t4" << std::endl;
     if (this->GUI_move_save_states.size() < 2) {
 
-        std::cout << "balance:t5" << std::endl;
+//        std::cout << "balance:t5" << std::endl;
 
         std::string balance_info = "Finished balancing Ship! Manifest \n";
         balance_info += this->shipDriver->getShip()->get_manifest_name();
         balance_info += "OUTBOUND.txt was written to desktop. email file.\n";
         balance_info += this->shipDriver->getShip()->print_ship();
 
-        std::cout << "balance:t6" << std::endl;
+//        std::cout << "balance:t6" << std::endl;
 
         balance_info += "\nbalance factor: ";
         balance_info += std::to_string(this->shipDriver->getShip()->balance_score());
@@ -282,7 +282,7 @@ void MainWindow::generate_balancing_states_clicked() {
         balance_info += this->shipDriver->getShip()->print_ship();
         this->ui->balancing_plain_text->setPlainText(QString::fromStdString(balance_info));
 
-           std::cout << "balance:t7" << std::endl;
+//        std::cout << "balance:t7" << std::endl;
         QString outbound_filepath = QString("%1/").arg(QStandardPaths::writableLocation(QStandardPaths::DesktopLocation));
 
         this->shipDriver->getShip()->create_outbound(outbound_filepath.toStdString());
@@ -291,30 +291,30 @@ void MainWindow::generate_balancing_states_clicked() {
         logger->logRawComment(comment);
     }
     else {
-        std::cout << "balance:t8" << std::endl;
+//        std::cout << "balance:t8" << std::endl;
 
         this->shipDriver->getShip()->move_num.first = this->GUI_balanced_list.size()/2;
         this->shipDriver->getShip()->move_num.second = 1;
         std::string move_instru = "Now doing move number ";
 
-        std::cout << "balance:t9" << std::endl;
+//        std::cout << "balance:t9" << std::endl;
 
         move_instru += std::to_string(this->shipDriver->getShip()->move_num.second);
         move_instru += " of ";
         move_instru += std::to_string(this->shipDriver->getShip()->move_num.first);
         move_instru += ". Move (";
-        std::cout << "balance:t10" << std::endl;
+//        std::cout << "balance:t10" << std::endl;
         move_instru += std::to_string(this->GUI_balanced_list.at(this->GUI_balanced_list.size()-1).first);
-        std::cout << "balance:t11" << std::endl;
+//        std::cout << "balance:t11" << std::endl;
         move_instru += ", ";
         move_instru += std::to_string(this->GUI_balanced_list.at(this->GUI_balanced_list.size()-1).second);
-        std::cout << "balance:t12" << std::endl;
+//        std::cout << "balance:t12" << std::endl;
         move_instru += ") to (";
         move_instru += std::to_string(this->GUI_balanced_list.at(this->GUI_balanced_list.size()-2).first);
-        std::cout << "balance:t13" << std::endl;
+//        std::cout << "balance:t13" << std::endl;
         move_instru += ", ";
         move_instru += std::to_string(this->GUI_balanced_list.at(this->GUI_balanced_list.size()-2).second);
-        std::cout << "balance:t14" << std::endl;
+//        std::cout << "balance:t14" << std::endl;
         move_instru += ")\n";
         this->GUI_balanced_list.pop_back();
         this->GUI_balanced_list.pop_back();
@@ -325,14 +325,14 @@ void MainWindow::generate_balancing_states_clicked() {
         int manifestsize = this->GUI_move_save_states.size();
 
         std::string first_move = "Current Ship State\n\n";
-        std::cout << "balance:t15" << std::endl;
+//        std::cout << "balance:t15" << std::endl;
         first_move += this->GUI_move_save_states.at(manifestsize-1);
         first_move += "\n------------------------------------------------------------\n\n";
         first_move += "After Moving\n";
-        std::cout << "balance:t16" << std::endl;
+//        std::cout << "balance:t16" << std::endl;
         first_move +=this->GUI_move_save_states.at(manifestsize-2);
 
-        std::cout << "balance:t17" << std::endl;
+//        std::cout << "balance:t17" << std::endl;
 
         this->ui->balancing_plain_text->setPlainText(QString::fromStdString(first_move));
         this->GUI_move_save_states.pop_back();

@@ -18,10 +18,16 @@ int Ship::reset_ship() {
 
 // load manifest from filepath
 int Ship::load_manifest(const std::string &filepath) {
+
+    // Clear old information
+    this->Coordinates.clear();
+    this->Names.clear();
+    this->Mass.clear();
+
     if (this->manifest_name != "") {
         reset_ship(); 
     }
-    std::cout << "test5" << std::endl;
+//    std::cout << "test5" << std::endl;
     std::fstream fin(filepath); 
     // save manifest name 
     for (int i = filepath.size()-1; i >=0; i--) {
@@ -31,7 +37,7 @@ int Ship::load_manifest(const std::string &filepath) {
         this->manifest_name = filepath.at(i) + this->manifest_name; 
     }
 
-    std::cout << "test7" << std::endl;
+//    std::cout << "test7" << std::endl;
     this->manifest_name = this->manifest_name.substr(0, manifest_name.size()-4); 
 
     if (!fin.is_open()) {
@@ -39,7 +45,7 @@ int Ship::load_manifest(const std::string &filepath) {
         return -1; 
     }
  
-    std::cout << "test8" << std::endl;
+//    std::cout << "test8" << std::endl;
     while(!fin.eof()) {
         std::string cargo_y;
         std::string cargo_x;
@@ -48,18 +54,18 @@ int Ship::load_manifest(const std::string &filepath) {
 
         getline(fin, cargo_y, ','); 
         getline(fin, cargo_x, ',');
-        std::cout << stoi(cargo_x.substr(0, 2)) << std::endl; 
-        std::cout << stoi(cargo_y.substr(1, 2)) << std::endl; 
+//        std::cout << stoi(cargo_x.substr(0, 2)) << std::endl;
+//        std::cout << stoi(cargo_y.substr(1, 2)) << std::endl;
         this->Coordinates.push_back(std::pair<int,int> ( stoi(cargo_y.substr(1,2)),  stoi(cargo_x.substr(0,2)) )); 
         getline(fin, cargo_mass, ','); 
-        std::cout << cargo_mass.substr(2, cargo_mass.length() - 3) << std::endl;
+//        std::cout << cargo_mass.substr(2, cargo_mass.length() - 3) << std::endl;
         this->Mass.push_back(cargo_mass.substr(2, cargo_mass.length()-3)); 
         
         getline(fin, cargo_name);
 
         // cargo_name = cargo_name.substr(1, cargo_name.length() - 1);
 
-        std::cout << cargo_name.substr(1, cargo_name.length() - 1) << std::endl;
+//        std::cout << cargo_name.substr(1, cargo_name.length() - 1) << std::endl;
 
         this->Names.push_back(cargo_name.substr(1, cargo_name.length() - 1));
        
