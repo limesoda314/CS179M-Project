@@ -30,6 +30,8 @@ class ShippingPortDriver {
         int maxFrontierLength;
         Ship* ship;
 
+        std::vector<std::pair<int, int>> balance_list;
+
     public:
         // Constructors
         ShippingPortDriver();
@@ -44,6 +46,8 @@ class ShippingPortDriver {
         void defaultTest();
 
         void balance_ship();
+
+        void drawBalanceList(std::ostream&) const;
 };
 
 #endif

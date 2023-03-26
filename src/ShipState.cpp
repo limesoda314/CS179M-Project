@@ -4,7 +4,7 @@
 ShipState::ShipState(
     const std::vector<std::pair<int,int>>& ship_coords,
     const std::vector<std::string>& ship_mass,
-    const std::vector<std::string>& ship_names,s
+    const std::vector<std::string>& ship_names,
     Heuristic* ctx,
     ShipState* par
     )
@@ -39,6 +39,8 @@ ShipState::ShipState(
 
     std::cout << "      > Generate possible moves to make" << std::endl;
     this->generate_move(); 
+
+    this->parent = nullptr;
 }
 
 ShipState::ShipState(
@@ -52,14 +54,18 @@ ShipState::ShipState(
 {
     this->coords = ship_coords;
     this->mass = ship_mass; 
-    this->free_spaces = ship_free_spaces; 
-    this->move_spaces = ship_move_spaces;
+    this->generate_possible(); 
+    this->generate_move();
     this->cost = 0;
     this->ctx = ctx;
     this->parent = par;
 } 
 
 int ShipState::expandNode() {
+
+    // this->drawCoords(std::cout, this->move_spaces);
+    // this->drawCoords(std::cout, this->free_spaces);
+
     for (int i = 0; i < move_spaces.size(); i++) {
         for (int j = 0; j < free_spaces.size(); j++) {
             std::vector<std::pair<int,int>> new_coords = this->coords;
@@ -69,81 +75,118 @@ int ShipState::expandNode() {
             // check if free space is ontop of a box 
             // if it is, we need to remove it from the possible spaces later 
             // if (this->check_under_mass(free_spaces.at(j).first, free_spaces.at(j).second)) {
-            //     for (int k = 0; k < new_moves.size(); k++) {
-            //         if (new_moves.at(k).first == free_spaces.at(j).first-1 && new_moves.at(k).second == free_spaces.at(j).second) {
-            //             new_moves.at(k) = new_moves.at(new_moves.size() - 1);
-            //             new_moves.pop_back();  
-            //         }
-            //     }
+                // for (int k = 0; k < new_moves.size(); k++) {
+                //     if (new_moves.at(k).first == free_spaces.at(j).first-1 && new_moves.at(k).second == free_spaces.at(j).second) {
+                //         new_moves.at(k) = new_moves.at(new_moves.size() - 1);
+                //         new_moves.pop_back();  
+                //     }
+                // }
             // }
 
-            // // update temp coord and mass vectors
-            // swap_coords(new_coords, move_spaces.at(i), free_spaces.at(j)); 
+            // update temp coord and mass vectors
+            // TODO check above
+            if (free_spaces.at(j).first != move_spaces.at(i).first+1) {
+
+                // std::cout << "moving (" << move_spaces.at(i).first << ", " << move_spaces.at(i).second << ") to ("
+                //           << free_spaces.at(j).first << ", " << free_spaces.at(j).second << ")" << std::endl;
+
+                swap_coords(new_coords, free_spaces.at(j), move_spaces.at(i)); 
+            }
+            else {
+                continue;
+            }
+
             // new_frees.at(j) = move_spaces.at(i);
 
             // if (move_spaces.at(i).first > 1) {
-            //     new_moves.at(i) = std::pair<int,int> (move_spaces.at(i).first-1, move_spaces.at(i).second);
+            // new_moves.at(i) = std::pair<int,int> (move_spaces.at(i).first-1, move_spaces.at(i).second);
             // }
             
-            // ShipState* newState = new ShipState(
-            //     new_coords,
-            //     this->mass,
-            //     new_frees,
-            //     new_moves, 
-            //     this->ctx,
-            //     this
-            // );
+            ShipState* newState = new ShipState(
+                new_coords,
+                this->mass,
+                new_frees,
+                new_moves, 
+                this->ctx,
+                this
+            );
 
-            // newState->setCost(this->getCost() + 1);
-            // children.push_back(newState); 
+            newState->currFrom = {this->move_spaces.at(i).first, this->move_spaces.at(i).second };
+            newState->currTo   = {this->free_spaces.at(j).first, this->free_spaces.at(j).second };
+
+            if (newState->balanceFactor() >= 0.9 && newState->balanceFactor() <= 1.1) {
+                newState->setCost(this->getCost() + 1);
+                children.push_back(newState); 
+                return 0;
+            }
+
+            newState->setCost(this->getCost() + 1);
+            children.push_back(newState);
 
             // Remove current item from free_spaces and move_spaces
             // for (int k = 0; k < this->free_spaces.size(); k++) {
             //     if 
             // }
-
         
-            // First update value in new_coords to reflect change (it will reflect free_spaces[j] coords)
-            for (int k = 0; k < new_coords.size(); k++) {
-                if ( new_coords.at(k).first == new_moves.at(i).first && new_coords.at(k).second == new_moves.at(i).second ) {
-                    new_coords.at(k).first = new_moves.at(i).first;
-                    new_coords.at(k).second = new_moves.at(i).second;
-                }
-            }
+            // // First update value in new_coords to reflect change (it will reflect free_spaces[j] coords)
+            // for (int k = 0; k < new_coords.size(); k++) {
+            //     if ( new_coords.at(k).first == new_moves.at(i).first && new_coords.at(k).second == new_moves.at(i).second ) {
+            //         new_coords.at(k).first = new_moves.at(i).first;
+            //         new_coords.at(k).second = new_moves.at(i).second;
+            //     }
+            // }
 
-            // Update new moves to reflect the change (new move will add both the current free_space and the one below
-            // the old new_moves)
-            new_moves.at(i)
+            // // Update new moves to reflect the change (new move will add both the current free_space and the one below
+            // // the old new_moves)
+            // new_moves.at(i)
 
-            // Update free spaces to now reflect the change (free_spaces[j].first - 1 for y)
-            free_spaces.at(j).first = free_spaces.at(j).first - 1;
+            // // Update free spaces to now reflect the change (free_spaces[j].first - 1 for y)
+            // free_spaces.at(j).first = free_spaces.at(j).first - 1;
         
-            // Update new moves to reflect the change (new move will add both the current free_space)
+            // // Update new moves to reflect the change (new move will add both the current free_space)
 
-            // 
-            for () {
+            // // 
+            // for () {
 
-            }
-        
+            // }
         }
-
+    
+    
     }
 
     return 0;
 
 }
 
+void ShipState::drawChange(
+    std::ostream& out,
+    std::vector<std::pair<int, int>>& changeVec
+) {
+
+    out << " - moving (" << this->currFrom.first << ", " << this->currFrom.second << ") "
+        << " to "
+        << "(" << this->currTo.first << ", " << this->currTo.second << ")" << std::endl;
+
+    changeVec.push_back({this->currFrom.first, this->currFrom.second}); // from coord
+    changeVec.push_back({this->currTo.first, this->currTo.second}); // to coord
+    return;
+}
+
 int ShipState::swap_coords(
     std::vector<std::pair<int,int>> &new_coords,
     const std::pair<int,int> &free_space,
     const std::pair<int,int> &move_space)
-
 {
 
     // free_space should not exist in new_coords 
-    int move_index = 0;   
+    int move_index = 0;
+
     for (int i = 0; i < new_coords.size(); i++) {
-        if (new_coords.at(i).first == move_space.first && new_coords.at(i).second == move_space.second) {
+        if (
+            new_coords.at(i).first == move_space.first &&
+            new_coords.at(i).second == move_space.second
+        ) {
+            // std::cout << "                      found move_spaces coord in coords" << std::endl;
             move_index = i; 
             break;
         }
@@ -157,6 +200,8 @@ int ShipState::swap_coords(
 }
 
 int ShipState::generate_move() {
+
+    this->move_spaces.clear();
 
     for (int i = 0; i < this->coords.size(); i++) {
 
@@ -197,6 +242,8 @@ bool ShipState::check_above(const int &y_coord, const int &x_coord) {
 // can possibly update implementation later to check going up 
 // this way you can avoid checking columns that are empty 
 int ShipState::generate_possible() {
+
+    this->free_spaces.clear();
 
     int max_top = 8 + 1; // maximum y index [1, y_size]
     int max_right = 12 + 1; // maximum x index [1, x_size]
@@ -270,11 +317,11 @@ bool ShipState::check_under_mass(const int &y_coord, const int &x_coord) {
     return 0; // false 
 }
 
-int ShipState::f_valueFrom() const {
+double ShipState::f_valueFrom() const {
     return this->getCost() + this->heuristic();
 }
 
-int ShipState::heuristic() const {
+double ShipState::heuristic() const {
     return this->ctx->heuristic(this);
 }
 
@@ -302,7 +349,7 @@ void ShipState::draw(std::ostream& out) {
     return;
 }
 
-int ShipState::balanceFactor() const {
+double ShipState::balanceFactor() const {
     int right_mass = 0;
     int left_mass = 0;
     int middle = (11 - 0 + 1) / 2; // 6 - middle of the ship
@@ -334,7 +381,7 @@ int ShipState::balanceFactor() const {
     // std::cout << "Ship has a balance score of: " << balance << std::endl;
     // std::cout << "right: " << right_mass << std::endl;
     // std::cout << "left: " <<left_mass << std::endl;
-    std::cout << "               BALANCE: " << balance << std::endl;
+    // std::cout << "               BALANCE: " << balance << std::endl;
     return balance;
 }
 
@@ -350,9 +397,12 @@ bool ShipState::coordInCoords(std::pair<int, int> curr){
 
 void ShipState::drawCoords(
     std::ostream& out,
-    std::vector<std::pair<int, int>>
+    std::vector<std::pair<int, int>> given
 ) const {
-
-
+    out << "Drawing {";
+    for (int i = 0; i < given.size(); i++) {
+        out << "(" << given.at(i).first << "," << given.at(i).second << "), ";
+    }
+    out << "}" << std::endl;
     return;
 }

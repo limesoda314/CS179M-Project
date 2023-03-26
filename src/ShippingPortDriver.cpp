@@ -10,51 +10,51 @@ ShipState* ShippingPortDriver::graphSearch(ShipState* problem) {
 
     std::cout << "             Beginning graph search" << std::endl;
 
-    std::cout << "              > frontier push" << std::endl;
+    // std::cout << "              > frontier push" << std::endl;
     // Initialize the frontier using the initial state of problem
     this->frontier.push(problem);
     this->frontier_set.insert(problem);
 
-    std::cout << "              > frontier size check" << std::endl;
+    // std::cout << "              > frontier size check" << std::endl;
     // Tracking max frontier length
     if (this->frontier.size() > this->maxFrontierLength) {
         this->maxFrontierLength = this->frontier.size();
     }
 
     // loop do
-    std::cout << "              > starting search" << std::endl;
+    // std::cout << "              > starting search" << std::endl;
     while (true) {
         // If frontier is empty, then return failure
         if (this->frontier.size() == 0) { return nullptr; }
 
-        std::cout << "                  > getting leaf" << std::endl;
+        // std::cout << "                  > getting leaf" << std::endl;
         // Pick the smallest leaf, based on algorithm
         ShipState* leaf = this->frontier.top();
 
-        std::cout << "                  > popping from frontier" << std::endl;
+        // std::cout << "                  > popping from frontier" << std::endl;
         this->frontier.pop();
 
-        std::cout << "                  > erasing from frontier" << std::endl;
+        // std::cout << "                  > erasing from frontier" << std::endl;
         this->frontier_set.erase(leaf);
 
-        std::cout << "                  > calculating balance factor" << std::endl;
+        // std::cout << "                  > calculating balance factor" << std::endl;
         // If leaf is the goal, return it
         if (leaf->balanceFactor() >= 0.9 && leaf->balanceFactor() <= 1.1) { 
             return leaf;
         } // Overloaded== // TODO - CHECK
 
-        std::cout << "                  > adding to explored" << std::endl;
+        // std::cout << "                  > adding to explored" << std::endl;
         // Add to explored set if not
         this->explored.insert(leaf);
 
         // If not in explored, expand
-        std::cout << "==============================================================\n Current expanding node with g(n) = "
-                  << leaf->getCost() << ", h(n) = " << leaf->heuristic() << ", and f(n) = " << leaf->f_valueFrom() << "\n";
+        // std::cout << "==============================================================\n Current expanding node with g(n) = "
+                //   << leaf->getCost() << ", h(n) = " << leaf->heuristic() << ", and f(n) = " << leaf->f_valueFrom() << "\n";
         
         // std::cout << "                  > drawing current state" << std::endl;
         leaf->draw(std::cout);
 
-        std::cout << "                  > expanding state..." << std::endl;
+        // std::cout << "                  > expanding state..." << std::endl;
         leaf->expandNode();
 
         this->count++;
@@ -62,7 +62,7 @@ ShipState* ShippingPortDriver::graphSearch(ShipState* problem) {
         // std::cout << "Expanding node " << this->count << "...\n";
         // std::cout << "Size: " << this->frontier_set.size() << "\n\n";
 
-        std::cout << "                  > add all the children to the frontier..." << std::endl;
+        // std::cout << "                  > add all the children to the frontier..." << std::endl;
         // Add the children to the frontier if not there or in explored
         for (int i = 0; i < leaf->getChildrenLength(); i++) {
 
@@ -72,7 +72,7 @@ ShipState* ShippingPortDriver::graphSearch(ShipState* problem) {
             bool in_frontier = ( this->frontier_set.find(leaf->getChild(i)) != this->frontier_set.end() );
 
             // Child is not in explored
-            // std::cout << "                  > check if leaf child(i) is in explored" << std::endl;
+            // std::cout << "                  > check if leaf chisld(i) is in explored" << std::endl;
             bool in_explored = ( this->explored.find(leaf->getChild(i)) != this->explored.end() );
 
             // If both conditions are met, push into frontier
@@ -191,10 +191,22 @@ void ShippingPortDriver::menu() {
 }
 
 void ShippingPortDriver::printPath(std::ostream& out, ShipState* leaf, int i) {
-    if (leaf == nullptr) { return; }
+    // std::cout << "Printing the path..." << std::endl;
+    if (!leaf) {
+        // std::cout << "reached above root..." << std::endl;
+        return;
+    }
+
+    // std::cout << "printing current" << std::endl;
+
     printPath(out, leaf->getParent(), i + 1);
-    out << i << ")\n";
+    
     leaf->draw(std::cout);
+    if (leaf->getParent()) {
+        leaf->drawChange(out, this->balance_list);
+    }
+    // out << i << ")\n";
+
 }
 
 void ShippingPortDriver::defaultTest() {
@@ -207,7 +219,7 @@ void ShippingPortDriver::defaultTest() {
         nullptr
     );
 
-    // Graph search algorithm
+    // Graph search algorith
     ShipState* solution = this->graphSearch(startState);
     if (solution != nullptr) {
         std::cout << "Goal!!!" << std::endl;
@@ -246,10 +258,21 @@ void ShippingPortDriver::balance_ship() {
         solution->draw(std::cout);
         std::cout << "\n";
         this->printPath(std::cout, solution, 0);
+        this->drawBalanceList(std::cout);
     }
     else {
         std::cout << "Failure!!!\n\n"
                   << "No answer was found. :(" << std::endl;
     }
 
+}
+
+void ShippingPortDriver::drawBalanceList(std::ostream& out) const {
+    out << "{";
+    for (int i = 0; i < this->balance_list.size(); i++) {
+        out << "(" << this->balance_list.at(i).first << ", "
+            << this->balance_list.at(i).second << "), ";
+    }
+    out << "}" << std::endl;
+    return;
 }

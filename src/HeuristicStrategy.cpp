@@ -5,9 +5,9 @@
 Heuristic::Heuristic() {}
 
 BalanceFactorHeuristic::BalanceFactorHeuristic() : Heuristic() {}
-int BalanceFactorHeuristic::heuristic(const ShipState* shipState) const {
+double BalanceFactorHeuristic::heuristic(const ShipState* shipState) const {
     return shipState->balanceFactor();
 }
 
 UniformCostHeuristic::UniformCostHeuristic() : Heuristic() {}
-int UniformCostHeuristic::heuristic(const ShipState* shipState) const { return 0; }
+double UniformCostHeuristic::heuristic(const ShipState* shipState) const { return 0; }

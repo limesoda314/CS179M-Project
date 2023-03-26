@@ -33,6 +33,9 @@ class ShipState {
 
         ShipState* parent;
 
+        std::pair<int, int> currFrom;
+        std::pair<int, int> currTo;
+
         int cost;
 
     public: 
@@ -79,11 +82,11 @@ class ShipState {
         bool check_under_mass(const int &y_coord, const int &x_coord);
 
         /* Calculate f factor for current ship state */
-        int f_valueFrom() const;
+        double f_valueFrom() const;
 
         /* Calculates the heuristic of the board state for the current
         selected context */
-        int heuristic() const;
+        double heuristic() const;
 
         int getCost() const { return this->cost; }
         void setCost(int cst) { this->cost = cst; }
@@ -102,10 +105,14 @@ class ShipState {
         std::vector<std::string> getMass() const { return this->mass; }
 
         void draw(std::ostream&);
+        void drawChange(std::ostream&, std::vector<std::pair<int, int>>&);
 
-        int balanceFactor() const;
+        double balanceFactor() const;
 
         bool coordInCoords(std::pair<int, int>);
+
+        std::pair<int, int> getCurrFrom() const { return this->currFrom; }
+        std::pair<int, int> getCurrTo() const { return this->currTo; }
 
     private:
         void drawCoords(std::ostream&, std::vector<std::pair<int, int>>) const;
