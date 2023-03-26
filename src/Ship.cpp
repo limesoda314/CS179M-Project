@@ -2,9 +2,12 @@
 
 int Ship::reset_ship() {
     manifest_name = ""; 
+
     Coordinates.clear();
     Mass.clear();
     Names.clear();
+    this->saved_states.clear();
+    this->balanced_list.clear();
 
     if (Names.size() != 0 || Coordinates.size() != 0 || Names.size() != 0) {
         return -1; 

@@ -13,7 +13,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     this->logger = new Logger(this);
     this->shipDriver = new ShippingPortDriver();
-    this->shipDriver->setShip(new Ship());
 
     QPushButton tmp;
 
@@ -30,17 +29,10 @@ MainWindow::MainWindow(QWidget *parent)
     this->connect(ui->enter_transfer_info_button, &QPushButton::clicked, this, &MainWindow::input_transfer_list_clicked);
     this->ui->Onload_offload_popup->hide();
 
-
     this->connect(ui->load_unload_submit_button, &QPushButton::clicked, this, &MainWindow::submit_transfer_list_clicked);
     this->connect(ui->add_yet_another_transfer_list_button, &QPushButton::clicked, this, &MainWindow::add_another_transfer_item_clicked);
     this->connect(ui->onload_offload_calculate_button, &QPushButton::clicked, this, &MainWindow::generate_transfer_moves_clicked);
     this->connect(ui->transfer_next_move_button, &QPushButton::clicked, this, &MainWindow::next_transfer_moves_clicked);
-
-
-
-
-
-
 }
 
 MainWindow::~MainWindow()

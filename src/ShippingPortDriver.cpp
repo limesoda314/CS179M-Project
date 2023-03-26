@@ -5,6 +5,7 @@
 
 ShippingPortDriver::ShippingPortDriver() {
     this->count = 0;
+    this->ship = new Ship();
 }
 
 /* Can run AStar and Uniform Cost Search */
