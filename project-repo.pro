@@ -15,7 +15,8 @@ SOURCES += \
     src/Logger.cpp \
     src/HeuristicStrategy.cpp \
     src/ShippingPortDriver.cpp \
-    src/ShipState.cpp
+    src/ShipState.cpp \
+    src/Popup.cpp
 
 HEADERS += \
     headers/Ship.h \
@@ -23,7 +24,8 @@ HEADERS += \
     headers/Logger.h \
     headers/HeuristicStrategy.h \
     headers/ShippingPortDriver.h \
-    headers/ShipState.h
+    headers/ShipState.h \
+    headers/Popup.h
     
 FORMS += \
     forms/MainWindow.ui

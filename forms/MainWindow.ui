@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
-  <widget class="QWidget" name="centralwidget">
+  <widget class="QWidget" name="main_window_centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
      <widget class="QLabel" name="logged_in_label">
@@ -157,7 +157,7 @@
              <rect>
               <x>10</x>
               <y>10</y>
-              <width>766</width>
+              <width>896</width>
               <height>154</height>
              </rect>
             </property>
@@ -473,6 +473,56 @@
          </widget>
         </widget>
        </widget>
+       <widget class="QStackedWidget" name="onload_offload_confirmation_popup">
+        <property name="geometry">
+         <rect>
+          <x>190</x>
+          <y>110</y>
+          <width>421</width>
+          <height>181</height>
+         </rect>
+        </property>
+        <property name="autoFillBackground">
+         <bool>false</bool>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: lightgray; color: black;</string>
+        </property>
+        <widget class="QWidget" name="page_8">
+         <widget class="QWidget" name="verticalLayoutWidget_12">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>10</y>
+            <width>401</width>
+            <height>161</height>
+           </rect>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_3">
+           <item>
+            <widget class="QLabel" name="label_14">
+             <property name="text">
+              <string>Finished making moves.
+Please email the outbound manifest for today's date
+Found on the desktop</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="onload_offload_popup_confirm_button">
+             <property name="text">
+              <string>Confirm</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </widget>
+        <widget class="QWidget" name="page_9"/>
+       </widget>
       </widget>
       <widget class="QWidget" name="balancetab">
        <attribute name="title">
@@ -645,6 +695,56 @@
           </widget>
          </item>
         </layout>
+       </widget>
+       <widget class="QStackedWidget" name="balance_finish_move_confirmation_popup">
+        <property name="geometry">
+         <rect>
+          <x>190</x>
+          <y>120</y>
+          <width>421</width>
+          <height>181</height>
+         </rect>
+        </property>
+        <property name="autoFillBackground">
+         <bool>false</bool>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: lightgray; color: black;</string>
+        </property>
+        <widget class="QWidget" name="page_12">
+         <widget class="QWidget" name="verticalLayoutWidget_16">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>10</y>
+            <width>401</width>
+            <height>161</height>
+           </rect>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_16">
+           <item>
+            <widget class="QLabel" name="label_18">
+             <property name="text">
+              <string>Finished making moves.
+Please email the outbound manifest for today's date
+Found on the desktop</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="balance_finish_popup_confirmation_button">
+             <property name="text">
+              <string>Confirm</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </widget>
+        <widget class="QWidget" name="page_13"/>
        </widget>
       </widget>
       <widget class="QWidget" name="logfiletab">

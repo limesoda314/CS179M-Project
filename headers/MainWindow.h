@@ -5,6 +5,7 @@
 #include <QtWidgets>
 #include <QLayout>
 #include "ShippingPortDriver.h"
+#include "Popup.h"
 #include <QVBoxLayout>
 
 class Logger;
@@ -18,7 +19,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
     public:
-        MainWindow(QWidget *parent = nullptr);
+        MainWindow(QWidget* parent = nullptr);
         ~MainWindow();
 
         Logger* logger;
@@ -26,6 +27,7 @@ class MainWindow : public QMainWindow
         std::vector<std::pair<int, int>> GUI_balanced_list;
         std::vector<std::string> GUI_move_save_states;
         int isPossibleResult;
+        Popup* global_popup_window;
 
     private:
         Ui::MainWindow *ui;
@@ -45,5 +47,8 @@ class MainWindow : public QMainWindow
         void add_another_transfer_item_clicked();
         void generate_transfer_moves_clicked();
         void next_transfer_moves_clicked();
+
+        void onload_offload_popup_confirm_button_clicked();
+        void balance_finish_popup_confirmation_button_clicked();
 };
 #endif // MAINWINDOW_H

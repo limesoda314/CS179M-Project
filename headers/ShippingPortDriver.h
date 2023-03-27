@@ -30,6 +30,7 @@ class ShippingPortDriver {
         int maxFrontierLength;
         Ship* ship;
         std::vector<std::pair<int, int>> balance_list;
+        std::vector<std::pair<int, int>> transfer_list;
         ShipState* startState;
 
     public:
@@ -58,6 +59,8 @@ class ShippingPortDriver {
         void cleanInternalVariables(std::ostream&);
 
         void clearShipStateTree(ShipState*, std::ostream&);
+
+        void transfer_containers(std::vector<std::pair<int, int>>&);
 };
 
 #endif

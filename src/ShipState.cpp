@@ -435,3 +435,10 @@ void ShipState::drawCoords(
 ShipState* ShipState::getChild(int i) const {
     return this->children.at(i);
 }
+
+bool ShipState::finished() const {
+//    if ( (this->unloadNames.size() == 0) && (this->loadNames.size() == 0) ) {
+//        return true;
+//    }
+    return false; // stub
+}

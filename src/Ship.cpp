@@ -582,7 +582,6 @@ int Ship::load_unload_ship() {
 
 
 std::vector<std::pair<int,int>> Ship::create_transfer_moves() {
-
     std::vector<std::pair<int,int>> trans_pair_list = {{1,2},{1,11}, {1,3}, {2,11}, {2,11},{1,10}};
     return trans_pair_list;
 
@@ -590,6 +589,8 @@ std::vector<std::pair<int,int>> Ship::create_transfer_moves() {
 
 
 int Ship::create_transfer_list(std::vector< std::pair<int,int> > &trans_list) {
+
+    // TODO REMOVE THIS
     trans_list = {{1,2},{1,11}, {1,3}, {2,11}, {2,11},{1,10}};
     return 0;
 }
