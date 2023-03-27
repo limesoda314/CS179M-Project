@@ -278,6 +278,7 @@ void MainWindow::generate_balancing_states_clicked() {
     if (isPossibleResult == 0) {
         this->ui->balancing_next_move_text->setPlainText(QString::fromStdString("No moves yet"));
         this->ui->balancing_plain_text->setPlainText(QString::fromStdString("Impossible to balance"));
+        this->shipDriver->balance_ship_impossible();
         return;
     }
     else if (isPossibleResult == 2) {

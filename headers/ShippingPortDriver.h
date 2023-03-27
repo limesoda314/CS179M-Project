@@ -46,10 +46,12 @@ class ShippingPortDriver {
         void defaultTest();
 
         void balance_ship(std::vector<std::pair<int, int>>&);
+        void balance_ship_impossible();
 
         void drawBalanceList(std::ostream&) const;
 
         Ship* getShip() const { return this->ship; }
+
 
         void setShip(Ship*);
 
