@@ -298,6 +298,8 @@ void MainWindow::generate_balancing_states_clicked() {
 //    }
 
 //    std::cout << "balance:t4" << std::endl;
+
+    // no more moves
     if (this->GUI_move_save_states.size() < 2) {
 
 //        std::cout << "balance:t5" << std::endl;
@@ -334,6 +336,7 @@ void MainWindow::generate_balancing_states_clicked() {
 
 //        std::cout << "balance:t9" << std::endl;
 
+        // output the move we're on + num of moves, coordinates1 -> coordinates2
         move_instru += std::to_string(this->shipDriver->getShip()->move_num.second);
         move_instru += " of ";
         move_instru += std::to_string(this->shipDriver->getShip()->move_num.first);
@@ -351,8 +354,12 @@ void MainWindow::generate_balancing_states_clicked() {
         move_instru += std::to_string(this->GUI_balanced_list.at(this->GUI_balanced_list.size()-2).second);
 //        std::cout << "balance:t14" << std::endl;
         move_instru += ")\n";
+
+
         this->GUI_balanced_list.pop_back();
         this->GUI_balanced_list.pop_back();
+
+
         this->shipDriver->getShip()->move_num.second++;
 
         this->ui->balancing_next_move_text->setPlainText(QString::fromStdString(move_instru));
@@ -430,10 +437,10 @@ void MainWindow::load_next_balance_states_clicked() {
         move_instru += ")\n";
         this->shipDriver->getShip()->move_num.second++;
 
-        if (this->GUI_balanced_list.size() >= 2) {
-            this->GUI_balanced_list.pop_back();
-            this->GUI_balanced_list.pop_back();
-        }
+
+        this->GUI_balanced_list.pop_back();
+        this->GUI_balanced_list.pop_back();
+
 
 
         this->ui->balancing_next_move_text->setPlainText(QString::fromStdString(move_instru));
