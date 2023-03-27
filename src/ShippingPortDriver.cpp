@@ -460,12 +460,14 @@ void ShippingPortDriver::balance_ship_impossible() {
     int left_ind = 6;
     int right_lvl = 1;
     int left_lvl = 1;
+    std::vector<int> already_there;
+    int there = 0;
 
     for (int i = sortMass.size()-1; i >= 0; i--) {
         for (int k = 0; k < endMass.size(); k++) {
             if (ship->getNames().at(k) != "NAN") {
                 if (sortMass.at(i) == std::stoi(ship->getMasses().at(k)) ) {
-                    if (ship->getMasses().at(k) == endMass.at(k)) { // && ship->getNames().at(k) == endNames.at(k)
+                    //if (ship->getMasses().at((left_lvl-1)*12+left_ind-1) == endMass.at((left_lvl-1)*12+left_ind-1)) { // && ship->getNames().at(k) == endNames.at(k)
                         if ((i+1)%2 == 0) {
                             // size = 5
                             // 5 % 2 == 1   // cat
@@ -503,9 +505,24 @@ void ShippingPortDriver::balance_ship_impossible() {
 
                             endMass.at((right_lvl-1)*12+right_ind-1) = ship->getMasses().at(k);
                             endNames.at((right_lvl-1)*12+right_ind-1) = ship->getNames().at(k);
+                            int meh = ((right_lvl-1)*12+right_ind-1);
+                            already_there.push_back(meh);
 
-                            endMass.at(k) = "00000";
-                            endNames.at(k) = "UNUSED";
+                            there = 0;
+                            for (int asd = 0; asd < already_there.size(); asd++) {
+                                std::cout << "f" <<std::endl;
+                                std::cout << "d" <<already_there.at(asd) << " " << k << std::endl;
+                                if (already_there.at(asd) == k) {
+                                    std::cout << "dfwefwf" <<already_there.at(asd) << " " << k << std::endl;
+                                    there = 1;
+                                }
+                            }
+
+                            if (there == 0) {
+                                endMass.at(k) = "00100";
+                                endNames.at(k) = "U2SED";
+                            }
+
                             std::cout << "Saved name: " << endNames.at((right_lvl-1)*12+right_ind-1) << " ";
                             std::cout << "Saved mass: " << endMass.at((right_lvl-1)*12+right_ind-1) << std::endl;
 
@@ -519,9 +536,9 @@ void ShippingPortDriver::balance_ship_impossible() {
                             }
                             break;
 
-                        }
+                        //}
                     } else {
-                        if (ship->getMasses().at(k) == endMass.at(k)) { //  && ship->getNames().at(k) == endNames.at(k)
+                        //if (ship->getMasses().at((left_lvl-1)*12+left_ind-1) == endMass.at((left_lvl-1)*12+left_ind-1)) { //  && ship->getNames().at(k) == endNames.at(k)
 
                             //swap_impossible(endMass.at(k), left_ind, left_lvl);
                             std::cout << "left: " << ship->getCoords().at((left_lvl-1)*12+left_ind-1).first <<", ";
@@ -531,14 +548,26 @@ void ShippingPortDriver::balance_ship_impossible() {
 
                             endMass.at((left_lvl-1)*12+left_ind-1) = ship->getMasses().at(k);
                             endNames.at((left_lvl-1)*12+left_ind-1) = ship->getNames().at(k);
+                            already_there.push_back(((right_lvl-1)*12+right_ind-1));
 
-                            endMass.at(k) = "00000";
-                            endNames.at(k) = "UNUSED";
+                            there = 0;
+                            for (int asd = 0; asd < already_there.size(); asd++) {
+                                std::cout << "g" <<std::endl;
+                                std::cout << "d" <<already_there.at(asd) << " " << k << std::endl;
+                                if (already_there.at(asd) == k) {
+                                    std::cout << "dfwe44fwf" <<already_there.at(asd) << " " << k << std::endl;
+                                    there = 1;
+                                }
+                            }
+                            if (there == 0) {
+                                endMass.at(k) = "00200";
+                                endNames.at(k) = "UN3SED";
+                            }
+
+
                             std::cout << "Saved name: " << endNames.at((left_lvl-1)*12+left_ind-1) << " ";
                             std::cout << "Saved mass: " << endMass.at((left_lvl-1)*12+left_ind-1) << std::endl;
 
-    //                        endNames.at(k) = "UNUSED";
-    //                        endMass.at(k) = "00000";
                             if (left_ind > 0) {
                                 left_ind--;
                             } else {
@@ -546,7 +575,7 @@ void ShippingPortDriver::balance_ship_impossible() {
                                 left_lvl++;
                             }
                             break;
-                        }
+                       // }
 
                     }
 
