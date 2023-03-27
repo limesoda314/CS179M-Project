@@ -6,7 +6,7 @@ Heuristic::Heuristic() {}
 
 BalanceFactorHeuristic::BalanceFactorHeuristic() : Heuristic() {}
 double BalanceFactorHeuristic::heuristic(const ShipState* shipState) const {
-    return shipState->balanceFactor();
+    return std::fabs(1 - shipState->balanceFactor());
 }
 
 UniformCostHeuristic::UniformCostHeuristic() : Heuristic() {}

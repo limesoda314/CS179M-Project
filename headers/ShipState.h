@@ -96,7 +96,7 @@ class ShipState {
         // Overloading == operator for the GameDrive driver
         friend bool operator==(ShipState& lhs, ShipState& rhs);
 
-        ShipState* getChild(int i) const { return this->children.at(i); }
+        ShipState* getChild(int i) const;
         ShipState* getParent() const { return this->parent; }
 
         int getChildrenLength() const { return this->children.size(); }
@@ -106,6 +106,8 @@ class ShipState {
 
         void draw(std::ostream&);
         void drawChange(std::ostream&, std::vector<std::pair<int, int>>&);
+        void drawFree(std::ostream&);
+        void drawMoves(std::ostream&);
 
         double balanceFactor() const;
 

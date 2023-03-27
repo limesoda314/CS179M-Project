@@ -249,7 +249,6 @@ void MainWindow::load_manifest_onload_clicked() {
     this->ui->enter_transfer_info_button->setEnabled(true);
 }
 
-
 // -------------------------balance - generate ship states----------------------------------------------------------------
 void MainWindow::generate_balancing_states_clicked() {
 
@@ -287,7 +286,13 @@ void MainWindow::generate_balancing_states_clicked() {
 
     this->shipDriver->balance_ship(this->GUI_balanced_list);
 
-//    std::cout << "[4] curr size of balanced_list: " << this->GUI_balanced_list.size() << std::endl;
+    //    std::cout << "[4] curr size of balanced_list: " << this->GUI_balanced_list.size() << std::endl;
+
+    std::cout << " balance list: ";
+    for (int i = 0; i < this->GUI_balanced_list.size(); i++) {
+        std::cout << "(" << this->GUI_balanced_list.at(i).first << ", " << this->GUI_balanced_list.at(i).second << "), ";
+    }
+    std::cout << std::endl;
 
     this->shipDriver->getShip()->save_ship_states(this->GUI_move_save_states, this->GUI_balanced_list);
 
@@ -380,11 +385,11 @@ void MainWindow::generate_balancing_states_clicked() {
 
         std::string first_move = "Current Ship State\n\n";
 //        std::cout << "balance:t15" << std::endl;
-        first_move += this->GUI_move_save_states.at(manifestsize-1);
+        first_move += this->GUI_move_save_states.at(manifestsize - 1);
         first_move += "\n------------------------------------------------------------\n\n";
         first_move += "After Moving\n";
 //        std::cout << "balance:t16" << std::endl;
-        first_move +=this->GUI_move_save_states.at(manifestsize-2);
+        first_move +=this->GUI_move_save_states.at(manifestsize - 2);
 
 //        std::cout << "balance:t17" << std::endl;
 
@@ -406,7 +411,7 @@ void MainWindow::load_next_balance_states_clicked() {
         this->ui->balancing_plain_text->setPlainText(QString::fromStdString("Error: Empty Manifest. Try loading manifest again"));
     }
 
-    if (this->shipDriver->getShip()->saved_states.size() < 2) {
+    if (this->GUI_balanced_list.size() < 2) {
         this->ui->balancing_plain_text->clear();
 
         std::string balance_info = "Finished balancing Ship! Manifest \n";
@@ -419,8 +424,7 @@ void MainWindow::load_next_balance_states_clicked() {
         balance_info += shipDriver->getShip()->print_ship();
         this->ui->balancing_plain_text->setPlainText(QString::fromStdString(balance_info));
 
-        QString outbound_filepath =
-                  QString("%1/").arg(QStandardPaths::writableLocation(QStandardPaths::DesktopLocation));
+        QString outbound_filepath = QString("%1/").arg(QStandardPaths::writableLocation(QStandardPaths::DesktopLocation));
         shipDriver->getShip()->create_outbound(outbound_filepath.toStdString());
 
         std::string comment = "Finished a cycle. Manifest " + shipDriver->getShip()->get_manifest_name() + "OUTBOUND.txt was written to desktop, and a reminder pop-up to operator to send file was displayed.";
@@ -431,7 +435,6 @@ void MainWindow::load_next_balance_states_clicked() {
         this->ui->balancing_next_move_text->setPlainText(QString::fromStdString("No more moves!"));
     }
     else {
-
         this->ui->balancing_next_move_text->clear();
 
         std::string move_instru = "Now doing move number ";
@@ -454,28 +457,26 @@ void MainWindow::load_next_balance_states_clicked() {
         this->GUI_balanced_list.pop_back();
 
 
-
         this->ui->balancing_next_move_text->setPlainText(QString::fromStdString(move_instru));
 
         this->ui->balancing_plain_text->clear();
         int manifestsize =  this->GUI_move_save_states.size();
         std::string next_move = "Current Ship State\n\n";
-        next_move += this->GUI_move_save_states.at(manifestsize-1);
+        next_move += this->GUI_move_save_states.at(manifestsize - 1);
         next_move += "\n------------------------------------------------------------\n\n";
         next_move += "After Moving\n";
-        next_move += this->GUI_move_save_states.at(manifestsize-2);
+        next_move += this->GUI_move_save_states.at(manifestsize - 2);
 
-        if (this->GUI_move_save_states.size() == 2) {
-            next_move += "\n\nFinished! Ship balanced!";
-        }
+//        if (this->GUI_move_save_states.size() == 2) {
+//            next_move += "\n\nFinished! Ship balanced!";
+//        }
 
         this->ui->balancing_plain_text->setPlainText(QString::fromStdString(next_move));
 
         this->GUI_move_save_states.pop_back();
         this->GUI_move_save_states.pop_back();
-
-
     }
+
 }
 
 void MainWindow::input_transfer_list_clicked() {
@@ -708,14 +709,12 @@ void MainWindow::generate_transfer_moves_clicked() {
     // can no longer enter information
     this->ui->enter_transfer_info_button->setEnabled(false);
 
-
     //
     shipDriver->getShip()->create_transfer_list(this->shipDriver->getShip()->transfer_moves);
     shipDriver->getShip()->save_ship_states(this->shipDriver->getShip()->transfer_moves);
 
     std::reverse(shipDriver->getShip()->transfer_moves.begin(), shipDriver->getShip()->transfer_moves.end());
     std::reverse(shipDriver->getShip()->saved_states.begin(), shipDriver->getShip()->saved_states.end());
-
 
     if (shipDriver->getShip()->saved_states.size() < 2) {
         std::string transfer_info = "Finished Unloading and Loading! Manifest \n";

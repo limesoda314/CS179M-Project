@@ -1,7 +1,6 @@
 #include "../headers/ShippingPortDriver.h"
 #include "../headers/Ship.h"
-
-#include "headers/MainWindow.h"
+#include "../headers/MainWindow.h"
 
 ShippingPortDriver::ShippingPortDriver() {
     this->count = 0;
@@ -27,6 +26,7 @@ ShipState* ShippingPortDriver::graphSearch(ShipState* problem) {
     // loop do
     // std::cout << "              > starting search" << std::endl;
     while (true) {
+
         // If frontier is empty, then return failure
         if (this->frontier.size() == 0) { return nullptr; }
 
@@ -55,10 +55,16 @@ ShipState* ShippingPortDriver::graphSearch(ShipState* problem) {
                 //   << leaf->getCost() << ", h(n) = " << leaf->heuristic() << ", and f(n) = " << leaf->f_valueFrom() << "\n";
 
         // std::cout << "                  > drawing current state" << std::endl;
-        leaf->draw(std::cout);
+//        leaf->draw(std::cout);
 
         // std::cout << "                  > expanding state..." << std::endl;
-        leaf->expandNode();
+
+        if (
+            (this->frontier_set.find(leaf) == this->frontier_set.end())
+//            (this->frontier_set.find(leaf) == this->frontier_set.end())
+        ) {
+            leaf->expandNode();
+        }
 
         this->count++;
 
@@ -91,7 +97,9 @@ ShipState* ShippingPortDriver::graphSearch(ShipState* problem) {
             }
 
         }
+
     }
+
 }
 
 int ShippingPortDriver::QTGUI(int argc, char** argv) {
@@ -225,7 +233,12 @@ void ShippingPortDriver::printPath(std::ostream& out, ShipState* leaf, int i) {
 
     printPath(out, leaf->getParent(), i + 1);
 
-    leaf->draw(std::cout);
+//    this->ship->print_ship();
+
+    leaf->drawFree(std::cout << "   ");
+    leaf->drawMoves(std::cout << "   ");
+    leaf->draw(std::cout << "   ");
+
     if (leaf->getParent()) {
         leaf->drawChange(out, this->balance_list);
     }
@@ -277,6 +290,20 @@ void ShippingPortDriver::balance_ship(
         nullptr
     );
 
+    this->startState = startState; // set the pointer, will be useful for output and deallocation
+
+    std::cout << "getting information for debugging" << std::endl;
+    startState->draw(std::cout      << "    - ");
+    startState->drawFree(std::cout  << "    - ");
+    startState->drawMoves(std::cout << "    - ");
+
+    // print out getNames from ship
+    std::cout << "  Drawing ship->getNames: {";
+    for (int i = 0; i < this->ship->getNames().size(); i++) {
+        std::cout << "\"" << this->ship->getNames().at(i) << ", ";
+    }
+    std::cout << "}" << std::endl;
+
     std::cout << "[5] curr size of balanced_list: " << send_back.size() << std::endl;
 
     std::cout << " > curr balance factor: " << startState->balanceFactor() << std::endl;
@@ -320,6 +347,7 @@ void ShippingPortDriver::balance_ship(
                   << "No answer was found. :(" << std::endl;
     }
 
+    this->cleanInternalVariables(std::cout);
 }
 
 void ShippingPortDriver::drawBalanceList(std::ostream& out) const {
@@ -332,6 +360,7 @@ void ShippingPortDriver::drawBalanceList(std::ostream& out) const {
     return;
 }
 
+<<<<<<< HEAD
 void ShippingPortDriver::balance_ship_impossible() {
     // curr state -> sorted state
     // mass.at(0) = (1,6) // 1st heaviest
@@ -623,4 +652,55 @@ void ShippingPortDriver::balance_ship_impossible() {
 
 //    }
 
+=======
+/*
+std::priority_queue<ShipState*, std::vector<ShipState*>, Comp> frontier;
+std::set<ShipState*> frontier_set;
+std::set<ShipState*> explored;
+int count;
+int maxFrontierLength;
+Ship* ship;
+std::vector<std::pair<int, int>> balance_list;
+*/
+void ShippingPortDriver::cleanInternalVariables(std::ostream& out) {
+    out << "cleaning internal variables" << std::endl;
+
+    out << " - cleaning frontier set" << std::endl;
+    this->frontier_set.clear(); // rid of frontier set, will be needed for multiple operations in one execution
+
+    out << " - cleaning explored set" << std::endl;
+    this->explored.clear(); // rid of the explored set, will be needed for multiple operations in one execution
+
+    // get rid of priority queue
+    out << " - cleaning frontier" << std::endl;
+    while(!this->frontier.empty()) {
+        this->frontier.pop();
+    }
+
+    out << " - cleaning balance_list" << std::endl;
+    // clear balance list
+    this->balance_list.clear();
+
+    if (this->startState) {
+        out << " - cleaning ShipState tree" << std::endl;
+        this->clearShipStateTree(this->startState, out);
+    }
+
+}
+
+void ShippingPortDriver::clearShipStateTree(ShipState* curr, std::ostream& out) {
+   if (curr->getChildrenLength() == 0) {
+       out << "     - reached child" << std::endl;
+       delete curr;
+       return;
+   } // when we get to a leaf just return
+
+    // go thru every child when they exist, and recursive call
+    // given the child, imagine a new tree root at that node
+    for (int i = 0; i < curr->getChildrenLength(); i++) {
+        this->clearShipStateTree(curr->getChild(i), out);
+    }
+    // delete current, probably a leaf
+    delete curr;
+>>>>>>> f3f6173c25e92df0fea939e3f6629b539af6eed6
 }

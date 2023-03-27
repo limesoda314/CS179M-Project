@@ -29,8 +29,8 @@ class ShippingPortDriver {
         int count;
         int maxFrontierLength;
         Ship* ship;
-
         std::vector<std::pair<int, int>> balance_list;
+        ShipState* startState;
 
     public:
         // Constructors
@@ -56,6 +56,10 @@ class ShippingPortDriver {
         void setShip(Ship*);
 
         int QTGUI(int, char**);
+
+        void cleanInternalVariables(std::ostream&);
+
+        void clearShipStateTree(ShipState*, std::ostream&);
 };
 
 #endif
