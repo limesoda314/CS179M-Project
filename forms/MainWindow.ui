@@ -157,7 +157,7 @@
              <rect>
               <x>10</x>
               <y>10</y>
-              <width>751</width>
+              <width>766</width>
               <height>154</height>
              </rect>
             </property>
@@ -196,7 +196,7 @@
              <item row="2" column="1">
               <widget class="QLabel" name="label_4">
                <property name="text">
-                <string>Runs the onloading/offloading operation and outputs animation to the screen</string>
+                <string>Runs the load/unload operation and outputs animation to the screen. Can not add more unload/loads after calculation</string>
                </property>
               </widget>
              </item>

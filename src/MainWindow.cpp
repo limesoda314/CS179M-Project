@@ -16,6 +16,16 @@ MainWindow::MainWindow(QWidget *parent)
 
     QPushButton tmp;
 
+    // set enabled to false/hide widget
+    this->ui->Onload_offload_popup->hide();
+    this->ui->balancing_start_button->setEnabled(false);
+    this->ui->balancing_next_button->setEnabled(false);
+    this->ui->enter_transfer_info_button->setEnabled(false);
+    this->ui->onload_offload_calculate_button->setEnabled(false);
+    this->ui->transfer_next_move_button->setEnabled(false);
+
+
+
     // Signal/Slot connections
     this->connect(ui->loginbutton, &QPushButton::clicked, this, &MainWindow::login_button_clicked);
     this->connect(ui->add_comment_button, &QPushButton::clicked, this, &MainWindow::add_comment_clicked);
@@ -27,9 +37,6 @@ MainWindow::MainWindow(QWidget *parent)
     this->connect(ui->balancing_start_button, &QPushButton::clicked, this, &MainWindow::generate_balancing_states_clicked);
     this->connect(ui->balancing_next_button, &QPushButton::clicked, this, &MainWindow::load_next_balance_states_clicked);
     this->connect(ui->enter_transfer_info_button, &QPushButton::clicked, this, &MainWindow::input_transfer_list_clicked);
-    this->ui->Onload_offload_popup->hide();
-    this->ui->balancing_start_button->setEnabled(false);
-
     this->connect(ui->load_unload_submit_button, &QPushButton::clicked, this, &MainWindow::submit_transfer_list_clicked);
     this->connect(ui->add_yet_another_transfer_list_button, &QPushButton::clicked, this, &MainWindow::add_another_transfer_item_clicked);
     this->connect(ui->onload_offload_calculate_button, &QPushButton::clicked, this, &MainWindow::generate_transfer_moves_clicked);
@@ -238,6 +245,8 @@ void MainWindow::load_manifest_onload_clicked() {
     comment += " containers on the ship.";
 
     logger->logRawComment(comment);
+
+    this->ui->enter_transfer_info_button->setEnabled(true);
 }
 
 
@@ -295,7 +304,7 @@ void MainWindow::generate_balancing_states_clicked() {
 
         std::string balance_info = "Finished balancing Ship! Manifest \n";
         balance_info += this->shipDriver->getShip()->get_manifest_name();
-        balance_info += "OUTBOUND.txt was written to desktop. email file.\n";
+        balance_info += "OUTBOUND.txt was written to desktop. Please email Outbound Manifest then delete from desktop.\n";
         balance_info += this->shipDriver->getShip()->print_ship();
 
 //        std::cout << "balance:t6" << std::endl;
@@ -366,6 +375,7 @@ void MainWindow::generate_balancing_states_clicked() {
     }
 
     this->ui->balancing_start_button->setEnabled(false);
+    this->ui->balancing_next_button->setEnabled(true);
 
     //this->ui->balancing_plain_text->clear();
     //this->ui->balancing_plain_text->setPlainText(QString::fromStdString(saved_states.at(1)));
@@ -382,8 +392,7 @@ void MainWindow::load_next_balance_states_clicked() {
 
         std::string balance_info = "Finished balancing Ship! Manifest \n";
         balance_info += shipDriver->getShip()->get_manifest_name();
-        balance_info += "OUTBOUND.txt was written to desktop. email file.\n";
-        balance_info += shipDriver->getShip()->print_ship();
+        balance_info += "OUTBOUND.txt was written to desktop. Please email Outbound Manifest then delete.\n";
 
         balance_info += "\nbalance factor: ";
         balance_info += std::to_string(shipDriver->getShip()->balance_score());
@@ -398,8 +407,12 @@ void MainWindow::load_next_balance_states_clicked() {
         std::string comment = "Finished a cycle. Manifest " + shipDriver->getShip()->get_manifest_name() + "OUTBOUND.txt was written to desktop, and a reminder pop-up to operator to send file was displayed.";
 
         logger->logRawComment(comment);
+        this->ui->balancing_next_button->setEnabled(false);
+        this->ui->balancing_next_move_text->clear();
+        this->ui->balancing_next_move_text->setPlainText(QString::fromStdString("No more moves!"));
     }
     else {
+
         this->ui->balancing_next_move_text->clear();
 
         std::string move_instru = "Now doing move number ";
@@ -472,20 +485,39 @@ void MainWindow::submit_transfer_list_clicked() {
     std::string unloadquantity= unloadQquantity.toStdString();
     if (unloadname.size() !=0 && unloadquantity.size() != 0) {
         // at max we have 96 containers
-        if (unloadquantity.size() <=2) {
+        if (unloadquantity == "A" || unloadquantity == "a") {
             shipDriver->getShip()->unload_names.push_back(unloadname);
             shipDriver->getShip()->unload_quantity.push_back(unloadquantity);
             std::cout << "unload quantity: " << unloadquantity << std::endl;
             std::cout << "unload name: " << unloadname << std::endl;
-
         }
         else {
-            std::cout << "Error: Please check unload input. Quantity is greater than 99" << std::endl;
-            this->ui->transfer_description_text_box->clear();
-            this->ui->transfer_description_text_box->setPlainText(QString::fromStdString("Error: Please check unload input. Quantity is greater than 99"));
-            return;
-        }
 
+            bool isnum_quant = 1;
+            for (int i = 0; i < unloadquantity.size(); i++) {
+                if (!std::isdigit(unloadquantity.at(i)) || isalpha(unloadquantity.at(i))) {
+                    isnum_quant = 0;
+                }
+            }
+            if (isnum_quant) {
+                if (std::stoi(unloadquantity) < 97) {
+                    shipDriver->getShip()->unload_names.push_back(unloadname);
+                    shipDriver->getShip()->unload_quantity.push_back(unloadquantity);
+                    std::cout << "unload quantity: " << unloadquantity << std::endl;
+                    std::cout << "unload name: " << unloadname << std::endl;
+                }
+            }
+            else {
+                std::cout << "Error: Please check unload input. Make sure quantity is either A or a number less than or equal to 96" << std::endl;
+                this->ui->transfer_description_text_box->clear();
+                this->ui->transfer_description_text_box->setPlainText(QString::fromStdString("Error: Please check unload input. Make sure quantity is either A or a number less than or equal to 96"));
+                return;
+
+            }
+
+
+
+        }
 
 
     }
@@ -494,9 +526,24 @@ void MainWindow::submit_transfer_list_clicked() {
     std::string loadname = loadQname.toStdString();
     QString loadQmass = this->ui->load_mass_line->text();
     std::string loadmass= loadQmass.toStdString();
-    if (unloadname.size() !=0 && unloadquantity.size() != 0) {
-        if (loadmass.size() <= 5) {
-            shipDriver->getShip()->load_mass.push_back(loadmass);
+    if (loadname.size() !=0 && loadmass.size() != 0) {
+
+        bool isnum = 1;
+        for (int i = 0; i < loadmass.size(); i++) {
+            if (!std::isdigit(loadmass.at(i))) {
+                isnum = 0;
+            }
+        }
+        if (!isnum) {
+            std::cout << "Error: Please check load input. Make sure mass contains only digits" << std::endl;
+            this->ui->transfer_description_text_box->clear();
+            this->ui->transfer_description_text_box->setPlainText(QString::fromStdString("Error: Please check load input. Make sure mass contains only digits"));
+            return;
+
+        }
+
+        if (isnum && loadmass.size() <= 5) {
+
             shipDriver->getShip()->load_mass.push_back(loadmass);
             shipDriver->getShip()->load_names.push_back(loadname);
             std::cout << "load mass: " << loadmass << std::endl;
@@ -508,13 +555,20 @@ void MainWindow::submit_transfer_list_clicked() {
             this->ui->transfer_description_text_box->clear();
             this->ui->transfer_description_text_box->setPlainText(QString::fromStdString("Error: Please check load input. Mass is greater than 99999"));
             return;
-
-
         }
 
     }
 
     this->ui->Onload_offload_popup->hide();
+    // at least 1 load/unload
+    if (shipDriver->getShip()->load_names.size() > 0 || shipDriver->getShip()->unload_names.size() > 0) {
+        this->ui->onload_offload_calculate_button->setEnabled(true);
+    }
+    else {
+        std::cout << "size of unload: " << shipDriver->getShip()->unload_names.size() << std::endl;
+        std::cout << "size of load: " << shipDriver->getShip()->load_names.size() << std::endl;
+        std::cout << "nope, got to input still" << std::endl;
+    }
 
 
 }
@@ -570,6 +624,7 @@ void MainWindow::add_another_transfer_item_clicked() {
 
     this->ui->Onload_offload_popup->show();
 
+
 }
 
 void MainWindow::generate_transfer_moves_clicked() {
@@ -583,6 +638,11 @@ void MainWindow::generate_transfer_moves_clicked() {
         return;
     }
 
+    // started calulating moves
+    // can no longer enter information
+    this->ui->enter_transfer_info_button->setEnabled(false);
+
+
     //
     shipDriver->getShip()->create_transfer_list(this->shipDriver->getShip()->transfer_moves);
     shipDriver->getShip()->save_ship_states(this->shipDriver->getShip()->transfer_moves);
@@ -594,7 +654,7 @@ void MainWindow::generate_transfer_moves_clicked() {
     if (shipDriver->getShip()->saved_states.size() < 2) {
         std::string transfer_info = "Finished Unloading and Loading! Manifest \n";
         transfer_info += shipDriver->getShip()->get_manifest_name();
-        transfer_info += "OUTBOUND.txt was written to desktop. email file.\n";
+        transfer_info += "OUTBOUND.txt was written to desktop. Please email Outbound Manifest then delete from desktop.\n";
         transfer_info += shipDriver->getShip()->print_ship();
         this->ui->onload_offload_textbox->setPlainText(QString::fromStdString(transfer_info));
         this->ui->transfer_update_coords_text->clear();
@@ -608,6 +668,7 @@ void MainWindow::generate_transfer_moves_clicked() {
         logger->logRawComment(comment);
     }
     else {
+
         shipDriver->getShip()->move_num.first = shipDriver->getShip()->transfer_moves.size() / 2;
         shipDriver->getShip()->move_num.second = 1;
         std::string move_instru = "Now doing move number ";
@@ -642,6 +703,11 @@ void MainWindow::generate_transfer_moves_clicked() {
         this->ui->onload_offload_textbox->setPlainText(QString::fromStdString(first_move));
         this->shipDriver->getShip()->saved_states.pop_back();
         this->shipDriver->getShip()->saved_states.pop_back();
+
+        this->ui->onload_offload_calculate_button->setEnabled(false);
+        if (this->shipDriver->getShip()->saved_states.size() >0) {
+            this->ui->transfer_next_move_button->setEnabled(true);
+        }
     }
 
     //this->ui->balancing_plain_text->clear();
@@ -659,7 +725,7 @@ void MainWindow::next_transfer_moves_clicked() {
     if (shipDriver->getShip()->saved_states.size() < 2) {
         std::string transfer_info = "Finished Unloading and Loading! Manifest \n";
         transfer_info += shipDriver->getShip()->get_manifest_name();
-        transfer_info += "OUTBOUND.txt was written to desktop. email file.\n";
+        transfer_info += "OUTBOUND.txt was written to desktop. Please email Outbound Manifest then delete from desktop.\n";
         transfer_info += shipDriver->getShip()->print_ship();
         this->ui->onload_offload_textbox->setPlainText(QString::fromStdString(transfer_info));
         this->ui->transfer_update_coords_text->clear();
@@ -671,6 +737,7 @@ void MainWindow::next_transfer_moves_clicked() {
         std::string comment = "Finished a cycle. Manifest " + shipDriver->getShip()->get_manifest_name() + "OUTBOUND.txt was written to desktop, and a reminder pop-up to operator to send file was displayed.";
 
         logger->logRawComment(comment);
+        this->ui->transfer_next_move_button->setEnabled(false);
     }
     else {
 
