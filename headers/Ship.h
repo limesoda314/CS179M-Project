@@ -15,7 +15,8 @@ class Ship {
         std::vector<std::pair<int,int>> Coordinates; 
         std::vector<std::string> Mass; 
         std::vector<std::string> Names;
-        std::string manifest_name = "";
+        std::string manifest_name = ""; 
+        std::vector<std::pair<int,int>> Buffer; // store buffer coordinates, use when full/impossible
 
     public: 
         std::vector<std::string> saved_states; // printed ship states
@@ -101,6 +102,9 @@ class Ship {
         std::vector<std::pair<int,int>> getCoords() const { return this->Coordinates; }
         std::vector<std::string> getMasses() const { return this->Mass; }
         std::vector<std::string> getNames() const { return this->Names; }
+        void setCoords(const std::vector<std::pair<int,int>> &setMe) { this->Coordinates=setMe; }
+        void setNames(const std::vector<std::string> &setMe) { this->Names=setMe; }
+        void setMass(const std::vector<std::string> &setMe) { this->Names=setMe; }
 
         /* Option q - Already built into the main.cpp source file */
         // ---

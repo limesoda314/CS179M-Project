@@ -442,6 +442,161 @@ void ShippingPortDriver::drawBalanceList(std::ostream& out) const {
     return;
 }
 
+void ShippingPortDriver::balance_ship_impossible() {
+
+    std::vector<std::pair<int,int>> endCoords = this->ship->getCoords();
+    std::vector<std::string> endNames = this->ship->getNames();
+    std::vector<std::string> endMass = this->ship->getMasses();
+    std::vector<int> sortMass;
+
+    for (int i = 0; i < endMass.size(); i++) {
+        if (endNames.at(i) != "NAN" && endNames.at(i) != "UNUSED") {
+            sortMass.push_back(std::stoi(endMass.at(i)));
+        }
+    }
+
+    sort(sortMass.begin(), sortMass.end());
+    int right_ind = 7;
+    int left_ind = 6;
+    int right_lvl = 1;
+    int left_lvl = 1;
+
+    for (int i = sortMass.size()-1; i >= 0; i--) {
+        for (int k = 0; k < endMass.size(); k++) {
+            if (ship->getNames().at(k) != "NAN") {
+                if (sortMass.at(i) == std::stoi(ship->getMasses().at(k)) ) {
+                    if (ship->getMasses().at(k) == endMass.at(k)) { // && ship->getNames().at(k) == endNames.at(k)
+                        if ((i+1)%2 == 0) {
+                            // size = 5
+                            // 5 % 2 == 1   // cat
+                            // 4 % 2 == 0   // dog
+                            // 3 % 2 == 1   // pig
+                            // 2 % 2 == 0   // hen
+                            // 1 % 2 == 1   // rat
+
+                            //Coor: 1, 2 Name: Cat Mass: 00096
+                            //Coor: 1, 3 Name: Dog Mass: 00008
+                            //Coor: 1, 4 Name: Pig Mass: 00004
+                            //Coor: 1, 5 Name: Hen Mass: 00004
+                            //Coor: 1, 6 Name: Rat Mass: 00001
+
+                            //================================
+                            //Coor: 1, 6 Name: Cat Mass: 00096
+                            //Coor: 1, 7 Name: Dog Mass: 00008
+                            //Coor: 1, 5 Name: Pig Mass: 00004
+                            //Coor: 1, 8 Name: Hen Mass: 00004
+                            //Coor: 1, 4 Name: Rat Mass: 00001
+                            //================================
+                            //Coor: 1, 4 Name: Rat Mass: 00001
+                            //Coor: 1, 5 Name: Pig Mass: 00004
+                            //Coor: 1, 6 Name: Cat Mass: 00096
+                            //Coor: 1, 7 Name: Dog Mass: 00008
+                            //Coor: 1, 8 Name: Hen Mass: 00004
+
+                            //swap_impossible(endMass.at(k), right_ind, right_lvl);
+                            //find_impossible_coordinate(right_ind, right_lvl) -> ship->getCoordinates.at((right_lvl-1)*12+right_ind-1)
+                            //endMass.at(k)
+                            std::cout << "right: " << ship->getCoords().at((right_lvl-1)*12+right_ind-1).first << ", ";
+                            std::cout << ship->getCoords().at((right_lvl-1)*12+right_ind-1).second << std::endl;
+                            std::cout << "name: " << ship->getNames().at(k) << " ";
+                            std::cout << "mass: " << ship->getMasses().at(k) << std::endl;
+
+                            endMass.at((right_lvl-1)*12+right_ind-1) = ship->getMasses().at(k);
+                            endNames.at((right_lvl-1)*12+right_ind-1) = ship->getNames().at(k);
+
+                            endMass.at(k) = "00000";
+                            endNames.at(k) = "UNUSED";
+                            std::cout << "Saved name: " << endNames.at((right_lvl-1)*12+right_ind-1) << " ";
+                            std::cout << "Saved mass: " << endMass.at((right_lvl-1)*12+right_ind-1) << std::endl;
+
+    //                        endNames.at(k) = "UNUSED";
+    //                        endMass.at(k) = "00000";
+                            if (right_ind < 12) {
+                                right_ind++;
+                            } else {
+                                right_ind = 7;
+                                right_lvl++;
+                            }
+                            break;
+
+                        }
+                    } else {
+                        if (ship->getMasses().at(k) == endMass.at(k)) { //  && ship->getNames().at(k) == endNames.at(k)
+
+                            //swap_impossible(endMass.at(k), left_ind, left_lvl);
+                            std::cout << "left: " << ship->getCoords().at((left_lvl-1)*12+left_ind-1).first <<", ";
+                            std::cout << ship->getCoords().at((left_lvl-1)*12+left_ind-1).second << std::endl;
+                            std::cout << "name: " << ship->getNames().at(k) << " ";
+                            std::cout << "mass: " << ship->getMasses().at(k) << std::endl;
+
+                            endMass.at((left_lvl-1)*12+left_ind-1) = ship->getMasses().at(k);
+                            endNames.at((left_lvl-1)*12+left_ind-1) = ship->getNames().at(k);
+
+                            endMass.at(k) = "00000";
+                            endNames.at(k) = "UNUSED";
+                            std::cout << "Saved name: " << endNames.at((left_lvl-1)*12+left_ind-1) << " ";
+                            std::cout << "Saved mass: " << endMass.at((left_lvl-1)*12+left_ind-1) << std::endl;
+
+    //                        endNames.at(k) = "UNUSED";
+    //                        endMass.at(k) = "00000";
+                            if (left_ind > 0) {
+                                left_ind--;
+                            } else {
+                                left_ind = 6;
+                                left_lvl++;
+                            }
+                            break;
+                        }
+
+                    }
+
+                }
+            }
+
+        }
+    }
+
+    std::cout << "****************************************************************" << std::endl;
+
+//        for (int i = 0; i < ship->getMasses().size(); i++) {
+//            std::cout << ship->onload_offload_calculate_button.().at(i).first << ", " << ship->getCoords().at(i).second << ": ";
+//            std::cout << ship->getNames().at(i) << " - " << ship->getMasses().at(i) << std::endl;
+
+//        }
+
+        for (int i = 0; i < ship->getCoords().size(); i++) {
+            if (ship->getNames().at(i) != "UNUSED" && ship->getNames().at(i) !="NAN") {
+                std::cout << "Coor: " << ship->getCoords().at(i).first << ", " << ship->getCoords().at(i).second << " ";
+                //std::cout << "Coor: " << endCoords.at(i).first << ", " << endCoords.at(i).second << " ";
+                std::cout << "Name: " << ship->getNames().at(i) << " ";
+                std::cout << "Mass: " << ship->getMasses().at(i) << std::endl;
+            }
+        }
+        std::cout << std::endl;
+        this->ship->setMass(endMass);
+        this->ship->setNames(endNames);
+
+//        for (int i = 0; i < ship->getMasses().size(); i++) {
+//            std::cout << ship->getCoords().at(i).first << ", " << ship->getCoords().at(i).second << ": ";
+//            std::cout << ship->getNames().at(i) << " - " << ship->getMasses().at(i) << std::endl;
+
+//        }
+
+        for (int i = 0; i < ship->getCoords().size(); i++) {
+            if (ship->getNames().at(i) != "UNUSED" && ship->getNames().at(i) !="NAN") {
+                std::cout << "Coor: " << ship->getCoords().at(i).first << ", " << ship->getCoords().at(i).second << " ";
+                //std::cout << "Coor: " << endCoords.at(i).first << ", " << endCoords.at(i).second << " ";
+                std::cout << "Name: " << endNames.at(i) << " ";
+                std::cout << "Mass: " << endMass.at(i) << std::endl;
+            }
+        }
+
+        this->ship->print_ship();
+
+
+}
+
+
 /*
 std::priority_queue<ShipState*, std::vector<ShipState*>, Comp> frontier;
 std::set<ShipState*> frontier_set;
