@@ -285,7 +285,7 @@ void MainWindow::generate_balancing_states_clicked() {
 
     this->shipDriver->balance_ship(this->GUI_balanced_list);
 
-//    std::cout << "[4] curr size of balanced_list: " << this->GUI_balanced_list.size() << std::endl;
+    //    std::cout << "[4] curr size of balanced_list: " << this->GUI_balanced_list.size() << std::endl;
 
     std::cout << " balance list: ";
     for (int i = 0; i < this->GUI_balanced_list.size(); i++) {

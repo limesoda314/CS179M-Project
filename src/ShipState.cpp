@@ -70,7 +70,7 @@ int ShipState::expandNode() {
         for (int j = 0; j < free_spaces.size(); j++) {
             std::vector<std::pair<int,int>> new_coords = this->coords;
             std::vector<std::pair<int,int>> new_frees =  this->free_spaces; // free_spaces.at(j) is now move_spaces.at(i)
-            std::vector<std::pair<int,int>> new_moves =  this->move_spaces; // update move_spaces.at(i) to be coordinate underneath if y_coord > 1 pair<int,int> (move_spaces.at(i).first, move_spaces.at(i).second - 1) 
+            std::vector<std::pair<int,int>> new_moves =  this->move_spaces; // update move_spaces.at(i) to be coordinate underneath if y_coord > 1 pair<int,int> (move_spaces.at(i).first, move_spaces.at(i).second - 1)
             
             // check if free space is ontop of a box 
             // if it is, we need to remove it from the possible spaces later 
@@ -96,7 +96,7 @@ int ShipState::expandNode() {
                 continue;
             }
 
-            // new_frees.at(j) = move_spaces.at(i);
+//            new_frees.at(j) = move_spaces.at(i);
 
             // if (move_spaces.at(i).first > 1) {
             // new_moves.at(i) = std::pair<int,int> (move_spaces.at(i).first-1, move_spaces.at(i).second);
@@ -115,6 +115,9 @@ int ShipState::expandNode() {
             newState->currTo   = {this->free_spaces.at(j).first, this->free_spaces.at(j).second };
 
             if (newState->balanceFactor() >= 0.9 && newState->balanceFactor() <= 1.1) {
+//                this->draw(std::cout);
+//                this->drawFree(std::cout << " - ");
+//                this->drawMoves(std::cout << " - ");
                 newState->setCost(this->getCost() + 1);
                 children.push_back(newState); 
                 return 0;
@@ -201,26 +204,24 @@ int ShipState::generate_move() {
 
     this->move_spaces.clear();
 
+    std::pair<int, int> curr_iter;
+
     for (int i = 0; i < this->coords.size(); i++) {
 
-        std::pair<int, int> curr_iter = this->coords.at(i);
+        curr_iter = this->coords.at(i);
 
         if (
-            !coordInCoords(std::pair<int, int>(curr_iter.first+1, curr_iter.second))
+            !coordInCoords(std::pair<int, int>(curr_iter.first+1, curr_iter.second)) &&
+            mass.at(i) != "NAN"
         ) {
 
-            // 8+1 comes from the top in terms of indexing [1, size] (0+1, size-1+1)
-            if (curr_iter.first+1 >= 8+1) {
-                continue;
-            }    
+//            std::cout << "curr move coord: (" << (curr_iter.first+1) << ", " << curr_iter.second << ")" << std::endl;
 
-            // we can not move NAN boxes 
-            if (mass.at(i) != "NAN") {
-                move_spaces.push_back(coords.at(i)); 
-            }
-
+            // we can not move NAN boxes
+            move_spaces.push_back(std::pair<int, int>(curr_iter.first, curr_iter.second));
         }
     }
+
     if (move_spaces.size() <= 12) {
         return 1; 
     }
@@ -254,7 +255,7 @@ int ShipState::generate_possible() {
         std::pair<int, int> curr_coord(1, 1);
 
         int j = 0;
-        while ((j<max_y) && (coordInCoords(curr_coord))) { // thru y
+        while ( (j < max_y) && (coordInCoords(curr_coord)) ) { // thru y
             curr_coord.first = j+1;
             curr_coord.second = i+1;
 
@@ -280,7 +281,7 @@ int ShipState::generate_possible() {
 
         }
 
-        if (j >= max_y) {
+        if (j > max_y) {
             continue;
         }
 
@@ -429,4 +430,8 @@ void ShipState::drawCoords(
     }
     out << "}" << std::endl;
     return;
+}
+
+ShipState* ShipState::getChild(int i) const {
+    return this->children.at(i);
 }
