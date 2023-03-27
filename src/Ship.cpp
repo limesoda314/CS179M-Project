@@ -262,9 +262,10 @@ std::string Ship::print_ship() const {
             
         }
         ship_view += "\n";
-        std::cout << std::endl; 
+        std::cout <<  std::endl; 
     }
     
+    std::cout <<  std::endl; 
     return ship_view;
 }
 
@@ -597,7 +598,8 @@ int Ship::create_transfer_list(std::vector< std::pair<int,int> > &trans_list) {
 std::string Ship::swap_coordinates(std::pair<int,int>& coord1, std::pair<int,int>& coord2) {
 
     // convert coordinate to their index
-    std::string tempMass = Mass.at((coord2.first-1)*12 + (coord2.second-1));
+    std::string tempMass = Mass.at( (coord2.first - 1)*12 + (coord2.second - 1) );
+
     Mass.at((coord2.first-1)*12 + (coord2.second-1)) = Mass.at((coord1.first-1)*12 + (coord1.second-1));
     Mass.at((coord1.first-1)*12 + (coord1.second-1)) = tempMass;
 
@@ -610,12 +612,21 @@ std::string Ship::swap_coordinates(std::pair<int,int>& coord1, std::pair<int,int
 
 void Ship::save_ship_states(std::vector<std::string> &saved_states_list, std::vector<std::pair<int, int> > move_list) {
     saved_states_list.clear();
-    saved_states_list.push_back(print_ship());
-    for (int i = 0; i < move_list.size() -1; i++) {
+
+    if (move_list.size() == 0) {
+        return;
+    }
+
+    for (int i = 0; i < move_list.size() - 1; i += 2) {
+        saved_states_list.push_back(print_ship());
         // saves the printed ship string after swapping
         // 1,2 -> 1,11
         // 1,3 -> 2,11
         // 2,11 -> 1,10
+
+        std::cout << "i: " << i << " - (" << move_list.at(i).first << ", " << move_list.at(i).second << ")" << std::endl;
+        std::cout << "i: " << i+1 << " - (" << move_list.at(i+1).first << ", " << move_list.at(i+1).second << ")" << std::endl;
+
         saved_states_list.push_back(swap_coordinates(move_list.at(i), move_list.at(i+1)));
     }
 
@@ -623,8 +634,12 @@ void Ship::save_ship_states(std::vector<std::string> &saved_states_list, std::ve
 
 void Ship::save_ship_states(std::vector<std::pair<int,int>> move_list) {
 
-    this->saved_states.push_back(print_ship());
-    for (int i = 0; i < move_list.size() -1; i++) {
+    if (move_list.size() == 0) {
+        return;
+    }
+
+    for (int i = 0; i < move_list.size() - 1; i += 2) {
+        this->saved_states.push_back(print_ship());
         // saves the printed ship string after swapping
         this->saved_states.push_back(swap_coordinates(move_list.at(i), move_list.at(i+1)));
     }

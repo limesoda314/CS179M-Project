@@ -106,6 +106,8 @@ class ShipState {
 
         void draw(std::ostream&);
         void drawChange(std::ostream&, std::vector<std::pair<int, int>>&);
+        void drawFree(std::ostream&);
+        void drawMoves(std::ostream&);
 
         double balanceFactor() const;
 

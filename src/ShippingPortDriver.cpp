@@ -27,6 +27,7 @@ ShipState* ShippingPortDriver::graphSearch(ShipState* problem) {
     // loop do
     // std::cout << "              > starting search" << std::endl;
     while (true) {
+
         // If frontier is empty, then return failure
         if (this->frontier.size() == 0) { return nullptr; }
 
@@ -55,7 +56,7 @@ ShipState* ShippingPortDriver::graphSearch(ShipState* problem) {
                 //   << leaf->getCost() << ", h(n) = " << leaf->heuristic() << ", and f(n) = " << leaf->f_valueFrom() << "\n";
 
         // std::cout << "                  > drawing current state" << std::endl;
-        leaf->draw(std::cout);
+//        leaf->draw(std::cout);
 
         // std::cout << "                  > expanding state..." << std::endl;
         leaf->expandNode();
@@ -91,7 +92,9 @@ ShipState* ShippingPortDriver::graphSearch(ShipState* problem) {
             }
 
         }
+
     }
+
 }
 
 int ShippingPortDriver::QTGUI(int argc, char** argv) {
@@ -225,7 +228,12 @@ void ShippingPortDriver::printPath(std::ostream& out, ShipState* leaf, int i) {
 
     printPath(out, leaf->getParent(), i + 1);
 
-    leaf->draw(std::cout);
+//    this->ship->print_ship();
+
+    leaf->drawFree(std::cout << "   ");
+    leaf->drawMoves(std::cout << "   ");
+    leaf->draw(std::cout << "   ");
+
     if (leaf->getParent()) {
         leaf->drawChange(out, this->balance_list);
     }
@@ -276,6 +284,13 @@ void ShippingPortDriver::balance_ship(
         new BalanceFactorHeuristic(),
         nullptr
     );
+
+    // print out getNames from ship
+    std::cout << "  Drawing ship->getNames: {";
+    for (int i = 0; i < this->ship->getNames().size(); i++) {
+        std::cout << "\"" << this->ship->getNames().at(i) << ", ";
+    }
+    std::cout << "}" << std::endl;
 
     std::cout << "[5] curr size of balanced_list: " << send_back.size() << std::endl;
 

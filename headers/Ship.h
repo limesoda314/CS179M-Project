@@ -14,7 +14,7 @@ class Ship {
         std::vector<std::pair<int,int>> Coordinates; 
         std::vector<std::string> Mass; 
         std::vector<std::string> Names;
-        std::string manifest_name = ""; 
+        std::string manifest_name = "";
 
     public: 
         std::vector<std::string> saved_states; // printed ship states

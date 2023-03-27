@@ -2,11 +2,11 @@
 #include <iostream>
 
 ShipState::ShipState(
-    const std::vector<std::pair<int,int>>& ship_coords,
-    const std::vector<std::string>& ship_mass,
-    const std::vector<std::string>& ship_names,
-    Heuristic* ctx,
-    ShipState* par
+        const std::vector<std::pair<int,int>>& ship_coords,
+        const std::vector<std::string>& ship_mass,
+        const std::vector<std::string>& ship_names,
+        Heuristic* ctx,
+        ShipState* par
     )
 {
     std::cout << "      into ShipState constructor" << std::endl;
@@ -90,7 +90,7 @@ int ShipState::expandNode() {
                 // std::cout << "moving (" << move_spaces.at(i).first << ", " << move_spaces.at(i).second << ") to ("
                 //           << free_spaces.at(j).first << ", " << free_spaces.at(j).second << ")" << std::endl;
 
-                swap_coords(new_coords, free_spaces.at(j), move_spaces.at(i)); 
+                this->swap_coords(new_coords, free_spaces.at(j), move_spaces.at(i));
             }
             else {
                 continue;
@@ -151,7 +151,6 @@ int ShipState::expandNode() {
             // }
         }
     
-    
     }
 
     return 0;
@@ -167,8 +166,8 @@ void ShipState::drawChange(
         << " to "
         << "(" << this->currTo.first << ", " << this->currTo.second << ")" << std::endl;
 
-    changeVec.push_back({this->currFrom.first, this->currFrom.second}); // from coord
-    changeVec.push_back({this->currTo.first, this->currTo.second}); // to coord
+    changeVec.push_back({this->currFrom.first , this->currFrom.second}); // from coord
+    changeVec.push_back({this->currTo.first   , this->currTo.second}  ); // to coord
     return;
 }
 
@@ -177,7 +176,6 @@ int ShipState::swap_coords(
     const std::pair<int,int> &free_space,
     const std::pair<int,int> &move_space)
 {
-
     // free_space should not exist in new_coords 
     int move_index = 0;
 
@@ -187,7 +185,7 @@ int ShipState::swap_coords(
             new_coords.at(i).second == move_space.second
         ) {
             // std::cout << "                      found move_spaces coord in coords" << std::endl;
-            move_index = i; 
+            move_index = i;
             break;
         }
     }
@@ -195,7 +193,7 @@ int ShipState::swap_coords(
     // update new_coords
     new_coords.at(move_index) = free_space; // updating coordinate, index of enw coordinates still same in relation to mass 
     // don't need to update new_mass since we're only moving the cargo 
-    
+
     return 1; 
 }
 
@@ -236,7 +234,7 @@ bool ShipState::check_above(const int &y_coord, const int &x_coord) {
             return 1; 
         }
     }
-    return 0; 
+    return 0;
 }
 
 // can possibly update implementation later to check going up 
@@ -245,41 +243,49 @@ int ShipState::generate_possible() {
 
     this->free_spaces.clear();
 
-    int max_top = 7 + 1; // maximum y index [1, y_size]
-    int max_right = 11 + 1; // maximum x index [1, x_size]
+    int max_y = 7 + 1; // maximum y index [1, y_size]
+    int max_x = 11 + 1; // maximum x index [1, x_size]
 
     std::pair<int, int> curr_coord(0, 0);
 
     // Get free spaces from the current boxes row
-    for (int i = 0; i < 12; i++) { // thru x
-        for (int j = 0; j < 8; j++) { // thru y
+    for (int i = 0; i < max_x; i++) { // thru x
+
+        std::pair<int, int> curr_coord(1, 1);
+
+        int j = 0;
+        while ((j<max_y) && (coordInCoords(curr_coord))) { // thru y
             curr_coord.first = j+1;
             curr_coord.second = i+1;
 
-            // iterate through every coord, check if we have a possible free space
-            for (int k = 0; k < this->coords.size(); k++) {
-                // i corresponds to second (x axis)
-                // j corresponds to first  (y axis)
-                if (this->coords.at(k).second == i+1) {
-                    // check for add to free spaces
-                    if (
-                            ((j+1-1) == this->coords.at(k).first) &&
-                            !coordInCoords(curr_coord)
-                    ) {
-                        this->free_spaces.push_back(std::pair<int, int>(j+1, i+1));   
-                    }
-                }
-            }
-        }
-    }
+//            // iterate through every coord, check if we have a possible free space
+//            for (int k = 0; k < this->coords.size(); k++) {
 
-    // Get any other free spaces :> (empty slots, so only first row)
-    for (int i = 0; i < 12; i++) {
-        curr_coord.first = 0+1;
-        curr_coord.second = i+1;
-        if (!coordInCoords(curr_coord)) {
-            this->free_spaces.push_back(std::pair<int, int>(0+1, i+1));
+//                // i corresponds to second (x axis)
+//                // j corresponds to first  (y axis)
+//                if (this->coords.at(k).second == i+1) {
+//                    // check for add to free spaces
+//                    if (
+//                        (j == this->coords.at(k).first) && // checks if k's y is right below the current j+1
+//                        !coordInCoords(curr_coord)         // checks if the current coordinate is NOT in the coordinates. This means it must be a free space
+//                    ) {
+//                        this->free_spaces.push_back(std::pair<int, int>(j+1, i+1));
+//                    }
+
+//                }
+
+//            }
+
+            j++;
+
         }
+
+        if (j >= max_y) {
+            continue;
+        }
+
+        this->free_spaces.push_back(std::pair<int, int>(j, i+1));
+
     }
 
     // number of possible spaces is 12
@@ -344,6 +350,24 @@ void ShipState::draw(std::ostream& out) {
     for (int i = 0; i < this->coords.size(); i++) {
         out << "(" << this->coords.at(i).first << "," << this->coords.at(i).second << ")["
         << this->mass.at(i) << "], ";
+    }
+    out << "}" << std::endl;
+    return;
+}
+
+void ShipState::drawFree(std::ostream& out) {
+    out << "Drawing frees {";
+    for (int i = 0; i < this->free_spaces.size(); i++) {
+        out << "(" << this->free_spaces.at(i).first << "," << this->free_spaces.at(i).second << ")";
+    }
+    out << "}" << std::endl;
+    return;
+}
+
+void ShipState::drawMoves(std::ostream& out) {
+    out << "Drawing moves {";
+    for (int i = 0; i < this->move_spaces.size(); i++) {
+        out << "(" << this->move_spaces.at(i).first << "," << this->move_spaces.at(i).second << ")";
     }
     out << "}" << std::endl;
     return;

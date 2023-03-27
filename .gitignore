@@ -9,3 +9,5 @@ CMakeFiles/
 
 # IDE
 *.autosave
+
+*.pro.user.*
