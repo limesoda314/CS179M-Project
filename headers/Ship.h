@@ -6,6 +6,7 @@
 #include <fstream>
 #include <string> 
 #include <algorithm> 
+#include <cmath>
 #include <queue>
 #include <ctime>
 
@@ -32,6 +33,8 @@ class Ship {
 
         /* Resets the ship variables entirely */
         int reset_ship(); // so we can load again
+
+        int isPossibleToBalance() const; // 0 for impossible, 1 for possible, 2 for idk we have to check the sum of permuations
 
         // END MANIFEST OPERATIONS
         

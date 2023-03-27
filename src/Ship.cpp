@@ -640,3 +640,64 @@ int Ship::num_boxes() const {
     }
     return sum;
 }
+
+int Ship::isPossibleToBalance() const {
+
+    std::vector<int> convertedMass;
+    int left_sum = 0;
+    int right_sum = 0;
+    for (int i = 0; i < this->Mass.size(); i++) {
+        if (this->Mass.at(i) != "NAN") {
+            if (Coordinates.at(i).second <=6) {
+                left_sum+=std::stoi(Mass.at(i));
+            }else {
+                right_sum+=std::stoi(Mass.at(i));
+            }
+            convertedMass.push_back(std::stoi(Mass.at(i)));
+        }
+    }
+
+//    double balanceSum = (left_sum + right_sum)/2;
+//    double max_X = balanceSum + abs(balanceSum - left_sum) / 2;
+//    double min_X = balanceSum - abs(balanceSum - left_sum) / 2;
+    int sum = left_sum + right_sum;
+    int max_X = std::floor(sum / 1.9);       // round down, if above max_X no longer fits balance factor
+    int min_X = std::ceil(sum * 0.9 / 1.9);  // round up, if below min_X no longer fits balance factor
+
+    std::sort(convertedMass.begin(), convertedMass.end()); // make sure mass is in order
+    int BigX = convertedMass.at(convertedMass.size()-1);
+
+
+    int max_Y;
+    int min_Y;
+
+    if (BigX >= max_X) {                     // impossible to balance
+        return 0;
+    }
+    else if (BigX < max_X && BigX > min_X) { // within the range
+        return 1;
+    }
+    else { // X <= min_X
+        max_Y = max_X - BigX;
+        min_Y = min_X - BigX;
+
+    }
+
+    std::vector<int> possiblePerms;
+    // don't need to include last index cuz largest mass is BigX
+    for (int i = 0; i < convertedMass.size() - 1; i++) {
+        // mass
+        if (convertedMass.at(i) > min_Y && convertedMass.at(i) < max_Y) {
+            return 1;
+        }
+        else if (convertedMass.at(i) < max_Y) {                             // don't do nothing with mass's over max_Y
+
+            possiblePerms.push_back(convertedMass.at(i));       // if mass_y > max_y it's not gonna work but if mass_y < min_y we can sum it
+            return 2;
+        }
+    }
+
+    // get all permuations of possiblePerms
+    // check if sum(possiblePerms) > min_Y && sum(possiblePerms) > max_Y
+
+}

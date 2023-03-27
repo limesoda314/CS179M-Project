@@ -114,7 +114,8 @@ class ShipState {
         std::pair<int, int> getCurrFrom() const { return this->currFrom; }
         std::pair<int, int> getCurrTo() const { return this->currTo; }
 
-        int isPossibleToBalance() const; // 0 for impossible, 1 for possible, 2 for idk we have to check the sum of permuations
+
+
 
 
     private:

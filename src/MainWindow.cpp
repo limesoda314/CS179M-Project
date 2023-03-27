@@ -273,6 +273,17 @@ void MainWindow::generate_balancing_states_clicked() {
 
     std::cout << "[3] curr size of balanced_list: " << this->GUI_balanced_list.size() << std::endl;
 
+    isPossibleResult = this->shipDriver->getShip()->isPossibleToBalance();
+
+    if (isPossibleResult == 0) {
+        this->ui->balancing_next_move_text->setPlainText(QString::fromStdString("No moves yet"));
+        this->ui->balancing_plain_text->setPlainText(QString::fromStdString("Impossible to balance"));
+        return;
+    }
+    else if (isPossibleResult == 2) {
+        std::cout << "Might be possible to balance" << std::endl;
+    }
+
     this->shipDriver->balance_ship(this->GUI_balanced_list);
 
 //    std::cout << "[4] curr size of balanced_list: " << this->GUI_balanced_list.size() << std::endl;
