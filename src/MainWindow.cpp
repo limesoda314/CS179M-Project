@@ -4,6 +4,7 @@
 #include <QtWidgets>
 
 #include "../headers/Logger.h"
+#include "../headers/Popup.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -16,6 +17,36 @@ MainWindow::MainWindow(QWidget *parent)
 
     QPushButton tmp;
 
+    // int pop_up_window_pos_x = 0;
+    // int pop_up_window_pos_y = 0;
+    // int pop_up_window_width = 200;
+    // int pop_up_window_height = 200;
+
+    // this->global_popup_window = new Popup(
+    //     this->centralWidget(),
+    //     pop_up_window_pos_x,
+    //     pop_up_window_pos_y,
+    //     pop_up_window_width,
+    //     pop_up_window_height
+    // );
+
+    // QPoint pop_up_window_geo = this->global_popup_window->mapToParent(
+    //     QPoint(0, 0)
+    // );
+
+    // this->global_popup_window->move(pop_up_window_geo.x(), pop_up_window_geo.y());
+
+    // this->global_popup_window->setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
+    // this->global_popup_window->setEnabled(false);
+
+//    this->global_popup_window->setEnabled(true);
+//    this->global_popup_window->show();
+
+    this->ui->balance_finish_move_confirmation_popup->hide();
+
+    this->ui->onload_offload_confirmation_popup->hide();
+
+
     // set enabled to false/hide widget
     this->ui->Onload_offload_popup->hide();
     this->ui->balancing_start_button->setEnabled(false);
@@ -23,8 +54,6 @@ MainWindow::MainWindow(QWidget *parent)
     this->ui->enter_transfer_info_button->setEnabled(false);
     this->ui->onload_offload_calculate_button->setEnabled(false);
     this->ui->transfer_next_move_button->setEnabled(false);
-
-
 
     // Signal/Slot connections
     this->connect(ui->loginbutton, &QPushButton::clicked, this, &MainWindow::login_button_clicked);
@@ -41,6 +70,9 @@ MainWindow::MainWindow(QWidget *parent)
     this->connect(ui->add_yet_another_transfer_list_button, &QPushButton::clicked, this, &MainWindow::add_another_transfer_item_clicked);
     this->connect(ui->onload_offload_calculate_button, &QPushButton::clicked, this, &MainWindow::generate_transfer_moves_clicked);
     this->connect(ui->transfer_next_move_button, &QPushButton::clicked, this, &MainWindow::next_transfer_moves_clicked);
+
+    this->connect(ui->balance_finish_popup_confirmation_button, &QPushButton::clicked, this, &MainWindow::balance_finish_popup_confirmation_button_clicked);
+    this->connect(ui->onload_offload_popup_confirm_button, &QPushButton::clicked, this, &MainWindow::onload_offload_popup_confirm_button_clicked);
 }
 
 MainWindow::~MainWindow()
@@ -339,6 +371,8 @@ void MainWindow::generate_balancing_states_clicked() {
 
         this->shipDriver->getShip()->create_outbound(outbound_filepath.toStdString());
 
+        this->ui->balance_finish_move_confirmation_popup->show();
+
         std::string comment = "Finished a cycle. Manifest " + this->shipDriver->getShip()->get_manifest_name() + "OUTBOUND.txt was written to desktop, and a reminder pop-up to operator to send file was displayed.";
         logger->logRawComment(comment);
     }
@@ -429,6 +463,8 @@ void MainWindow::load_next_balance_states_clicked() {
 
         std::string comment = "Finished a cycle. Manifest " + shipDriver->getShip()->get_manifest_name() + "OUTBOUND.txt was written to desktop, and a reminder pop-up to operator to send file was displayed.";
 
+        this->ui->balance_finish_move_confirmation_popup->show();
+
         logger->logRawComment(comment);
         this->ui->balancing_next_button->setEnabled(false);
         this->ui->balancing_next_move_text->clear();
@@ -480,6 +516,7 @@ void MainWindow::load_next_balance_states_clicked() {
 }
 
 void MainWindow::input_transfer_list_clicked() {
+
     if (shipDriver->getShip()->get_manifest_name().size() == 0) {
         this->ui->Onload_offload_popup->hide();
         this->ui->onload_offload_textbox->clear();
@@ -503,7 +540,7 @@ void MainWindow::submit_transfer_list_clicked() {
     std::string unloadname = unloadQname.toStdString();
     QString unloadQquantity = this->ui->unload_quantity_line->text();
     std::string unloadquantity= unloadQquantity.toStdString();
-    if (unloadname.size() !=0 && unloadquantity.size() != 0) {
+    if (unloadname.size() != 0 && unloadquantity.size() != 0) {
         // at max we have 96 containers
         if (unloadquantity == "A" || unloadquantity == "a") {
             shipDriver->getShip()->unload_names.push_back(unloadname);
@@ -593,8 +630,6 @@ void MainWindow::submit_transfer_list_clicked() {
 
     this->ui->transfer_description_text_box->clear();
     this->ui->transfer_description_text_box->setPlainText(QString::fromStdString("Input the quanitity as a value 1-96 or A for all"));
-
-
 }
 
 
@@ -690,8 +725,6 @@ void MainWindow::add_another_transfer_item_clicked() {
     this->ui->transfer_description_text_box->clear();
     this->ui->transfer_description_text_box->setPlainText(QString::fromStdString("Input the quanitity as a value 1-96 or A for all"));
 
-
-
 }
 
 void MainWindow::generate_transfer_moves_clicked() {
@@ -724,6 +757,8 @@ void MainWindow::generate_transfer_moves_clicked() {
         this->ui->onload_offload_textbox->setPlainText(QString::fromStdString(transfer_info));
         this->ui->transfer_update_coords_text->clear();
         this->ui->transfer_update_coords_text->setPlainText(QString::fromStdString("No more moves!"));
+
+        this->ui->onload_offload_confirmation_popup->show();
 
         QString outbound_filepath =
                   QString("%1/").arg(QStandardPaths::writableLocation(QStandardPaths::DesktopLocation));
@@ -801,6 +836,8 @@ void MainWindow::next_transfer_moves_clicked() {
         shipDriver->getShip()->create_outbound(outbound_filepath.toStdString());
         std::string comment = "Finished a cycle. Manifest " + shipDriver->getShip()->get_manifest_name() + "OUTBOUND.txt was written to desktop, and a reminder pop-up to operator to send file was displayed.";
 
+        this->ui->onload_offload_confirmation_popup->show();
+
         logger->logRawComment(comment);
         this->ui->transfer_next_move_button->setEnabled(false);
     }
@@ -844,6 +881,14 @@ void MainWindow::next_transfer_moves_clicked() {
     //this->ui->balancing_plain_text->setPlainText(QString::fromStdString(saved_states.at(1)));
 }
 
+void MainWindow::onload_offload_popup_confirm_button_clicked() {
+    std::cout << "onload_offload_popup_confirm_button_clicked clicked" << std::endl;
+    this->ui->onload_offload_confirmation_popup->hide();
+}
 
+void MainWindow::balance_finish_popup_confirmation_button_clicked() {
+    std::cout << "balance_finish_popup_confirmation_button clicked" << std::endl;
+    this->ui->balance_finish_move_confirmation_popup->hide();
+}
 
 

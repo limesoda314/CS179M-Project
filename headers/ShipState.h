@@ -27,10 +27,15 @@ class ShipState {
         std::vector<std::pair<int,int>> free_spaces;
 
         // every box that can move - the surface of the container boxes
-        std::vector<std::pair<int,int>> move_spaces; 
+        std::vector<std::pair<int,int>> move_spaces;
+
+        // load and unload names and masses
+        std::vector<std::string> unload_names;
+        std::vector<std::string> unload_mass;
+        std::vector<std::string> load_names;
+        std::vector<std::string> load_mass;
 
         Heuristic* ctx;
-
         ShipState* parent;
 
         std::pair<int, int> currFrom;
@@ -116,9 +121,7 @@ class ShipState {
         std::pair<int, int> getCurrFrom() const { return this->currFrom; }
         std::pair<int, int> getCurrTo() const { return this->currTo; }
 
-
-
-
+        bool finished() const;
 
     private:
         void drawCoords(std::ostream&, std::vector<std::pair<int, int>>) const;
