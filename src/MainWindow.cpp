@@ -17,6 +17,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     QPushButton tmp;
 
+    this->setWindowTitle("Shipping Port Utility");
+
     // int pop_up_window_pos_x = 0;
     // int pop_up_window_pos_y = 0;
     // int pop_up_window_width = 200;
