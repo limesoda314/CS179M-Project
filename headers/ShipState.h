@@ -116,6 +116,10 @@ class ShipState {
         std::pair<int, int> getCurrFrom() const { return this->currFrom; }
         std::pair<int, int> getCurrTo() const { return this->currTo; }
 
+
+
+
+
     private:
         void drawCoords(std::ostream&, std::vector<std::pair<int, int>>) const;
 };

@@ -25,6 +25,7 @@ class MainWindow : public QMainWindow
         ShippingPortDriver* shipDriver;
         std::vector<std::pair<int, int>> GUI_balanced_list;
         std::vector<std::string> GUI_move_save_states;
+        int isPossibleResult;
 
     private:
         Ui::MainWindow *ui;
