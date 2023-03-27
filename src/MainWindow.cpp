@@ -506,6 +506,12 @@ void MainWindow::submit_transfer_list_clicked() {
                     std::cout << "unload quantity: " << unloadquantity << std::endl;
                     std::cout << "unload name: " << unloadname << std::endl;
                 }
+                else {
+                    std::cout << "Error: Please check unload input. Make sure quantity is either A or a number less than or equal to 96" << std::endl;
+                    this->ui->transfer_description_text_box->clear();
+                    this->ui->transfer_description_text_box->setPlainText(QString::fromStdString("Error: Please check unload input. Make sure quantity is either A or a number less than or equal to 96"));
+                    return;
+                }
             }
             else {
                 std::cout << "Error: Please check unload input. Make sure quantity is either A or a number less than or equal to 96" << std::endl;
@@ -564,11 +570,9 @@ void MainWindow::submit_transfer_list_clicked() {
     if (shipDriver->getShip()->load_names.size() > 0 || shipDriver->getShip()->unload_names.size() > 0) {
         this->ui->onload_offload_calculate_button->setEnabled(true);
     }
-    else {
-        std::cout << "size of unload: " << shipDriver->getShip()->unload_names.size() << std::endl;
-        std::cout << "size of load: " << shipDriver->getShip()->load_names.size() << std::endl;
-        std::cout << "nope, got to input still" << std::endl;
-    }
+
+    this->ui->transfer_description_text_box->clear();
+    this->ui->transfer_description_text_box->setPlainText(QString::fromStdString("Input the quanitity as a value 1-96 or A for all"));
 
 
 }
@@ -581,39 +585,78 @@ void MainWindow::add_another_transfer_item_clicked() {
     QString unloadQquantity = this->ui->unload_quantity_line->text();
     std::string unloadquantity= unloadQquantity.toStdString();
     if (unloadname.size() !=0 && unloadquantity.size() != 0) {
-        if (unloadquantity.size() <=2) {
+        // at max we have 96 containers
+        if (unloadquantity == "A" || unloadquantity == "a") {
             shipDriver->getShip()->unload_names.push_back(unloadname);
             shipDriver->getShip()->unload_quantity.push_back(unloadquantity);
             std::cout << "unload quantity: " << unloadquantity << std::endl;
             std::cout << "unload name: " << unloadname << std::endl;
         }
         else {
-            std::cout << "Error: Please check unload input. Quantity is greater than 99" << std::endl;
-            this->ui->transfer_description_text_box->clear();
-            this->ui->transfer_description_text_box->setPlainText(QString::fromStdString("Error: Please check unload input. Quantity is greater than 99"));
-            return;
-        }
 
+            bool isnum_quant = 1;
+            for (int i = 0; i < unloadquantity.size(); i++) {
+                if (!std::isdigit(unloadquantity.at(i)) || isalpha(unloadquantity.at(i))) {
+                    isnum_quant = 0;
+                }
+            }
+            if (isnum_quant) {
+                if (std::stoi(unloadquantity) < 97) {
+                    shipDriver->getShip()->unload_names.push_back(unloadname);
+                    shipDriver->getShip()->unload_quantity.push_back(unloadquantity);
+                    std::cout << "unload quantity: " << unloadquantity << std::endl;
+                    std::cout << "unload name: " << unloadname << std::endl;
+                }
+                else {
+                    std::cout << "Error: Please check unload input. Make sure quantity is either A or a number less than or equal to 96" << std::endl;
+                    this->ui->transfer_description_text_box->clear();
+                    this->ui->transfer_description_text_box->setPlainText(QString::fromStdString("Error: Please check unload input. Make sure quantity is either A or a number less than or equal to 96"));
+                    return;
+                }
+            }
+            else {
+                std::cout << "Error: Please check unload input. Make sure quantity is either A or a number less than or equal to 96" << std::endl;
+                this->ui->transfer_description_text_box->clear();
+                this->ui->transfer_description_text_box->setPlainText(QString::fromStdString("Error: Please check unload input. Make sure quantity is either A or a number less than or equal to 96"));
+                return;
+
+            }
+        }
     }
 
     QString loadQname = this->ui->load_name_line->text();
     std::string loadname = loadQname.toStdString();
     QString loadQmass = this->ui->load_mass_line->text();
     std::string loadmass= loadQmass.toStdString();
-    if (unloadname.size() !=0 && unloadquantity.size() != 0) {
-        if (loadmass.size() <= 5) {
-            shipDriver->getShip()->load_mass.push_back(loadmass);
+    if (loadname.size() !=0 && loadmass.size() != 0) {
+
+        bool isnum = 1;
+        for (int i = 0; i < loadmass.size(); i++) {
+            if (!std::isdigit(loadmass.at(i))) {
+                isnum = 0;
+            }
+        }
+        if (!isnum) {
+            std::cout << "Error: Please check load input. Make sure mass contains only digits" << std::endl;
+            this->ui->transfer_description_text_box->clear();
+            this->ui->transfer_description_text_box->setPlainText(QString::fromStdString("Error: Please check load input. Make sure mass contains only digits"));
+            return;
+
+        }
+
+        if (isnum && loadmass.size() <= 5) {
+
             shipDriver->getShip()->load_mass.push_back(loadmass);
             shipDriver->getShip()->load_names.push_back(loadname);
             std::cout << "load mass: " << loadmass << std::endl;
             std::cout << "load name: " <<loadname << std::endl;
+
         }
         else {
             std::cout << "Error: Please check load input. Mass is greater than 99999" << std::endl;
             this->ui->transfer_description_text_box->clear();
             this->ui->transfer_description_text_box->setPlainText(QString::fromStdString("Error: Please check load input. Mass is greater than 99999"));
             return;
-
         }
 
     }
@@ -623,6 +666,10 @@ void MainWindow::add_another_transfer_item_clicked() {
     this->ui->load_mass_line->clear();
 
     this->ui->Onload_offload_popup->show();
+
+    this->ui->transfer_description_text_box->clear();
+    this->ui->transfer_description_text_box->setPlainText(QString::fromStdString("Input the quanitity as a value 1-96 or A for all"));
+
 
 
 }
